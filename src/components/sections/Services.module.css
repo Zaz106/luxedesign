@@ -1,0 +1,148 @@
+.section {
+  width: 100%;
+  max-width: 100rem;
+  margin: 0 auto;
+  padding: 5rem 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.25rem;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+  margin-top: -1rem;
+}
+
+.header h2 {
+  font-size: var(--h2-size);
+  margin-bottom: 16px;
+  font-weight: 300;
+  letter-spacing: -1px;
+}
+
+.header p {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 24px;
+}
+
+.card {
+  position: relative;
+  aspect-ratio: 9/12;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 3rem;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.5s ease;
+  filter: blur(2px);
+  transform: scale(1.05);
+}
+
+.card:hover img {
+  transform: scale(
+    1.05
+  ); /* Maintain scale to avoid jump, or increase if zoom effect desired */
+  filter: blur(0px);
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  z-index: 2;
+}
+
+.tag {
+  align-self: flex-start;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(1px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cardOverlay h3 {
+  font-size: var(--text-base);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
+.cardBottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 12px;
+  width: 100%;
+}
+
+.cardBottom p {
+  font-size: 13px;
+  color: rgba(255, 255, 255);
+  line-height: 1.5;
+  max-width: 70%;
+}
+
+.explore {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgb(255, 255, 255, 0.7);
+  padding-bottom: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.explore:hover {
+  border-bottom: 1px solid rgba(255, 255, 255);
+  color: rgb(255, 255, 255);
+  max-width: 80%;
+}
+
+.arrow {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

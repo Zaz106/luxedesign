@@ -1,66 +1,45 @@
-import Image from "next/image";
+import dynamic from "next/dynamic";
+import Header from "../components/layout/Header";
+import Hero from "../components/sections/Hero";
 import styles from "./page.module.css";
+
+// Lazy load heavy/below-the-fold components
+const LogoCloud = dynamic(() => import("../components/sections/LogoCloud"), {
+  loading: () => <div style={{ height: "200px" }} aria-hidden />,
+});
+const Solutions = dynamic(() => import("../components/sections/Solutions"), {
+  loading: () => <div style={{ height: "600px" }} aria-hidden />,
+});
+const Services = dynamic(() => import("../components/sections/Services"), {
+  loading: () => <div style={{ height: "600px" }} aria-hidden />,
+});
+const Feature = dynamic(() => import("../components/sections/Feature"), {
+  loading: () => <div style={{ height: "600px" }} aria-hidden />,
+});
+const Work = dynamic(() => import("../components/sections/Work"), {
+  loading: () => <div style={{ height: "600px" }} aria-hidden />,
+});
+const Pricing = dynamic(() => import("../components/sections/Pricing"), {
+  loading: () => <div style={{ height: "600px" }} aria-hidden />,
+});
+const Footer = dynamic(() => import("../components/layout/Footer"), {
+  loading: () => <div style={{ height: "400px" }} aria-hidden />,
+});
 
 export default function Home() {
   return (
     <div className={styles.page}>
+      <Header />
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <Hero />
+        <LogoCloud />
+        <Solutions />
+        <Services />
+        <Feature />
+        <Work />
+        <Pricing />
       </main>
+      <Footer />
     </div>
   );
 }

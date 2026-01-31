@@ -1,0 +1,222 @@
+.section {
+  width: 100%;
+  max-width: 100rem;
+  margin: 0 auto;
+  padding: 5rem 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.25rem;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+  margin-top: 2rem;
+}
+
+.header h2 {
+  font-size: var(--h2-size);
+  margin-bottom: 16px;
+  font-weight: 300;
+  letter-spacing: -1px;
+}
+
+.header p {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.grid {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  height: 720px; /* Matched to Services image height */
+}
+
+/* On mobile, stack them normally */
+@media (max-width: 900px) {
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.card {
+  position: relative;
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: flex 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background: #111;
+}
+
+/* Hover effect: Expand hovered card, others shrink automatically via flex */
+@media (min-width: 900px) {
+  .card:hover {
+    flex: 1.3; /* Reduced expansion */
+  }
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+  filter: grayscale(0.2);
+}
+
+.card:hover img {
+  transform: scale(1); /* No zoom */
+  filter: grayscale(0);
+}
+
+/* Overlay 0.2 opacity always on */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Tags Top Right */
+.tags {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, auto); /* 2 cols */
+  gap: 8px;
+  z-index: 2;
+  opacity: 0; /* Hidden by default */
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  direction: rtl; /* Stacks items from right to left */
+}
+
+.card:hover .tags {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tag {
+  direction: ltr; /* Reset text direction */
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+}
+
+/* Content Bottom */
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 32px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+.cardContent {
+  width: 100%;
+}
+
+.cardContent h3 {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 0px;
+  transition: transform 0.4s ease;
+  transform-origin: left bottom;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  max-width: 60%;
+  
+  /* Hide by default */
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+/* On hover, reveal description and push elements */
+.card:hover .description {
+  max-height: 100px; /* Enough to fit text */
+  opacity: 1;
+  margin-bottom: 24px;
+  margin-top: 12px;
+}
+
+.projectButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 24px;
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 300;
+  transition: all 0.3s ease;
+  margin-top: 24px; /* Default spacing */
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.card:hover .projectButton {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.arrowIcon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Custom button overrides for the dark cards if needed */
+.arrow {
+  font-size: 14px;
+  color: #000;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -1,0 +1,218 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease, backdrop-filter 0.3s ease, padding 0.3s ease;
+}
+
+.header.hidden {
+  transform: translateY(-100%);
+}
+
+.header.scrolled {
+  background-color: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.container {
+  width: 100%;
+  max-width: 100rem; /* 1600px */
+  margin: 0 auto;
+  padding: 0 2.5rem; /* 40px */
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.25rem; /* 20px */
+  }
+}
+
+.inner {
+  display: flex; /* Changed from grid to flex for better control */
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+  transition: padding 0.3s ease;
+}
+
+.header.scrolled .inner {
+  padding: 1rem 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  z-index: 101; /* Above mobile menu overlay if needed, though usually menu covers it */
+}
+
+/* Desktop Styles */
+.desktopNav {
+  display: flex;
+  gap: 4rem;
+  font-size: 1rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.desktopNav a {
+  transition: color 0.2s ease;
+}
+
+.desktopNav a:hover {
+  color: #ffffff;
+}
+
+.desktopAction {
+  display: flex;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 30px;
+  height: 20px;
+  position: relative;
+  z-index: 200; /* Ensure clickable above everything */
+  padding: 0;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #fff;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+.hamburger span:first-child {
+  top: 0;
+}
+
+.hamburger span:last-child {
+  bottom: 0;
+}
+
+.hamburger.active span:first-child {
+  transform: rotate(45deg);
+  top: 9px;
+}
+
+.hamburger.active span:last-child {
+  transform: rotate(-45deg);
+  bottom: 9px;
+}
+
+/* Mobile Menu Styles */
+.mobileMenuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  visibility: hidden;
+  transition: visibility 0.3s delay 0.3s;
+}
+
+.mobileMenuOverlay.open {
+  visibility: visible;
+  transition: visibility 0s;
+}
+
+.mobileMenuBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobileMenuOverlay.open .mobileMenuBackdrop {
+  opacity: 1;
+}
+
+.mobileMenuPanel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 85%;
+  max-width: 400px;
+  background: #151515;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 6rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileMenuOverlay.open .mobileMenuPanel {
+  transform: translateX(0);
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.mobileNav a {
+  font-size: 2rem;
+  font-weight: 400;
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 1rem;
+}
+
+.mobileAction {
+  margin-top: auto;
+}
+
+.contactButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 500;
+  line-height: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  width: auto;
+}
+
+.contactButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Breakpoint for Mobile Toggle */
+@media (max-width: 1024px) {
+  .desktopNav, .desktopAction {
+    display: none;
+  }
+  
+  .hamburger {
+    display: block;
+  }
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+  }
+
+  .nav {
+    display: none;
+  }
+}
