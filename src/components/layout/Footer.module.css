@@ -50,9 +50,9 @@
 }
 
 .contactSection p {
-  font-size: var(--text-base);
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.7);
-  max-width: 50rem;
+  max-width: 60rem;
   margin: 0 auto;
   line-height: 1.6;
 }
@@ -81,6 +81,16 @@
   color: #fff;
   font-family: inherit;
   font-size: 0.875rem;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #ffffff;
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px transparent;
 }
 
 .input:focus {
@@ -119,7 +129,7 @@
   display: block;
   margin-bottom: 0.75rem;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 0.875rem;
+  font-size: 1rem;
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -129,8 +139,9 @@
 }
 
 .columns h4 {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
   color: #fff;
   margin-bottom: 1.5rem;
 }
@@ -200,7 +211,7 @@
 
 @media (max-width: 1024px) {
   .top {
-    flex-direction: column;
+    flex-direction: row;
     gap: 2.5rem;
   }
   
@@ -212,18 +223,36 @@
   .bottom {
     flex-direction: column;
     gap: 1.25rem;
-    align-items: flex-start;
+    align-items: center;
   }
 }
 
 @media (max-width: 768px) {
-  .contactSection, .footerBlock {
-    width: 100%;
+  .footer {
+    padding-bottom: 0rem;
+  }
+  
+   .top {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .contactSection {
+    width: 95%;
     padding: 2rem 1.5rem;
-    border-radius: 0;
+    border-radius: 12px;
     border-left: none;
     border-right: none;
     margin-bottom: 4rem;
+  }
+
+   .footerBlock {
+    width: 95%;
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    border-left: none;
+    border-right: none;
+    margin-bottom: 1rem;
   }
   
   .form {
@@ -233,5 +262,9 @@
   .columns {
     flex-direction: column;
     gap: 2rem;
+  }
+
+  .footer {
+    padding: 5rem 0 0;
   }
 }

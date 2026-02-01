@@ -15,16 +15,17 @@ const Feature = () => {
           </p>
           <div className={styles.action}>
             <Link href="#about" className={styles.primaryButton}>
-              Learn More ↗
+              Learn More {"\u2197\uFE0E"}
             </Link>
           </div>
         </div>
         <div className={styles.imageWrapper}>
           <Image
-            src="/images/feature.jpg"
+            src="/images/feature.png"
             alt="Foggy forest landscape"
             fill
             className={styles.image}
+            sizes="(max-width: 900px) 100vw, 50vw"
           />
         </div>
       </div>

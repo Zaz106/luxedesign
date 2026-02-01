@@ -150,6 +150,7 @@ const Solutions = () => {
                 width={600}
                 height={800}
                 priority={index === 2}
+                sizes="(max-width: 768px) 80vw, 400px"
               />
             </div>
           ))}

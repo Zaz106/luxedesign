@@ -2,13 +2,7 @@
   width: 100%;
   max-width: 100rem;
   margin: 0 auto;
-  padding: 5rem 2.5rem;
-}
-
-@media (max-width: 768px) {
-  .section {
-    padding: 3rem 1.25rem;
-  }
+  padding: 4rem 2.5rem 6rem;
 }
 
 .header {
@@ -34,16 +28,15 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: 1fr;
   gap: 24px;
 }
 
 .card {
   position: relative;
-  aspect-ratio: 9/12;
+  min-height: 500px;
   overflow: hidden;
-  border-radius: 12px;
-  margin-bottom: 3rem;
+  border-radius: 16px;
 }
 
 .card img {
@@ -141,8 +134,47 @@
   font-size: 14px;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
+  .section {
+    padding: 5rem 1.25rem 4rem;
+    margin-top: 1.5rem;
+  }
+
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    min-height: 400px;
+  }
+}
+
+@media (min-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    aspect-ratio: 9/12;
+    min-height: auto;
+  }
+
+  /* Center the last card if it's the 3rd one (or any odd last child) */
+  .card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: calc(50% - 12px);
+    margin-inline: auto;
+  }
+}
+
+@media (min-width: 900px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .card:last-child:nth-child(odd) {
+    grid-column: auto;
+    width: auto;
+    margin-inline: 0;
   }
 }

@@ -544,7 +544,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us ↗
+            Contact Us {"\u2197\uFE0E"}
           </Link>
         </div>
 
@@ -601,7 +601,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us ↗
+            Contact Us {"\u2197\uFE0E"}
           </Link>
         </div>
 
@@ -667,7 +667,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.blackButton}>
-            Contact Us ↗
+            Contact Us {"\u2197\uFE0E"}
           </Link>
         </div>
       </div>

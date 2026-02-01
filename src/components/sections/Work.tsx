@@ -48,6 +48,7 @@ const Work = () => {
               width={800}
               height={800}
               className={styles.image}
+              sizes="(max-width: 900px) 100vw, 33vw"
             />
             {/* Overlay handled in CSS */}
             

@@ -2,14 +2,9 @@
   width: 100%;
   max-width: 100rem;
   margin: 0 auto;
-  padding: 5rem 2.5rem;
+  padding: 4rem 2.5rem;
 }
 
-@media (max-width: 768px) {
-  .section {
-    padding: 3rem 1.25rem;
-  }
-}
 
 .header {
   text-align: center;
@@ -32,6 +27,16 @@
   line-height: 1.6;
 }
 
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.25rem 2rem;
+  }
+
+  .header {
+    margin-bottom: 2rem;
+  }
+}
+
 .grid {
   display: flex;
   gap: 24px;
@@ -45,6 +50,11 @@
     display: grid;
     grid-template-columns: 1fr;
     height: auto;
+    gap: 32px;
+  }
+
+  .card {
+    min-height: 400px;
   }
 }
 
@@ -215,8 +225,14 @@
   color: #000;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 900px) {
+.description {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 900px) {
   .grid {
-    grid-template-columns: repeat(3, 1fr);
+    display: flex; /* Keep flex for desktop hover effect */
   }
 }

@@ -245,11 +245,27 @@ const Prism: React.FC<PrismProps> = ({
     const resize = () => {
       const w = container.clientWidth || 1;
       const h = container.clientHeight || 1;
+      
+      // Dynamic resolution scaling for performance
+      // Target roughly 720p equivalent max pixels to save GPU on high-DPI/large screens
+      const targetPixels = 1280 * 720;
+      const naturalPixels = w * h * dpr * dpr;
+      
+      // If we exceed target pixels, scale down dpr
+      const scaleFactor = naturalPixels > targetPixels 
+        ? Math.sqrt(targetPixels / naturalPixels) 
+        : 1;
+        
+      const effectiveDpr = dpr * scaleFactor;
+      
+      // OGL Renderer has public dpr property
+      renderer.dpr = effectiveDpr;
       renderer.setSize(w, h);
+      
       iResBuf[0] = gl.drawingBufferWidth;
       iResBuf[1] = gl.drawingBufferHeight;
-      offsetPxBuf[0] = offX * dpr;
-      offsetPxBuf[1] = offY * dpr;
+      offsetPxBuf[0] = offX * effectiveDpr;
+      offsetPxBuf[1] = offY * effectiveDpr;
       program.uniforms.uPxScale.value =
         1 / ((gl.drawingBufferHeight || 1) * 0.1 * SCALE);
     };

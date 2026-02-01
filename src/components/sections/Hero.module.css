@@ -75,10 +75,12 @@
     white-space: normal;
     flex-direction: column;
     gap: 0;
+    margin-bottom: 0;
   }
   .separator {
     display: none !important; /* Hide separator on mobile stack */
   }
+
 }
 
 .word {
@@ -137,7 +139,7 @@
 /* Mobile Responsiveness for Hero Content */
 @media (max-width: 768px) {
   .hero {
-    padding-bottom: 4rem;
+    padding-bottom: 3rem;
     justify-content: flex-end; /* Center vertically on mobile */
   }
 
@@ -154,8 +156,18 @@
   }
 
   .heading {
-    margin-bottom: 1rem;
+    margin-bottom: 0.1rem;
   }
+
+  .description {
+  max-width: 25rem; /* 400px */
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
 }
 
 .exploreButton {
@@ -224,5 +236,11 @@
   .gridFooter {
     align-items: flex-start;
     text-align: left;
+  }
+}
+
+@media (max-width: 768px) {
+ .exploreButton {
+    gap: 4px;
   }
 }

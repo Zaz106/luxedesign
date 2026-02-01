@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Sans } from "next/font/google";
-import GradualBlur from "../components/ui/GradualBlur";
+import ScrollGradualBlur from "../components/layout/ScrollGradualBlur";
 import "./globals.css";
 
 // Instrument Sans is variable by default, ensuring all weights 400-700 are available
@@ -23,16 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${instrumentSans.variable}`}>
       <body>
-        <GradualBlur
-          target="page"
-          position="bottom"
-          height="4rem"
-          strength={2}
-          divCount={5}
-          curve="bezier"
-          exponential
-          opacity={1}
-        />
+        <ScrollGradualBlur />
         {children}
       </body>
     </html>

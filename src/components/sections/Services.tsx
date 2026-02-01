@@ -15,6 +15,7 @@ const Services = () => {
             alt="Web Design"
             width={600}
             height={800}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <div className={styles.cardOverlay}>
             <div className={styles.tag}>Web Design</div>
@@ -24,7 +25,7 @@ const Services = () => {
                 High-performance websites and platforms built for speed,
                 security, and scalability.
               </p>
-              <span className={styles.explore}>Explore More ↗</span>
+              <span className={styles.explore}>Explore More {"\u2197\uFE0E"}</span>
             </div>
           </div>
         </div>
@@ -34,13 +35,14 @@ const Services = () => {
             alt="App Development"
             width={600}
             height={800}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <div className={styles.cardOverlay}>
             <div className={styles.tag}>App Development</div>
             <h3>We build secure & scalable systems</h3>
             <div className={styles.cardBottom}>
               <p>Intuitive, user-friendly mobile apps for iOS and Android.</p>
-              <span className={styles.explore}>Explore More ↗</span>
+              <span className={styles.explore}>Explore More {"\u2197\uFE0E"}</span>
             </div>
           </div>
         </div>
@@ -50,6 +52,7 @@ const Services = () => {
             alt="Hosting"
             width={600}
             height={800}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <div className={styles.cardOverlay}>
             <div className={styles.tag}>Hosting</div>
@@ -58,7 +61,7 @@ const Services = () => {
               <p>
                 Robust backend systems and APIs that power modern applications.
               </p>
-              <span className={styles.explore}>Explore More ↗</span>
+              <span className={styles.explore}>Explore More {"\u2197\uFE0E"}</span>
             </div>
           </div>
         </div>

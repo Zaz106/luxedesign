@@ -1,11 +1,40 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import Prism from "../ui/Prism";
+import dynamic from 'next/dynamic';
 import { InstagramIcon, TikTokIcon, LinkedInIcon, GitHubIcon } from "../ui/SocialIcons";
 import styles from "./Footer.module.css";
 
+// Lazy load Prism with no SSR
+const Prism = dynamic(() => import('../ui/Prism'), { 
+  ssr: false,
+  loading: () => <div style={{ height: '30rem' }} /> // Optional placeholder
+});
+
 const Footer = () => {
+  const [prismScale, setPrismScale] = useState(1.2);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Scale down prism based on screen width
+      // Desktop base is 1.2
+      if (window.innerWidth < 768) {
+        setPrismScale(0.7); // Mobile
+      } else if (window.innerWidth < 1024) {
+        setPrismScale(0.9); // Tablet
+      } else {
+        setPrismScale(1.2); // Desktop
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <footer className={styles.footer}>
       <div className={styles.background} aria-hidden>
@@ -14,7 +43,7 @@ const Footer = () => {
           timeScale={0.3}
           height={4}
           baseWidth={6}
-          scale={1.2}
+          scale={prismScale}
           hueShift={0}
           colorFrequency={1}
           noise={0}

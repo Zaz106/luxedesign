@@ -69,57 +69,100 @@
   display: flex;
 }
 
+/* New Burger Component CSS */
+.burgerWrapper {
+  position: relative;
+  /* Scale to match header proportions (Original ~20px height vs New ~34px) */
+  transform: scale(0.6); 
+  transform-origin: center right;
+  z-index: 201; /* Above mobile menu overlay */
+}
+
+/* Hide checkbox input */
+.burgerCheckbox {
+  display: none;
+}
+
+.burgerLabel {
+  position: relative;
+  width: 40px;
+  cursor: pointer;
+  margin: auto;
+  display: block;
+  height: calc(4px * 3 + 11px * 2);
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: calc(4px / 2);
+  background: #ffffff;
+  color: inherit;
+  opacity: 1;
+  transition: none 0.35s cubic-bezier(.5,-0.35,.35,1.5) 0s;
+}
+
+/***** Spin Animation *****/
+
+.barTop {
+  bottom: calc(50% + 11px + 4px/ 2);
+  transition-property: bottom,transform;
+  transition-delay: calc(0s + 0.35s),0s;
+}
+
+.barMiddle {
+  top: calc(50% - 4px/ 2);
+  transition-property: opacity;
+  transition-delay: calc(0s + 0.35s);
+}
+
+.barBottom {
+  top: calc(50% + 11px + 4px/ 2);
+  transition-property: top,transform;
+  transition-delay: calc(0s + 0.35s),0s;
+}
+
+.burgerWrapper.active .barTop {
+  bottom: calc(50% - 4px/ 2);
+  transform: rotate(135deg);
+  transition-delay: 0s,calc(0s + 0.35s);
+}
+
+.burgerWrapper.active .barMiddle {
+  opacity: 0;
+  transition-duration: 0s;
+  transition-delay: calc(0s + 0.35s);
+}
+
+.burgerWrapper.active .barBottom {
+  top: calc(50% - 4px/ 2);
+  transform: rotate(225deg);
+  transition-delay: 0s,calc(0s + 0.35s);
+}
+
+/* Reusing .hamburger class logic for visibility media queries */
 .hamburger {
   display: none;
   background: none;
   border: none;
-  cursor: pointer;
-  width: 30px;
-  height: 20px;
-  position: relative;
-  z-index: 200; /* Ensure clickable above everything */
   padding: 0;
-}
-
-.hamburger span {
-  display: block;
-  width: 100%;
-  height: 2px;
-  background-color: #fff;
-  position: absolute;
-  transition: all 0.3s ease;
-}
-
-.hamburger span:first-child {
-  top: 0;
-}
-
-.hamburger span:last-child {
-  bottom: 0;
-}
-
-.hamburger.active span:first-child {
-  transform: rotate(45deg);
-  top: 9px;
-}
-
-.hamburger.active span:last-child {
-  transform: rotate(-45deg);
-  bottom: 9px;
 }
 
 /* Mobile Menu Styles */
 .mobileMenuOverlay {
   position: fixed;
   inset: 0;
-  z-index: 99;
+  z-index: 200; /* Must be higher than header (100) */
   visibility: hidden;
-  transition: visibility 0.3s delay 0.3s;
+  /* Delay visibility hidden until the slide-out animation completes */
+  transition: visibility 0s linear 0.5s;
 }
 
 .mobileMenuOverlay.open {
   visibility: visible;
-  transition: visibility 0s;
+  transition: visibility 0s linear 0s;
 }
 
 .mobileMenuBackdrop {
@@ -128,7 +171,7 @@
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(5px);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
 }
 
 .mobileMenuOverlay.open .mobileMenuBackdrop {
@@ -145,10 +188,28 @@
   background: #151515;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Smooth bezier for both in and out */
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 6rem 2rem 2rem;
   display: flex;
   flex-direction: column;
+}
+
+.mobileClose {
+  position: absolute;
+  top: 1.5rem; /* Match inner padding */
+  right: 2.5rem; /* Match container padding */
+  display: block; 
+  /* Also apply scaling here */
+  transform: scale(0.6);
+  transform-origin: center right;
+  z-index: 202; /* Higher than panel */
+}
+
+@media (max-width: 768px) {
+  .mobileClose {
+    right: 1.25rem; /* Match mobile padding */
+  }
 }
 
 .mobileMenuOverlay.open .mobileMenuPanel {
@@ -179,9 +240,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  font-weight: 500;
+  font-weight: 300;
   line-height: 1;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
   background: #ffffff;
   color: #000000;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
@@ -191,7 +252,7 @@
 }
 
 .contactButton:hover {
-  transform: translateY(-2px);
+background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 

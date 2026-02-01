@@ -47,10 +47,13 @@ const Header = () => {
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
+  // Force header visible when menu is open
+  const headerClass = `${styles.header} ${isHidden && !isMobileMenuOpen ? styles.hidden : ""} ${isScrolled ? styles.scrolled : ""}`;
+
   return (
     <>
       <header 
-        className={`${styles.header} ${isHidden ? styles.hidden : ""} ${isScrolled ? styles.scrolled : ""}`}
+        className={headerClass}
       >
         <div className={styles.container}>
           <div className={styles.inner}>
@@ -59,9 +62,9 @@ const Header = () => {
                 <Image 
                   src="/images/Luxe Logo.png" 
                   alt="Luxe Logo" 
-                  width={130} 
-                  height={42} 
-                  style={{ width: 'auto', height: 'auto', maxHeight: '1.75rem' }} 
+                  width={150} 
+                  height={45} 
+                  style={{ width: 'auto', height: 'auto', maxHeight: '1.9rem' }} 
                   priority
                 />
               </Link>
@@ -83,37 +86,36 @@ const Header = () => {
             </div>
 
             {/* Mobile Toggle */}
-            <button 
-              className={`${styles.hamburger} ${isMobileMenuOpen ? styles.active : ""}`}
+            <div 
+              className={`${styles.hamburger} ${styles.burgerWrapper} ${isMobileMenuOpen ? styles.active : ""}`}
               onClick={toggleMobileMenu}
-              aria-label="Toggle menu"
             >
-              <span></span>
-              <span></span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile Menu Overlay */}
-      <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ""}`}>
-        <div className={styles.mobileMenuBackdrop} onClick={closeMobileMenu} />
-        <div className={styles.mobileMenuPanel}>
-          <div className={styles.mobileMenuContent}>
-            <nav className={styles.mobileNav}>
-              <a href="#home" onClick={closeMobileMenu}>Home</a>
-              <a href="#about" onClick={closeMobileMenu}>About Us</a>
-              <a href="#pricing" onClick={closeMobileMenu}>Pricing</a>
-              <a href="#contact" onClick={closeMobileMenu}>Contact Us</a>
-            </nav>
-            <div className={styles.mobileAction}>
-               <Link href="#contact" className={styles.contactButton} onClick={closeMobileMenu}>
-                Contact Us
-              </Link>
+              <div className={styles.burgerLabel}>
+                <div className={`${styles.bar} ${styles.barTop}`}></div>
+                <div className={`${styles.bar} ${styles.barMiddle}`}></div>
+                <div className={`${styles.bar} ${styles.barBottom}`}></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Mobile Menu Overlay - Move INSIDE Header to share stacking context */}
+        <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ""}`}>
+          <div className={styles.mobileMenuBackdrop} onClick={closeMobileMenu} />
+          {/* Removed Ghost Burger */}
+          
+          <div className={styles.mobileMenuPanel}>
+            <div className={styles.mobileMenuContent}>
+              <nav className={styles.mobileNav}>
+                <a href="#home" onClick={closeMobileMenu}>Home</a>
+                <a href="#about" onClick={closeMobileMenu}>About Us</a>
+                <a href="#pricing" onClick={closeMobileMenu}>Pricing</a>
+                <a href="#contact" onClick={closeMobileMenu}>Contact Us</a>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </header>
     </>
   );
 };

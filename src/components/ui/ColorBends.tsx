@@ -1,7 +1,19 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import * as THREE from "three";
+import { 
+  WebGLRenderer, 
+  ShaderMaterial, 
+  Vector2,
+  Vector3, 
+  Scene, 
+  OrthographicCamera, 
+  PlaneGeometry,
+  Color,
+  Mesh,
+  Clock,
+  SRGBColorSpace
+} from "three";
 import styles from "./ColorBends.module.css";
 
 type ColorBendsProps = {
@@ -148,40 +160,40 @@ export default function ColorBends({
   noise = 0,
 }: ColorBendsProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const rendererRef = useRef<WebGLRenderer | null>(null);
   const rafRef = useRef<number | null>(null);
-  const materialRef = useRef<THREE.ShaderMaterial | null>(null);
+  const materialRef = useRef<ShaderMaterial | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const rotationRef = useRef<number>(rotation);
   const autoRotateRef = useRef<number>(autoRotate);
-  const pointerTargetRef = useRef<THREE.Vector2>(new THREE.Vector2(0, 0));
-  const pointerCurrentRef = useRef<THREE.Vector2>(new THREE.Vector2(0, 0));
+  const pointerTargetRef = useRef<Vector2>(new Vector2(0, 0));
+  const pointerCurrentRef = useRef<Vector2>(new Vector2(0, 0));
   const pointerSmoothRef = useRef<number>(8);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const scene = new Scene();
+    const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    const uColorsArray = Array.from({ length: MAX_COLORS }, () => new THREE.Vector3(0, 0, 0));
-    const material = new THREE.ShaderMaterial({
+    const geometry = new PlaneGeometry(2, 2);
+    const uColorsArray = Array.from({ length: MAX_COLORS }, () => new Vector3(0, 0, 0));
+    const material = new ShaderMaterial({
       vertexShader: vert,
       fragmentShader: frag,
       uniforms: {
-        uCanvas: { value: new THREE.Vector2(1, 1) },
+        uCanvas: { value: new Vector2(1, 1) },
         uTime: { value: 0 },
         uSpeed: { value: speed },
-        uRot: { value: new THREE.Vector2(1, 0) },
+        uRot: { value: new Vector2(1, 0) },
         uColorCount: { value: 0 },
         uColors: { value: uColorsArray },
         uTransparent: { value: transparent ? 1 : 0 },
         uScale: { value: scale },
         uFrequency: { value: frequency },
         uWarpStrength: { value: warpStrength },
-        uPointer: { value: new THREE.Vector2(0, 0) },
+        uPointer: { value: new Vector2(0, 0) },
         uMouseInfluence: { value: mouseInfluence },
         uParallax: { value: parallax },
         uNoise: { value: noise },
@@ -191,16 +203,16 @@ export default function ColorBends({
     });
     materialRef.current = material;
 
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new Mesh(geometry, material);
     scene.add(mesh);
 
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
       antialias: false,
       powerPreference: "high-performance",
       alpha: true,
     });
     rendererRef.current = renderer;
-    (renderer as any).outputColorSpace = (THREE as any).SRGBColorSpace;
+    (renderer as any).outputColorSpace = SRGBColorSpace;
     // CRITICAL: Force 1.0 pixel ratio or lower for performance
     // High resolution on full-screen shaders kills FPS
     renderer.setPixelRatio(1);
@@ -210,7 +222,7 @@ export default function ColorBends({
     renderer.domElement.style.display = "block";
     container.appendChild(renderer.domElement);
 
-    const clock = new THREE.Clock();
+    const clock = new Clock();
 
     const handleResize = () => {
       const dpr = renderer.getPixelRatio();
@@ -228,7 +240,7 @@ export default function ColorBends({
       const height = Math.floor(ch * scale);
 
       renderer.setSize(width, height, false); // false = do not update style width/height
-      (material.uniforms.uCanvas.value as THREE.Vector2).set(width, height);
+      (material.uniforms.uCanvas.value as Vector2).set(width, height);
     };
 
     handleResize();
@@ -250,14 +262,14 @@ export default function ColorBends({
       const rad = (deg * Math.PI) / 180;
       const c = Math.cos(rad);
       const s = Math.sin(rad);
-      (material.uniforms.uRot.value as THREE.Vector2).set(c, s);
+      (material.uniforms.uRot.value as Vector2).set(c, s);
 
       const cur = pointerCurrentRef.current;
       const tgt = pointerTargetRef.current;
       // Frame-rate independent smoothing
       const amt = Math.min(1, dt * pointerSmoothRef.current * 0.8); 
       cur.lerp(tgt, amt);
-      (material.uniforms.uPointer.value as THREE.Vector2).copy(cur);
+      (material.uniforms.uPointer.value as Vector2).copy(cur);
       
       renderer.render(scene, camera);
     };
@@ -338,7 +350,7 @@ export default function ColorBends({
               parseInt(h.slice(2, 4), 16),
               parseInt(h.slice(4, 6), 16),
             ];
-      return new THREE.Vector3(v[0] / 255, v[1] / 255, v[2] / 255);
+      return new Vector3(v[0] / 255, v[1] / 255, v[2] / 255);
     };
 
     const arr = (colors || [])
@@ -346,7 +358,7 @@ export default function ColorBends({
       .slice(0, MAX_COLORS)
       .map(toVec3);
     for (let i = 0; i < MAX_COLORS; i++) {
-      const vec = (material.uniforms.uColors.value as THREE.Vector3[])[i];
+      const vec = (material.uniforms.uColors.value as Vector3[])[i];
       if (i < arr.length) vec.copy(arr[i]);
       else vec.set(0, 0, 0);
     }
