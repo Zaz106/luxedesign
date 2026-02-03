@@ -175,7 +175,8 @@ const Solutions = () => {
                 style={{
                   position: 'absolute',
                   cursor: 'pointer',
-                  transformOrigin: 'center center'
+                  transformOrigin: 'center center',
+                  touchAction: 'none' // Important for dragging
                 }}
               >
                 <Image
@@ -185,7 +186,8 @@ const Solutions = () => {
                   height={800}
                   priority={index === activeIndex}
                   sizes="(max-width: 768px) 80vw, 400px"
-                  style={{ borderRadius: '12px' }}
+                  style={{ borderRadius: '12px', userSelect: 'none' }}
+                  draggable={false}
                 />
               </motion.div>
             ))}

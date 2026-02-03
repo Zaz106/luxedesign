@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./Feature.module.css";
-import { ArrowUpRight } from "../../ui/Icons";
 
 const Feature = () => {
   return (
@@ -16,7 +15,7 @@ const Feature = () => {
           </p>
           <div className={styles.action}>
             <Link href="#about" className={styles.primaryButton}>
-              Learn More <ArrowUpRight />
+              Learn More ↗
             </Link>
           </div>
         </div>

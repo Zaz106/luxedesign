@@ -11,7 +11,6 @@ import {
   ElectronIcon,
   VercelIcon,
   StripeIcon,
-  ArrowUpRight,
 } from "../../ui/Icons";
 
 type Currency = "ZAR" | "USD" | "AUD" | "EUR" | "GBP" | "CAD";
@@ -561,7 +560,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us <ArrowUpRight />
+            Contact Us ↗
           </Link>
         </div>
 
@@ -618,7 +617,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us <ArrowUpRight />
+            Contact Us ↗
           </Link>
         </div>
 
@@ -684,7 +683,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.blackButton}>
-            Contact Us <ArrowUpRight />
+            Contact Us ↗
           </Link>
         </div>
       </div>

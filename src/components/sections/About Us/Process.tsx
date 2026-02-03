@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import styles from "./Process.module.css";
-import { motion } from "motion/react";
+import { motion, useInView } from "motion/react";
 
 const steps = [
   {
@@ -46,8 +47,27 @@ const itemVariants = {
 } as const;
 
 const Process = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { margin: "-200px" });
+  const [isReady, setIsReady] = useState(false);
+  const [hasTriggered, setHasTriggered] = useState(false);
+
+  useEffect(() => {
+    // Add a small delay to prevent animation from triggering during page load/scroll reset
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (isInView && isReady) {
+      setHasTriggered(true);
+    }
+  }, [isInView, isReady]);
+
   return (
-    <section className={styles.section}>
+    <section className={styles.section} ref={ref}>
       <div className={styles.header}>
         <h2 className={styles.title}>Our Process</h2>
         <p className={styles.subtitle}>
@@ -59,8 +79,7 @@ const Process = () => {
         className={styles.grid}
         variants={containerVariants}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        animate={hasTriggered ? "visible" : "hidden"}
       >
         {steps.map((step, index) => (
           <motion.div key={index} className={styles.step} variants={itemVariants}>

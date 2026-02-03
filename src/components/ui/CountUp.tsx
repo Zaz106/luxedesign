@@ -1,7 +1,7 @@
 "use client";
 
 import { useInView, useMotionValue, useSpring } from 'motion/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface CountUpProps {
   to: number;
@@ -39,7 +39,15 @@ export default function CountUp({
     stiffness
   });
 
-  const isInView = useInView(ref, { once: true, margin: '0px 0px -100px 0px' });
+  const [ready, setReady] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const isInView = useInView(ref, { margin: '0px 0px -100px 0px' });
+
+  useEffect(() => {
+    // Prevent animation from firing instantly on page load if user came from bottom
+    const timer = setTimeout(() => setReady(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const getDecimalPlaces = (num: number): number => {
     const str = num.toString();
@@ -73,12 +81,14 @@ export default function CountUp({
 
   useEffect(() => {
     if (ref.current) {
-      ref.current.textContent = formatValue(direction === 'down' ? to : from);
+       // ref.current.textContent = formatValue(direction === 'down' ? to : from);
     }
   }, [from, to, direction, formatValue]);
 
   useEffect(() => {
-    if (isInView && startWhen) {
+    if (isInView && startWhen && ready && !hasStarted) {
+      setHasStarted(true);
+      
       if (typeof onStart === 'function') {
         onStart();
       }
@@ -101,7 +111,7 @@ export default function CountUp({
         clearTimeout(durationTimeoutId);
       };
     }
-  }, [isInView, startWhen, motionValue, direction, from, to, delay, onStart, onEnd, duration]);
+  }, [isInView, startWhen, ready, hasStarted, motionValue, direction, from, to, delay, onStart, onEnd, duration]);
 
   useEffect(() => {
     const unsubscribe = springValue.on('change', (latest: number) => {

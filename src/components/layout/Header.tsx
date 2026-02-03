@@ -92,6 +92,7 @@ const Header = () => {
             <div 
               className={`${styles.hamburger} ${styles.burgerWrapper} ${isMobileMenuOpen ? styles.active : ""}`}
               onClick={toggleMobileMenu}
+              style={{ opacity: isMobileMenuOpen ? 0 : 1 }} 
             >
               <div className={styles.burgerLabel}>
                 <div className={`${styles.bar} ${styles.barTop}`}></div>
@@ -106,8 +107,19 @@ const Header = () => {
         {mounted && createPortal(
           <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ""}`}>
             <div className={styles.mobileMenuBackdrop} onClick={closeMobileMenu} />
-            {/* Removed Ghost Burger */}
             
+            {/* Proxy Burger for High Z-Index Visibility */}
+             <div 
+              className={`${styles.hamburger} ${styles.burgerWrapper} ${styles.proxyBurger} ${isMobileMenuOpen ? styles.active : ""} ${isScrolled ? styles.scrolled : ""}`}
+              onClick={toggleMobileMenu}
+            >
+              <div className={styles.burgerLabel}>
+                <div className={`${styles.bar} ${styles.barTop}`}></div>
+                <div className={`${styles.bar} ${styles.barMiddle}`}></div>
+                <div className={`${styles.bar} ${styles.barBottom}`}></div>
+              </div>
+            </div>
+
             <div className={styles.mobileMenuPanel}>
               <div className={styles.mobileMenuContent}>
                 <nav className={styles.mobileNav}>

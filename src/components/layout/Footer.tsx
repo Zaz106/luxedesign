@@ -98,13 +98,16 @@ const Footer = () => {
                 <h4>Explore</h4>
                 <a href="#home">Home</a>
                 <a href="#about">About Us</a>
-                <a href="#projects">Projects</a>
+                <a href="#projects">Web Builder</a>
+                <a href="#projects">Pricing</a>
+                <a href="#projects">Contact Us</a>
               </div>
               <div>
                 <h4>About</h4>
                 <a href="#services">Services</a>
                 <a href="#work">Our Work</a>
                 <a href="#pricing">Pricing</a>
+                <a href="#pricing">Our Team</a>
               </div>
               <div>
                 <h4>Support</h4>

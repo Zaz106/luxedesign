@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 101; /* Above mobile menu overlay (99) and panel (100) */
   transition: transform 0.3s ease-in-out, background-color 0.3s ease, backdrop-filter 0.3s ease, padding 0.3s ease;
 }
 
@@ -150,11 +150,11 @@
   padding: 0;
 }
 
-/* Mobile Menu Styles */
+/* Mobile Menu Overlay */
 .mobileMenuOverlay {
   position: fixed;
   inset: 0;
-  z-index: 200; /* Must be higher than header (100) */
+  z-index: 200; /* Higher than header (100) */
   visibility: hidden;
   /* Delay visibility hidden until the slide-out animation completes */
   transition: visibility 0s linear 0.5s;
@@ -163,6 +163,28 @@
 .mobileMenuOverlay.open {
   visibility: visible;
   transition: visibility 0s linear 0s;
+}
+
+.proxyBurger {
+  position: fixed;
+  top: 2.1rem; /* Visual alignment with header padding + centering */
+  right: 2.5rem;
+  z-index: 210; /* Highest */
+  display: none;
+}
+
+.proxyBurger.active {
+  display: block;
+}
+
+.proxyBurger.scrolled {
+  top: 1.6rem; /* Adjusted for scrolled padding */
+}
+
+@media (max-width: 768px) {
+  .proxyBurger {
+    right: 1.25rem;
+  }
 }
 
 .mobileMenuBackdrop {
@@ -193,6 +215,7 @@
   padding: 6rem 2rem 2rem;
   display: flex;
   flex-direction: column;
+  z-index: 100; /* Ensure panel is above backdrop */
 }
 
 .mobileClose {
