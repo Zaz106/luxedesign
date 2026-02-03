@@ -48,7 +48,7 @@ const itemVariants = {
 
 const Process = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { margin: "-200px" });
+  const isInView = useInView(ref, { margin: "0px 0px -25% 0px" });
   const [isReady, setIsReady] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
 

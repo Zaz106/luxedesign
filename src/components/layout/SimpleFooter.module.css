@@ -1,0 +1,167 @@
+.footer {
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 0 2rem;
+  background: var(--background);
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.footerBlock {
+  width: 100%;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 2.5rem 3.75rem 2rem;
+  border-radius: 1.25rem;
+  background: rgba(16, 16, 16, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.columns {
+  display: flex;
+  gap: 5rem;
+}
+
+.columns a {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-weight: 300;
+}
+
+.columns a:hover {
+  color: #fff;
+}
+
+.columns h4 {
+  font-family: "Satoshi", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.brand {
+  max-width: 25rem;
+}
+
+.logo {
+  margin-bottom: 0.5rem;
+}
+
+.brand p {
+  font-family: var(--font-heading);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 4rem;
+  margin-bottom: 5rem;
+}
+
+.divider {
+  display: block;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.875rem;
+  width: 100%;
+}
+
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.socials {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.linkGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.icons {
+  display: inline-flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.25rem;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.icons a:hover {
+  color: #fff;
+}
+
+@media (max-width: 1024px) {
+  .top {
+    flex-direction: row;
+    gap: 2.5rem;
+  }
+
+  .columns {
+    flex-wrap: wrap;
+    gap: 2.5rem;
+  }
+
+  .bottom {
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding-bottom: 1rem;
+  }
+
+  .top {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .footerBlock {
+    width: 95%;
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.01);
+  }
+
+  .columns {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .footer {
+    padding: 5rem 0 0;
+  }
+}

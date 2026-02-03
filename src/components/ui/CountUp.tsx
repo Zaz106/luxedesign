@@ -41,7 +41,7 @@ export default function CountUp({
 
   const [ready, setReady] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const isInView = useInView(ref, { margin: '0px 0px -100px 0px' });
+  const isInView = useInView(ref, { margin: '0px 0px -25% 0px' });
 
   useEffect(() => {
     // Prevent animation from firing instantly on page load if user came from bottom

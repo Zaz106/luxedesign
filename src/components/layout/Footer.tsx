@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import dynamic from 'next/dynamic';
 import { InstagramIcon, TikTokIcon, LinkedInIcon, GitHubIcon } from "../ui/Icons";
@@ -13,7 +14,14 @@ const Prism = dynamic(() => import('../ui/Prism'), {
 });
 
 const Footer = () => {
+  const router = useRouter();
   const [prismScale, setPrismScale] = useState(1.2);
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push(`/contact?email=${encodeURIComponent(email)}#contact-form`);
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -60,13 +68,15 @@ const Footer = () => {
             life.
           </p>
 
-          <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+          <form className={styles.form} onSubmit={handleSubscribe}>
             <div className={styles.inputWrapper}>
               <input
                 type="email"
                 placeholder="Enter Your Email"
                 className={styles.input}
                 aria-label="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <button type="submit" className={styles.submitBtn}>
                 Submit
@@ -99,22 +109,22 @@ const Footer = () => {
                 <a href="#home">Home</a>
                 <a href="#about">About Us</a>
                 <a href="#projects">Web Builder</a>
-                <a href="#projects">Pricing</a>
-                <a href="#projects">Contact Us</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/contact">Contact Us</a>
               </div>
               <div>
                 <h4>About</h4>
-                <a href="#services">Services</a>
-                <a href="#work">Our Work</a>
-                <a href="#pricing">Pricing</a>
-                <a href="#pricing">Our Team</a>
+                <a href="/#services">Services</a>
+                <a href="/#work">Our Work</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#pricing">Our Team</a>
               </div>
               <div>
                 <h4>Support</h4>
                 <div className={styles.linkGroup}>
-                  <a href="#contact">Contact Us</a>
-                  <a href="#contact">Community</a>
-                  <a href="#contact">Support</a>
+                  <a href="/contact">Contact Us</a>
+                  <a href="/contact">Community</a>
+                  <a href="/contact">Support</a>
                 </div>
               </div>
             </div>

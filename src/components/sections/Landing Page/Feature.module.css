@@ -88,6 +88,12 @@
   object-position: center;
 }
 
+.arrow {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  display: inline-block;
+}
+
 @media (min-width: 900px) {
   .container {
     grid-template-columns: 1fr 1fr;

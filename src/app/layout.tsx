@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Sans } from "next/font/google";
 import ScrollGradualBlur from "../components/layout/ScrollGradualBlur";
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 
 // Instrument Sans is variable by default, ensuring all weights 400-700 are available
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body>
         <ScrollGradualBlur />
         {children}
+        <Analytics />
       </body>
     </html>
   );

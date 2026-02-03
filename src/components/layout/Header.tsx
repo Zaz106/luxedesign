@@ -78,12 +78,12 @@ const Header = () => {
               <Link href="/">Home</Link>
               <Link href="/about">About Us</Link>
               <Link href="/#pricing">Pricing</Link>
-              <Link href="/#contact">Contact Us</Link>
+              <Link href="/contact">Contact Us</Link>
             </nav>
             
             {/* Desktop Action */}
             <div className={styles.desktopAction}>
-              <Link href="#contact" className={styles.contactButton}>
+              <Link href="/contact" className={styles.contactButton}>
                 Contact Us
               </Link>
             </div>
@@ -126,7 +126,7 @@ const Header = () => {
                   <Link href="/" onClick={closeMobileMenu}>Home</Link>
                   <Link href="/about" onClick={closeMobileMenu}>About Us</Link>
                   <Link href="/#pricing" onClick={closeMobileMenu}>Pricing</Link>
-                  <Link href="/#contact" onClick={closeMobileMenu}>Contact Us</Link>
+                  <Link href="/contact" onClick={closeMobileMenu}>Contact Us</Link>
                 </nav>
               </div>
             </div>

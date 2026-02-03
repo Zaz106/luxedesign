@@ -423,19 +423,35 @@ const Pricing = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    fetch("https://ipapi.co/currency/")
-      .then((res) => res.text())
-      .then((data) => {
-        const curr = data.trim();
-        if (curr in currencies) {
-            setCurrency(curr as Currency);
-        } else {
-             setCurrency("USD");
+    const getCurrency = async () => {
+      try {
+        // Check cache first to avoid unnecessary requests
+        const cached = localStorage.getItem("user_currency");
+        if (cached && (cached in currencies)) {
+          setCurrency(cached as Currency);
+          return;
         }
-      })
-      .catch((err) => {
-        console.error("Failed to fetch location", err);
-      });
+
+        const res = await fetch("https://ipapi.co/currency/");
+        if (!res.ok) {
+           // Ensure we don't spam the API on failure (e.g. 429)
+           throw new Error("Currency fetch failed");
+        }
+        
+        const data = await res.text();
+        const curr = data.trim();
+        const validCurrency = (curr in currencies) ? (curr as Currency) : "USD";
+        
+        setCurrency(validCurrency);
+        localStorage.setItem("user_currency", validCurrency);
+        
+      } catch (err) {
+        // Silently fail to default (ZAR)
+        // console.warn("Could not determine location currency"); 
+      }
+    };
+
+    getCurrency();
   }, []);
 
   const selectedCurrency = currencies[currency];
@@ -560,7 +576,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us ↗
+            Contact Us <span className={styles.arrow}>↗</span>
           </Link>
         </div>
 
@@ -617,7 +633,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us ↗
+            Contact Us <span className={styles.arrow}>↗</span>
           </Link>
         </div>
 
@@ -683,7 +699,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.blackButton}>
-            Contact Us ↗
+            Contact Us <span className={styles.arrow}>↗</span>
           </Link>
         </div>
       </div>

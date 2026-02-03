@@ -160,38 +160,45 @@ const Solutions = () => {
           onTouchEnd={handleDragEnd}
           onMouseEnter={() => setIsPaused(true)}
         >
-          <AnimatePresence mode="popLayout" initial={false}>
-            {solutionsData.map((item, index) => (
-              <motion.div
-                key={item.id}
-                className={styles.card}
-                onClick={() => handleCardClick(index)}
-                initial={false}
-                animate={getCardStyle(index)}
-                transition={{
-                  duration: 0.7,
-                  ease: [0.32, 0.72, 0, 1], // Smooth ease-out-quart
-                }}
-                style={{
-                  position: 'absolute',
-                  cursor: 'pointer',
-                  transformOrigin: 'center center',
-                  touchAction: 'none' // Important for dragging
-                }}
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  width={600}
-                  height={800}
-                  priority={index === activeIndex}
-                  sizes="(max-width: 768px) 80vw, 400px"
-                  style={{ borderRadius: '12px', userSelect: 'none' }}
-                  draggable={false}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {solutionsData.map((item, index) => (
+            <motion.div
+              key={item.id}
+              className={styles.card}
+              onClick={() => handleCardClick(index)}
+              initial={false}
+              animate={getCardStyle(index)}
+              transition={{
+                duration: 0.7,
+                ease: [0.32, 0.72, 0, 1],
+              }}
+              style={{
+                position: 'absolute',
+                cursor: 'pointer',
+                transformOrigin: 'center center',
+                touchAction: 'none',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                perspective: 1000,
+                WebkitPerspective: 1000,
+              }}
+            >
+              <Image
+                src={item.image}
+                alt={item.title}
+                width={600}
+                height={800}
+                priority={index === activeIndex}
+                sizes="(max-width: 768px) 80vw, 400px"
+                style={{ 
+                  borderRadius: '12px', 
+                  userSelect: 'none',
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden'
+                 }}
+                draggable={false}
+              />
+            </motion.div>
+          ))}
         </div>
 
         <div className={styles.action}>

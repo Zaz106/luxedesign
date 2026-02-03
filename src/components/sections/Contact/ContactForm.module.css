@@ -1,0 +1,364 @@
+.contactFormSection {
+  padding: 8rem 2rem 3rem;
+  background-color: var(--background);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 100rem;
+  display: flex;
+  background: #ffffff;
+  border-radius: 32px;
+  overflow: visible;
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.05);
+  isolation: isolate;
+  min-height: 800px;
+  position: relative;
+}
+
+.visualSide {
+  flex: 0 0 50%;
+  position: relative;
+  background: #000;
+  overflow: hidden;
+  height: auto;
+  border-top-left-radius: 32px;
+  border-bottom-left-radius: 32px;
+  z-index: 1;
+}
+
+.video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.95;
+}
+
+.formSide {
+  flex: 0 0 50%;
+  padding: 5rem;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-top-right-radius: 32px;
+  border-bottom-right-radius: 32px;
+}
+
+.formTitle {
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.formSubtitle {
+  font-family: var(--font-body);
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 1.1rem;
+  margin-bottom: 4rem;
+}
+
+.emailLink {
+  font-family: var(--font-body);
+  color: #987ed2;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid #987ed2;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+}
+
+.inputWrapper:hover {
+  background: transparent;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.inputWrapper:focus-within {
+  border-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.label {
+  font-family: var(--font-body);
+  position: absolute;
+  left: 1rem;
+  top: 1.1rem;
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #ffffff;
+  padding: 0 0.25rem;
+  z-index: 10;
+  line-height: 1;
+}
+
+.input {
+  font-family: var(--font-heading);
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #000000;
+  outline: none;
+}
+
+/* Floating effect: Outside and on top */
+.input:focus ~ .label,
+.input:not(:placeholder-shown) ~ .label,
+.textarea:focus ~ .label,
+.textarea:not(:placeholder-shown) ~ .label {
+  top: -0.5rem;
+  left: 0.75rem;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+}
+
+/* Specific to textarea */
+.textarea {
+  font-family: var(--font-heading);
+  width: 100%;
+  padding: 1.1rem 1.25rem;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #000000;
+  outline: none;
+  min-height: 150px;
+  resize: none;
+}
+
+/* Message label always at top left */
+.inputWrapper:has(.textarea) .label {
+  top: 1.1rem;
+}
+
+/* Ensure label moves up for textarea interaction too */
+.textarea:focus ~ .label,
+.textarea:not(:placeholder-shown) ~ .label {
+  top: -0.5rem !important;
+}
+
+/* Dropdown / Phone Input */
+.phoneInputContainer {
+  display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: visible;
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.phoneInputContainer:focus-within {
+  border-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.countrySelector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.25rem;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  position: relative;
+  background: #ffffff;
+  border-top-left-radius: 11px;
+  border-bottom-left-radius: 11px;
+}
+
+.flagIcon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.countryCode {
+  font-size: 1rem;
+  color: #000000;
+  font-weight: 400;
+}
+
+.countryDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: -1;
+  width: 120px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  overflow: hidden;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.countryOption {
+  color: #000000;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.countryOption:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.optionFlag {
+  width: 20px;
+  height: 20px;
+}
+
+.phoneInput {
+  flex: 1;
+  padding: 1.1rem 1.25rem;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #000000;
+  outline: none;
+}
+
+/* Hide label for phone input when typing or filled */
+.phoneInput:focus ~ .label,
+.phoneInput:not(:placeholder-shown) ~ .label {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Centering the button */
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.submitBtn {
+  font-family: var(--font-body);
+  background: #1a1a1a;
+  color: #fff;
+  padding: 1rem 10rem;
+  border-radius: 100px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: fit-content;
+}
+
+.submitBtn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Autofill styling */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.phoneInput:-webkit-autofill,
+.phoneInput:-webkit-autofill:hover,
+.phoneInput:-webkit-autofill:focus,
+.textarea:-webkit-autofill,
+.textarea:-webkit-autofill:hover,
+.textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1a1a1a;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff00 inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+@media (max-width: 1200px) {
+  .visualSide {
+    flex: 0 0 45%;
+  }
+
+  .formSide {
+    flex: 0 0 55%;
+    padding: 4rem 3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .contactFormSection {
+    padding: 4rem 1.5rem;
+  }
+
+  .formContainer {
+    flex-direction: column;
+    height: auto;
+    max-width: 100%;
+    border-radius: 32px;
+    overflow: hidden;
+    min-height: 800px;
+  }
+
+  .visualSide {
+    width: 100%;
+    flex: 0 0 35%;
+    height: auto;
+    min-height: 250px;
+    border-radius: 32px 32px 0 0;
+  }
+
+  .formSide {
+    width: 100%;
+    flex: 0 0 65%;
+    padding: 3.5rem 2rem;
+    border-radius: 0 0 32px 32px;
+  }
+
+  .formTitle {
+    font-size: 2.75rem;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .submitBtn {
+    padding: 1rem 6rem;
+  }
+}

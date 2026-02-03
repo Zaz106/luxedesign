@@ -54,6 +54,7 @@
 }
 
 .heading {
+  font-family: var(--font-heading);
   display: flex;
   flex-wrap: wrap; /* Allow wrapping on small screens */
   justify-content: center;
