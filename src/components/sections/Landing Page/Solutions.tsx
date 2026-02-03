@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "motion/react";
 import styles from "./Solutions.module.css";
 
 const solutionsData = [
@@ -16,6 +17,17 @@ const Solutions = () => {
   const [activeIndex, setActiveIndex] = useState(2); // Start with middle item (index 2 of 5)
   const [dragStartX, setDragStartX] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isDragging || isPaused) return;
+
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % solutionsData.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isDragging, isPaused]);
 
   const handleCardClick = (index: number) => {
     setActiveIndex(index);
@@ -71,31 +83,35 @@ const Solutions = () => {
     if (diff === 0) {
       // Center
       return {
-        transform: "translateX(0) scale(1)",
+        x: "0%",
+        scale: 1,
         zIndex: 10,
         opacity: 1,
-        filter: "grayscale(0%)",
+        filter: "grayscale(0%) brightness(100%)",
       };
     } else if (diff === -1) {
       // Immediate Left
       return {
-        transform: "translateX(-75%) scale(0.85)",
+        x: "-75%",
+        scale: 0.85,
         zIndex: 5,
         opacity: 0.8,
-        filter: "grayscale(20%)",
+        filter: "grayscale(20%) brightness(90%)",
       };
     } else if (diff === 1) {
        // Immediate Right
       return {
-        transform: "translateX(75%) scale(0.85)",
+        x: "75%",
+        scale: 0.85,
         zIndex: 5,
         opacity: 0.8,
-        filter: "grayscale(20%)",
+        filter: "grayscale(20%) brightness(90%)",
       };
     } else if (diff === -2) {
       // Far Left
       return {
-        transform: "translateX(-140%) scale(0.7)",
+        x: "-140%",
+        scale: 0.7,
         zIndex: 1,
         opacity: 0.5,
         filter: "grayscale(100%) brightness(60%)",
@@ -103,17 +119,20 @@ const Solutions = () => {
     } else if (diff === 2) {
       // Far Right
       return {
-        transform: "translateX(140%) scale(0.7)",
+        x: "140%",
+        scale: 0.7,
         zIndex: 1,
         opacity: 0.5,
         filter: "grayscale(100%) brightness(60%)",
       };
     } else {
-      // Default hidden
+      // Default hidden fallback
        return {
-         transform: `scale(0)`, // Hide smoothly
+         x: "0%",
+         scale: 0, 
          opacity: 0,
          zIndex: 0,
+         filter: "grayscale(100%)",
        };
     }
   };
@@ -133,27 +152,44 @@ const Solutions = () => {
           className={styles.carouselContainer}
           onMouseDown={handleDragStart}
           onMouseUp={handleDragEnd}
-          onMouseLeave={handleDragCancel}
+          onMouseLeave={() => {
+            handleDragCancel();
+            setIsPaused(false);
+          }}
           onTouchStart={handleDragStart}
           onTouchEnd={handleDragEnd}
+          onMouseEnter={() => setIsPaused(true)}
         >
-          {solutionsData.map((item, index) => (
-            <div
-              key={item.id}
-              className={styles.card}
-              onClick={() => handleCardClick(index)}
-              style={getCardStyle(index)}
-            >
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={600}
-                height={800}
-                priority={index === 2}
-                sizes="(max-width: 768px) 80vw, 400px"
-              />
-            </div>
-          ))}
+          <AnimatePresence mode="popLayout" initial={false}>
+            {solutionsData.map((item, index) => (
+              <motion.div
+                key={item.id}
+                className={styles.card}
+                onClick={() => handleCardClick(index)}
+                initial={false}
+                animate={getCardStyle(index)}
+                transition={{
+                  duration: 0.7,
+                  ease: [0.32, 0.72, 0, 1], // Smooth ease-out-quart
+                }}
+                style={{
+                  position: 'absolute',
+                  cursor: 'pointer',
+                  transformOrigin: 'center center'
+                }}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={600}
+                  height={800}
+                  priority={index === activeIndex}
+                  sizes="(max-width: 768px) 80vw, 400px"
+                  style={{ borderRadius: '12px' }}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
 
         <div className={styles.action}>

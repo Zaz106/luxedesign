@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import dynamic from 'next/dynamic';
-import { InstagramIcon, TikTokIcon, LinkedInIcon, GitHubIcon } from "../ui/SocialIcons";
+import { InstagramIcon, TikTokIcon, LinkedInIcon, GitHubIcon } from "../ui/Icons";
 import styles from "./Footer.module.css";
 
 // Lazy load Prism with no SSR

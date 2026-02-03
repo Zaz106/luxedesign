@@ -1,5 +1,5 @@
 import Image from "next/image";
-import ColorBends from "../ui/ColorBends";
+import ColorBends from "../../ui/ColorBends";
 import styles from "./Hero.module.css";
 
 const Hero = () => {

@@ -1,0 +1,193 @@
+.section {
+  width: 100%;
+  background-color: var(--background);
+  padding: 8rem 5%;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 6rem;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--h2-size);
+  font-weight: 300;
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.grid::after {
+  content: "";
+  position: absolute;
+  top: 2.625rem; /* 2rem padding top + 0.625rem half dot */
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  z-index: 0;
+  display: none;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+}
+
+/* Vertical Line Up (Desktop) */
+.step::before {
+  content: "";
+  position: absolute;
+  top: -200%; /* Extend upwards */
+  height: 200%;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: none;
+}
+
+.dot {
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: #fff;
+  border-radius: 50%;
+  margin-bottom: 2rem;
+  z-index: 2;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stepNumber {
+  font-family: var(--font-heading, "Satoshi", sans-serif);
+  font-size: 3rem;
+  font-weight: 400;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.stepTitle {
+  font-family: var(--font-header);
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 0.25rem;
+}
+
+.stepDesc {
+  font-family: var(--font-body, "Instrument Sans", sans-serif);
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+/* --- Mobile Styling --- */
+
+.step {
+  padding-left: 4em; /* Space for the timeline on left */
+  padding-top: 0;
+  padding-bottom: 4rem;
+  margin-top: 0;
+}
+
+.dot {
+  position: absolute;
+  left: 1rem;
+  top: 0.25rem;
+  margin: 0;
+}
+
+/* Connect dots vertically on mobile */
+.step::after {
+  content: "";
+  position: absolute;
+  left: 1.625rem; /* 1rem + half dot */
+  top: 1.5rem; /* Start below dot */
+  bottom: -0.25rem; /* Connect to next dot */
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.step:last-child::after {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 4rem 1.25rem 2rem;
+  }
+
+  .header {
+    margin-bottom: 5rem;
+  }
+}
+
+/* --- Desktop Styling --- */
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Hide mobile connectors */
+  .step::after {
+    display: none;
+  }
+
+  .step {
+    padding-left: 1.5rem;
+    padding-bottom: 0;
+  }
+
+  .dot {
+    position: static;
+    margin-top: 10rem; /* Fixed spacing from top of section/item */
+    margin-bottom: 2rem;
+  }
+  
+  .content {
+    padding-left: 0;
+  }
+
+  /* Show Desktop Lines */
+  .grid::after {
+    display: block; /* The horizontal line */
+    top: 0.6rem; /* Center of the dot (2rem padding + 0.625rem half-size) */
+  }
+
+  .step::before {
+    display: none; /* Remove vertical upward line */
+  }
+  
+  .dot {
+    position: static;
+    margin-top: 0; 
+    margin-bottom: 2rem;
+  }
+}

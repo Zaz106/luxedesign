@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styles from "./Services.module.css";
+import { ArrowUpRight } from "../../ui/Icons";
 
 const Services = () => {
   return (
@@ -25,7 +26,7 @@ const Services = () => {
                 High-performance websites and platforms built for speed,
                 security, and scalability.
               </p>
-              <span className={styles.explore}>Explore More {"\u2197\uFE0E"}</span>
+              <span className={styles.explore}>Explore More <ArrowUpRight /></span>
             </div>
           </div>
         </div>
@@ -42,7 +43,7 @@ const Services = () => {
             <h3>We build secure & scalable systems</h3>
             <div className={styles.cardBottom}>
               <p>Intuitive, user-friendly mobile apps for iOS and Android.</p>
-              <span className={styles.explore}>Explore More {"\u2197\uFE0E"}</span>
+              <span className={styles.explore}>Explore More <ArrowUpRight /></span>
             </div>
           </div>
         </div>
@@ -61,7 +62,7 @@ const Services = () => {
               <p>
                 Robust backend systems and APIs that power modern applications.
               </p>
-              <span className={styles.explore}>Explore More {"\u2197\uFE0E"}</span>
+              <span className={styles.explore}>Explore More <ArrowUpRight /></span>
             </div>
           </div>
         </div>

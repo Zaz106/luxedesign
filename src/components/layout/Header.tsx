@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import styles from "./Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,8 +9,10 @@ const Header = () => {
   const [isHidden, setIsHidden] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     let lastScrollY = window.scrollY;
 
     const handleScroll = () => {
@@ -72,10 +75,10 @@ const Header = () => {
             
             {/* Desktop Navigation */}
             <nav className={styles.desktopNav}>
-              <a href="#home">Home</a>
-              <a href="#about">About Us</a>
-              <a href="#pricing">Pricing</a>
-              <a href="#contact">Contact Us</a>
+              <Link href="/">Home</Link>
+              <Link href="/about">About Us</Link>
+              <Link href="/#pricing">Pricing</Link>
+              <Link href="/#contact">Contact Us</Link>
             </nav>
             
             {/* Desktop Action */}
@@ -100,21 +103,24 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu Overlay - Move INSIDE Header to share stacking context */}
-        <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ""}`}>
-          <div className={styles.mobileMenuBackdrop} onClick={closeMobileMenu} />
-          {/* Removed Ghost Burger */}
-          
-          <div className={styles.mobileMenuPanel}>
-            <div className={styles.mobileMenuContent}>
-              <nav className={styles.mobileNav}>
-                <a href="#home" onClick={closeMobileMenu}>Home</a>
-                <a href="#about" onClick={closeMobileMenu}>About Us</a>
-                <a href="#pricing" onClick={closeMobileMenu}>Pricing</a>
-                <a href="#contact" onClick={closeMobileMenu}>Contact Us</a>
-              </nav>
+        {mounted && createPortal(
+          <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ""}`}>
+            <div className={styles.mobileMenuBackdrop} onClick={closeMobileMenu} />
+            {/* Removed Ghost Burger */}
+            
+            <div className={styles.mobileMenuPanel}>
+              <div className={styles.mobileMenuContent}>
+                <nav className={styles.mobileNav}>
+                  <Link href="/" onClick={closeMobileMenu}>Home</Link>
+                  <Link href="/about" onClick={closeMobileMenu}>About Us</Link>
+                  <Link href="/#pricing" onClick={closeMobileMenu}>Pricing</Link>
+                  <Link href="/#contact" onClick={closeMobileMenu}>Contact Us</Link>
+                </nav>
+              </div>
             </div>
-          </div>
-        </div>
+          </div>,
+          document.body
+        )}
       </header>
     </>
   );

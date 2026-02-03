@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./Pricing.module.css";
 import {
@@ -11,7 +11,8 @@ import {
   ElectronIcon,
   VercelIcon,
   StripeIcon,
-} from "../ui/TechIcons";
+  ArrowUpRight,
+} from "../../ui/Icons";
 
 type Currency = "ZAR" | "USD" | "AUD" | "EUR" | "GBP" | "CAD";
 
@@ -422,6 +423,22 @@ const Pricing = () => {
   const [currency, setCurrency] = useState<Currency>("ZAR");
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    fetch("https://ipapi.co/currency/")
+      .then((res) => res.text())
+      .then((data) => {
+        const curr = data.trim();
+        if (curr in currencies) {
+            setCurrency(curr as Currency);
+        } else {
+             setCurrency("USD");
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch location", err);
+      });
+  }, []);
+
   const selectedCurrency = currencies[currency];
 
   const handleCurrencySelect = (curr: Currency) => {
@@ -544,7 +561,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us {"\u2197\uFE0E"}
+            Contact Us <ArrowUpRight />
           </Link>
         </div>
 
@@ -601,7 +618,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us {"\u2197\uFE0E"}
+            Contact Us <ArrowUpRight />
           </Link>
         </div>
 
@@ -667,7 +684,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.blackButton}>
-            Contact Us {"\u2197\uFE0E"}
+            Contact Us <ArrowUpRight />
           </Link>
         </div>
       </div>

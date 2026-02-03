@@ -1,0 +1,22 @@
+import Header from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer";
+import AboutHero from "../../components/sections/About Us/AboutHero";
+import Quote from "../../components/sections/About Us/Quote";
+import Results from "../../components/sections/About Us/Results";
+import Process from "../../components/sections/About Us/Process";
+import styles from "./page.module.css";
+
+export default function About() {
+  return (
+    <div className={styles.page}>
+      <Header />
+      <main className={styles.main}>
+        <AboutHero />
+        <Quote />
+        <Results />
+        <Process />
+      </main>
+      <Footer />
+    </div>
+  );
+}

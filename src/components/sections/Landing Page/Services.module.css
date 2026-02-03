@@ -178,3 +178,10 @@
     margin-inline: 0;
   }
 }
+
+@media (max-width: 768px) {
+  .card img {
+    filter: none !important;
+    transform: none !important;
+  }
+}
