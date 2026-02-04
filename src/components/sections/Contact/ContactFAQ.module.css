@@ -1,8 +1,8 @@
 .faqSection {
   width: 100%;
-  padding: 8rem 2.5rem;
-  background-color: var(--background);
+  padding: 8rem 2.5rem 6rem;
   color: #ffffff;
+  background-color: var(--background);
 }
 
 .faqContainer {
@@ -62,7 +62,7 @@
 }
 
 .faqQuestion:hover {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .faqPlusIcon {
@@ -93,8 +93,12 @@
 }
 
 @media (max-width: 768px) {
+.faqHeader  {
+    margin-bottom: 3rem;
+  }
+
   .faqSection {
-    padding: 5rem 1.25rem;
+    padding: 5rem 1.25rem 2rem;
   }
 
   .faqQuestion {

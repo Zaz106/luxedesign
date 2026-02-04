@@ -24,8 +24,15 @@ const ContactFormContent = () => {
     lastName: "",
     email: "",
     phone: "",
-    message: ""
+    message: "",
+    serviceType: ""
   });
+
+  const serviceOptions = [
+    { id: "website", label: "Website" },
+    { id: "app", label: "App" },
+    { id: "hosting", label: "Hosting" },
+  ];
 
   useEffect(() => {
     if (emailParam) {
@@ -34,7 +41,37 @@ const ContactFormContent = () => {
   }, [emailParam]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    let value = e.target.value;
+
+    if (e.target.name === "phone") {
+        const digits = value.replace(/\D/g, "");
+        if (selectedCountry.code === "ZA") {
+           // ZA: XX XXX XXXX (9 digits)
+           value = digits.substring(0, 9).replace(/^(\d{2})(\d{0,3})(\d{0,4}).*/, (_, p1, p2, p3) => {
+             let res = p1;
+             if (p2) res += " " + p2;
+             if (p3) res += " " + p3;
+             return res;
+           });
+        } else if (selectedCountry.code === "US" || selectedCountry.code === "CA") {
+           // US/CA: XXX XXX XXXX (10 digits)
+           value = digits.substring(0, 10).replace(/^(\d{3})(\d{0,3})(\d{0,4}).*/, (_, p1, p2, p3) => {
+             let res = p1;
+             if (p2) res += " " + p2;
+             if (p3) res += " " + p3;
+             return res;
+           });
+        } else {
+             // Generic: groups of 3
+             value = digits.replace(/(\d{3})(?=\d)/g, "$1 ");
+        }
+    }
+
+    setFormValues({ ...formValues, [e.target.name]: value });
+  };
+
+  const handleServiceSelect = (id: string) => {
+    setFormValues({ ...formValues, serviceType: id });
   };
 
   useEffect(() => {
@@ -67,6 +104,15 @@ const ContactFormContent = () => {
 
     getCountryCode();
   }, []);
+
+  const getPhonePlaceholder = (code: string) => {
+    switch(code) {
+      case "ZA": return "00 000 0000";
+      case "US": return "000 000 0000";
+      case "CA": return "000 000 0000";
+      default: return "000 000 000";
+    }
+  };
 
   return (
     <section className={styles.contactFormSection} id="contact-form">
@@ -155,6 +201,8 @@ const ContactFormContent = () => {
                             e.stopPropagation();
                             setSelectedCountry(c);
                             setIsDropdownOpen(false);
+                            // Reset phone on country change to prevent format confusion
+                            setFormValues(prev => ({ ...prev, phone: "" }));
                           }}
                           className={styles.countryOption}
                         >
@@ -172,10 +220,28 @@ const ContactFormContent = () => {
                     value={formValues.phone}
                     onChange={handleChange}
                     className={styles.phoneInput}
-                    placeholder=" "
+                    placeholder={getPhonePlaceholder(selectedCountry.code)}
                   />
                   <label className={styles.label}>Phone Number</label>
                 </div>
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <div className={styles.serviceSelection}>
+                 <p className={styles.serviceLabel}>Type of Inquiry</p>
+                 <div className={styles.serviceButtons}>
+                    {serviceOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        className={`${styles.serviceBtn} ${formValues.serviceType === option.id ? styles.selected : ""}`}
+                        onClick={() => handleServiceSelect(option.id)}
+                      >
+                         {option.label}
+                      </button>
+                    ))}
+                 </div>
               </div>
             </div>
 

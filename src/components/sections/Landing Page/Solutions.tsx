@@ -180,23 +180,40 @@ const Solutions = () => {
                 WebkitBackfaceVisibility: 'hidden',
                 perspective: 1000,
                 WebkitPerspective: 1000,
+                willChange: "transform, opacity, filter",
               }}
             >
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={600}
-                height={800}
-                priority={index === activeIndex}
-                sizes="(max-width: 768px) 80vw, 400px"
+              <div 
                 style={{ 
-                  borderRadius: '12px', 
-                  userSelect: 'none',
-                  backfaceVisibility: 'hidden',
-                  WebkitBackfaceVisibility: 'hidden'
-                 }}
-                draggable={false}
-              />
+                  width: '100%', 
+                  height: '100%', 
+                  position: 'relative',
+                  overflow: 'hidden',
+                  borderRadius: '12px',
+                  // Fix for iOS overflow/border-radius with transforms
+                  transform: 'translateZ(0)',
+                }}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={600}
+                  height={800}
+                  priority={index === activeIndex}
+                  sizes="(max-width: 768px) 80vw, 400px"
+                  style={{ 
+                    borderRadius: '12px', 
+                    userSelect: 'none',
+                    // Image itself shouldn't need backface hidden if container has it, but safe to keep
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                  draggable={false}
+                />
+              </div>
             </motion.div>
           ))}
         </div>

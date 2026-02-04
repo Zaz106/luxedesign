@@ -149,8 +149,9 @@
   }
 
   .footerBlock {
-    width: 95%;
-    padding: 2rem 1.5rem;
+    max-width: 100%;
+    width: 100%;
+    padding: 2rem 1.25rem;
     border-radius: 12px;
     margin-bottom: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.01);
