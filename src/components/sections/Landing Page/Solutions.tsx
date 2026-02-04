@@ -87,7 +87,7 @@ const Solutions = () => {
         scale: 1,
         zIndex: 10,
         opacity: 1,
-        filter: "grayscale(0%) brightness(100%)",
+        // Removed filter for mobile performance (flicker fix)
       };
     } else if (diff === -1) {
       // Immediate Left
@@ -95,8 +95,7 @@ const Solutions = () => {
         x: "-75%",
         scale: 0.85,
         zIndex: 5,
-        opacity: 0.8,
-        filter: "grayscale(20%) brightness(90%)",
+        opacity: 0.6, // Lower opacity instead of grayscale
       };
     } else if (diff === 1) {
        // Immediate Right
@@ -104,8 +103,7 @@ const Solutions = () => {
         x: "75%",
         scale: 0.85,
         zIndex: 5,
-        opacity: 0.8,
-        filter: "grayscale(20%) brightness(90%)",
+        opacity: 0.6,
       };
     } else if (diff === -2) {
       // Far Left
@@ -113,8 +111,7 @@ const Solutions = () => {
         x: "-140%",
         scale: 0.7,
         zIndex: 1,
-        opacity: 0.5,
-        filter: "grayscale(100%) brightness(60%)",
+        opacity: 0.3,
       };
     } else if (diff === 2) {
       // Far Right
@@ -122,8 +119,7 @@ const Solutions = () => {
         x: "140%",
         scale: 0.7,
         zIndex: 1,
-        opacity: 0.5,
-        filter: "grayscale(100%) brightness(60%)",
+        opacity: 0.3,
       };
     } else {
       // Default hidden fallback
@@ -132,7 +128,6 @@ const Solutions = () => {
          scale: 0, 
          opacity: 0,
          zIndex: 0,
-         filter: "grayscale(100%)",
        };
     }
   };
@@ -180,7 +175,7 @@ const Solutions = () => {
                 WebkitBackfaceVisibility: 'hidden',
                 perspective: 1000,
                 WebkitPerspective: 1000,
-                willChange: "transform, opacity, filter",
+                willChange: "transform, opacity",
               }}
             >
               <div 

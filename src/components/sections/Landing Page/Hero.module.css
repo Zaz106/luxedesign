@@ -20,8 +20,6 @@
 .overlay {
   position: absolute;
   inset: 0;
-  /* Darken bottom for text legibility, lighten top/center for visual pop */
-  background: radial-gradient(circle at 50% 40%, rgba(21, 21, 21, 0.1) 0%, rgba(21, 21, 21, 0.8) 100%, #151515 150%);
   z-index: 1;
   pointer-events: none;
 }

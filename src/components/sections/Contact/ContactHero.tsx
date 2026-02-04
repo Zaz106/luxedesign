@@ -9,7 +9,7 @@ const ContactHero = () => {
         <ColorBends
           colors={["#2400b3", "#987ed2"]}
           rotation={0} // Slightly different from home
-          speed={0.6}
+          speed={0.8}
           scale={0.9}
           mouseInfluence={0}
           noise={0}
