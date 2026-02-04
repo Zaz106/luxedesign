@@ -46,7 +46,7 @@ export default function ScrollGradualBlur() {
         position="bottom"
         height="5rem"
         strength={2}
-        divCount={5}
+        divCount={8}
         curve="bezier"
         exponential
         opacity={1}

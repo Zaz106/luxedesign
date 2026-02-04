@@ -219,11 +219,6 @@
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
 }
 
-/* Custom button overrides for the dark cards if needed */
-.arrow {
-  font-size: 14px;
-  color: #000;
-}
 
 @media (max-width: 900px) {
 .description {

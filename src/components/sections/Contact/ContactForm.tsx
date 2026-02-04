@@ -118,7 +118,15 @@ const ContactFormContent = () => {
     <section className={styles.contactFormSection} id="contact-form">
       <div className={styles.formContainer}>
         <div className={styles.visualSide}>
-          <video className={styles.video} autoPlay loop muted playsInline>
+          <video 
+            className={styles.video} 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            disablePictureInPicture
+            controlsList="nodownload noplaybackrate"
+          >
             <source
               src="/images/contact-us-video.mp4"
               type="video/mp4"

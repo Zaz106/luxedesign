@@ -45,7 +45,7 @@
 .logo {
   display: flex;
   align-items: center;
-  z-index: 101; /* Above mobile menu overlay if needed, though usually menu covers it */
+  z-index: 101;
 }
 
 /* Desktop Styles */
@@ -167,8 +167,8 @@
 
 .proxyBurger {
   position: fixed;
-  top: 2.1rem; /* Visual alignment with header padding + centering */
-  right: 2.5rem;
+  top: 1.5rem; /* Visual alignment with header padding + centering */
+  right: 2rem;
   z-index: 210; /* Highest */
   display: none;
 }

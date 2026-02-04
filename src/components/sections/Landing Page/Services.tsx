@@ -25,7 +25,7 @@ const Services = () => {
                 High-performance websites and platforms built for speed,
                 security, and scalability.
               </p>
-              <span className={styles.explore}>Explore More <span className={styles.arrow}>↗&#xFE0E;</span></span>
+              <span className={styles.explore}>Explore More <span className={styles.arrow}>↗</span></span>
             </div>
           </div>
         </div>
@@ -42,7 +42,7 @@ const Services = () => {
             <h3>We build secure & scalable systems</h3>
             <div className={styles.cardBottom}>
               <p>Intuitive, user-friendly mobile apps for iOS and Android.</p>
-              <span className={styles.explore}>Explore More <span className={styles.arrow}>↗&#xFE0E;</span></span>
+              <span className={styles.explore}>Explore More <span className={styles.arrow}>↗</span></span>
             </div>
           </div>
         </div>
@@ -61,7 +61,7 @@ const Services = () => {
               <p>
                 Robust backend systems and APIs that power modern applications.
               </p>
-              <span className={styles.explore}>Explore More <span className={styles.arrow}>↗&#xFE0E;</span></span>
+              <span className={styles.explore}>Explore More <span className={styles.arrow}>↗</span></span>
             </div>
           </div>
         </div>

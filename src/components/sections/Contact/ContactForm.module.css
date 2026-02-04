@@ -39,6 +39,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0.95;
+  pointer-events: none;
 }
 
 .formSide {
@@ -170,7 +171,7 @@
 
 .serviceBtn {
   flex: 1;
-  padding: 0.875rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 999px;
@@ -189,7 +190,6 @@
 .serviceBtn.selected {
   background: rgba(0, 0, 0, 0.8);
   color: #ffffff;
-  border-color: rgba(0, 0, 0, 0.8);
 }
 
 @media (max-width: 480px) {
@@ -201,7 +201,7 @@
   
   .serviceBtn {
     flex: 1 1 100%; /* Stack fully on very small screens or take available width */
-    padding: 1rem; /* Larger touch target */
+    padding: 0.8rem 1rem; /* Larger touch target */
     font-size: 1rem;
   }
 }
