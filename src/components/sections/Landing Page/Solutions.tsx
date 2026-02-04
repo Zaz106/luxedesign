@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, PanInfo } from "motion/react";
 import styles from "./Solutions.module.css";
 
 const solutionsData = [
@@ -14,122 +14,33 @@ const solutionsData = [
 ];
 
 const Solutions = () => {
-  const [activeIndex, setActiveIndex] = useState(2); // Start with middle item (index 2 of 5)
-  const [dragStartX, setDragStartX] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(2);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (isDragging || isPaused) return;
+    if (isPaused) return;
 
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % solutionsData.length);
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [isDragging, isPaused]);
+  }, [isPaused]);
 
-  const handleCardClick = (index: number) => {
-    setActiveIndex(index);
-  };
-
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    setIsDragging(true);
-    const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
-    setDragStartX(clientX);
-  };
-
-  const handleDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging || dragStartX === null) return;
-    
-    const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : (e as React.MouseEvent).clientX;
-    const diff = clientX - dragStartX;
-    
-    // Threshold 50px
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        // Swipe Right -> Go to Previous
-        setActiveIndex((prev) => (prev - 1 + solutionsData.length) % solutionsData.length);
-      } else {
-        // Swipe Left -> Go to Next
-        setActiveIndex((prev) => (prev + 1) % solutionsData.length);
-      }
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const threshold = 50;
+    if (info.offset.x > threshold) {
+      setActiveIndex((prev) => (prev - 1 + solutionsData.length) % solutionsData.length);
+    } else if (info.offset.x < -threshold) {
+      setActiveIndex((prev) => (prev + 1) % solutionsData.length);
     }
-    
-    setIsDragging(false);
-    setDragStartX(null);
   };
 
-  const handleDragCancel = () => {
-    setIsDragging(false);
-    setDragStartX(null);
-  };
-
-  // Helper to get circular distance
   const getCircularDistance = (index: number, active: number, length: number) => {
     let diff = (index - active) % length;
     if (diff > length / 2) diff -= length;
     if (diff < -length / 2) diff += length;
     return diff;
-  };
-
-  const getCardStyle = (index: number) => {
-    const total = solutionsData.length;
-    const diff = getCircularDistance(index, activeIndex, total);
-    
-    // Relative positioning with increased spacing
-    // Spread: 75% for neighbors (was 65%), 140% for far (was 120%)
-    
-    if (diff === 0) {
-      // Center
-      return {
-        x: "0%",
-        scale: 1,
-        zIndex: 10,
-        opacity: 1,
-        // Removed filter for mobile performance (flicker fix)
-      };
-    } else if (diff === -1) {
-      // Immediate Left
-      return {
-        x: "-75%",
-        scale: 0.85,
-        zIndex: 5,
-        opacity: 0.6, // Lower opacity instead of grayscale
-      };
-    } else if (diff === 1) {
-       // Immediate Right
-      return {
-        x: "75%",
-        scale: 0.85,
-        zIndex: 5,
-        opacity: 0.6,
-      };
-    } else if (diff === -2) {
-      // Far Left
-      return {
-        x: "-140%",
-        scale: 0.7,
-        zIndex: 1,
-        opacity: 0.3,
-      };
-    } else if (diff === 2) {
-      // Far Right
-      return {
-        x: "140%",
-        scale: 0.7,
-        zIndex: 1,
-        opacity: 0.3,
-      };
-    } else {
-      // Default hidden fallback
-       return {
-         x: "0%",
-         scale: 0, 
-         opacity: 0,
-         zIndex: 0,
-       };
-    }
   };
 
   return (
@@ -145,72 +56,99 @@ const Solutions = () => {
 
         <div 
           className={styles.carouselContainer}
-          onMouseDown={handleDragStart}
-          onMouseUp={handleDragEnd}
-          onMouseLeave={() => {
-            handleDragCancel();
-            setIsPaused(false);
-          }}
-          onTouchStart={handleDragStart}
-          onTouchEnd={handleDragEnd}
           onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
         >
-          {solutionsData.map((item, index) => (
-            <motion.div
-              key={item.id}
-              className={styles.card}
-              onClick={() => handleCardClick(index)}
-              initial={false}
-              animate={getCardStyle(index)}
-              transition={{
-                duration: 0.7,
-                ease: [0.32, 0.72, 0, 1],
-              }}
-              style={{
-                position: 'absolute',
-                cursor: 'pointer',
-                transformOrigin: 'center center',
-                touchAction: 'none',
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                perspective: 1000,
-                WebkitPerspective: 1000,
-                willChange: "transform, opacity",
-              }}
-            >
-              <div 
-                style={{ 
-                  width: '100%', 
-                  height: '100%', 
-                  position: 'relative',
-                  overflow: 'hidden',
-                  borderRadius: '12px',
-                  // Fix for iOS overflow/border-radius with transforms
-                  transform: 'translateZ(0)',
+          {solutionsData.map((item, index) => {
+            const diff = getCircularDistance(index, activeIndex, solutionsData.length);
+            
+            // Calculate styles based on position (diff)
+            let x = "0%";
+            let scale = 1;
+            let zIndex = 0;
+            let overlayOpacity = 0;
+
+            if (diff === 0) {
+              x = "0%";
+              scale = 1;
+              zIndex = 10;
+              overlayOpacity = 0;
+            } else if (Math.abs(diff) === 1) {
+              x = diff === -1 ? "-75%" : "75%";
+              scale = 0.85;
+              zIndex = 5;
+              overlayOpacity = 0.4;
+            } else if (Math.abs(diff) === 2) {
+              x = diff === -2 ? "-140%" : "140%";
+              scale = 0.7;
+              zIndex = 1;
+              overlayOpacity = 0.7;
+            } else {
+              x = "0%"; 
+              scale = 0;
+              zIndex = 0;
+            }
+
+            const isVisible = Math.abs(diff) <= 2;
+
+            return (
+              <motion.div
+                key={item.id}
+                className={styles.card}
+                onClick={() => setActiveIndex(index)}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.1}
+                onDragEnd={handleDragEnd}
+                initial={false}
+                animate={{
+                  x,
+                  scale,
+                  zIndex,
+                  opacity: isVisible ? 1 : 0
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                  mass: 1, 
+                }}
+                style={{
+                  position: 'absolute',
+                  cursor: 'pointer',
+                  transformStyle: 'preserve-3d',
                 }}
               >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  width={600}
-                  height={800}
-                  priority={index === activeIndex}
-                  sizes="(max-width: 768px) 80vw, 400px"
-                  style={{ 
-                    borderRadius: '12px', 
-                    userSelect: 'none',
-                    // Image itself shouldn't need backface hidden if container has it, but safe to keep
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                  }}
-                  draggable={false}
-                />
-              </div>
-            </motion.div>
-          ))}
+                  <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '0.75rem', overflow: 'hidden', transform: "translateZ(0)" }}>
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      priority={diff === 0}
+                      sizes="(max-width: 768px) 80vw, 450px"
+                      style={{ 
+                        objectFit: 'cover',
+                        userSelect: 'none',
+                        pointerEvents: 'none',
+                      }}
+                      draggable={false}
+                    />
+                    {/* Darkening Overlay */}
+                    <motion.div 
+                      initial={false}
+                      animate={{ opacity: overlayOpacity }}
+                      transition={{ duration: 0.4 }}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundColor: '#000',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                  </div>
+              </motion.div>
+            );
+          })}
         </div>
 
         <div className={styles.action}>
@@ -225,3 +163,4 @@ const Solutions = () => {
 
 
 export default Solutions;
+

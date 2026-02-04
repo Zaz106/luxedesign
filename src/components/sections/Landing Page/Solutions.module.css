@@ -62,7 +62,7 @@
   height: 34.375rem; /* 550px */
   border-radius: 0.75rem;
   overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* transition removed to prevent conflict with Framer Motion */
   cursor: pointer;
   box-shadow: 0 1.25rem 3.125rem rgba(0, 0, 0, 0.5);
 }
