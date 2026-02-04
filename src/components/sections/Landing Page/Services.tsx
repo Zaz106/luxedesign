@@ -25,7 +25,7 @@ const Services = () => {
                 High-performance websites and platforms built for speed,
                 security, and scalability.
               </p>
-              <span className={styles.explore}>Explore More <span className={styles.arrow}>&#8599;&#xFE0E;</span></span>
+              <span className={styles.explore}>Explore More <span className={styles.arrow} style={{fontFamily: "monospace"}}>&#8599;&#xFE0E;</span></span>
             </div>
           </div>
         </div>
