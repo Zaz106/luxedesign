@@ -328,8 +328,3 @@
 .blackButton:hover {
    background-color: rgba(0, 0, 0, 0.9);
 }
-
-.arrow {
-  font-size: 18px;
-  line-height: 1;
-}

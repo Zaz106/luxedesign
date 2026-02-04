@@ -15,7 +15,7 @@ const Feature = () => {
           </p>
           <div className={styles.action}>
             <Link href="#about" className={styles.primaryButton}>
-              Learn More <span className={styles.arrow} style={{color: "black"}}>&#8599;&#xFE0E;</span>
+              Learn More
             </Link>
           </div>
         </div>

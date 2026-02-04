@@ -576,7 +576,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us <span className={styles.arrow} style={{color: "black", fontFamily: "monospace"}}>&#8599;&#xFE0E;</span>
+            Contact Us
           </Link>
         </div>
 
@@ -633,7 +633,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.whiteButton}>
-            Contact Us <span className={styles.arrow} style={{color: "black", fontFamily: "monospace"}}>&#8599;&#xFE0E;</span>
+            Contact Us
           </Link>
         </div>
 
@@ -699,7 +699,7 @@ const Pricing = () => {
           </ul>
 
           <Link href="#contact" className={styles.blackButton}>
-            Contact Us <span className={styles.arrow} style={{color: "white", fontFamily: "monospace"}}>&#8599;&#xFE0E;</span>
+            Contact Us
           </Link>
         </div>
       </div>
