@@ -48,7 +48,8 @@ const itemVariants = {
 
 const Process = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { margin: "0px 0px -25% 0px" });
+  // Increased threshold: Animation triggers when the element is 40% up from the bottom of the viewport
+  const isInView = useInView(ref, { margin: "0px 0px -32% 0px" });
   const [isReady, setIsReady] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
 
@@ -67,7 +68,7 @@ const Process = () => {
   }, [isInView, isReady]);
 
   return (
-    <section className={styles.section} ref={ref}>
+    <section className={styles.section}>
       <div className={styles.header}>
         <h2 className={styles.title}>Our Process</h2>
         <p className={styles.subtitle}>
@@ -76,6 +77,7 @@ const Process = () => {
       </div>
 
       <motion.div 
+        ref={ref}
         className={styles.grid}
         variants={containerVariants}
         initial="hidden"

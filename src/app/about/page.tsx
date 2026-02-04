@@ -4,6 +4,7 @@ import AboutHero from "../../components/sections/About Us/AboutHero";
 import Quote from "../../components/sections/About Us/Quote";
 import Results from "../../components/sections/About Us/Results";
 import Process from "../../components/sections/About Us/Process";
+import AboutFAQ from "@/components/sections/About Us/AboutFAQ";
 import styles from "./page.module.css";
 
 export default function About() {
@@ -15,6 +16,7 @@ export default function About() {
         <Quote />
         <Results />
         <Process />
+        <AboutFAQ />
       </main>
       <Footer />
     </div>

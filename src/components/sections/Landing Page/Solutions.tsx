@@ -22,7 +22,7 @@ const Solutions = () => {
 
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % solutionsData.length);
-    }, 3000); // 1.5 seconds per slide
+    }, 2000); // 2 seconds per slide
 
     return () => clearInterval(interval);
   }, [isPaused]);
