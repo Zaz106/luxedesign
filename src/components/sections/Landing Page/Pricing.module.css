@@ -338,8 +338,6 @@
 
 @media (max-width: 768px) {
   .arrow {
-    font-size: 1rem;
-    max-width: 16px;
-    max-height: 16px;
+    font-size: 0.8rem;
   }
 }

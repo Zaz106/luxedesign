@@ -54,10 +54,28 @@ const Solutions = () => {
           </p>
         </div>
 
-        <div 
+        {/* 
+          Carousel Container 
+          Refactored: Removed individual card dragging. 
+          Now using a container-level Pan gesture to trigger slide changes.
+          This prevents the "fighting" between drag physics and position animations.
+        */}
+        <motion.div 
           className={styles.carouselContainer}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
+          onPanEnd={(e, info) => {
+            const threshold = 50; 
+            // Pan Left (velocity negative or negative offset) -> Next
+            if (info.offset.x < -threshold) {
+              setActiveIndex((prev) => (prev + 1) % solutionsData.length);
+            } 
+            // Pan Right -> Prev
+            else if (info.offset.x > threshold) {
+              setActiveIndex((prev) => (prev - 1 + solutionsData.length) % solutionsData.length);
+            }
+          }}
+          style={{ touchAction: "pan-y" }} // Allow vertical scroll, capture horizontal
         >
           {solutionsData.map((item, index) => {
             const diff = getCircularDistance(index, activeIndex, solutionsData.length);
@@ -96,10 +114,6 @@ const Solutions = () => {
                 key={item.id}
                 className={styles.card}
                 onClick={() => setActiveIndex(index)}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.1}
-                onDragEnd={handleDragEnd}
                 initial={false}
                 animate={{
                   x,
@@ -108,10 +122,8 @@ const Solutions = () => {
                   opacity: isVisible ? 1 : 0
                 }}
                 transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30,
-                  mass: 1, 
+                  duration: 0.5,
+                  ease: "easeInOut"
                 }}
                 style={{
                   position: 'absolute',
@@ -149,7 +161,7 @@ const Solutions = () => {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         <div className={styles.action}>
           <Link href="#contact" className={styles.primaryButton}>
