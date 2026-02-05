@@ -7,8 +7,7 @@ const Intro = () => {
       <div className={styles.container}>
         <div className={styles.textColumn}>
           <h2 className={styles.heading}>
-            Building the Future <br />
-            of Digital Experiences
+            Building the Future of Digital Experiences
           </h2>
           <p className={styles.description}>
             At Luxe, we don't just write code; we cultivate digital ecosystems. 

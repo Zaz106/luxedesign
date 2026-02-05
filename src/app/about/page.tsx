@@ -1,6 +1,7 @@
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import AboutHero from "../../components/sections/About Us/AboutHero";
+import Team from "../../components/sections/About Us/Team";
 import Quote from "../../components/sections/About Us/Quote";
 import Results from "../../components/sections/About Us/Results";
 import Process from "../../components/sections/About Us/Process";
@@ -13,6 +14,7 @@ export default function About() {
       <Header />
       <main className={styles.main}>
         <AboutHero />
+        <Team />
         <Quote />
         <Results />
         <Process />

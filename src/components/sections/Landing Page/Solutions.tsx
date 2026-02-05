@@ -15,31 +15,35 @@ const testimonials = [
   },
   { 
     id: 2, 
-    text: "Luxe transformed our digital presence. Their team understood our vision perfectly and delivered a platform that exceeded our expectations.",
-    name: "Sarah Jenkins",
-    role: "CEO, TechFlow",
-    initials: "SJ"
+    text: "I cannot thank Six Foot Design Co. enough for the incredible work they did on my website. Jason and Josh went above and beyond to create a site that perfectly reflects my eco-friendly cleaning business. They captured the exact eco-chic look I envisioned while also making it simple and inviting for potential clients to use. Their creativity, attention to detail, and hard work truly exceeded my expectations. I am so grateful for their dedication and would highly recommend Six Foot Design Co. to anyone looking for a team that genuinely cares about bringing your vision to life.",
+    name: "Angie",
+    role: "CEO of Angi Cleans",
+    initials: "AC",
+    image: "/images/angie.jpg" // Placeholder for user 
   },
   { 
     id: 3, 
-    text: "The scalability of the solution provided by Luxe has allowed us to grow our user base by 300% without a hitch. Truly world-class engineering.",
-    name: "David Chen",
-    role: "CTO, InnovateX",
-    initials: "DC"
+    text: "I cannot thank Six Foot Design Co. enough for the incredible work they did on my website. Jason and Josh went above and beyond to create a site that perfectly reflects my eco-friendly cleaning business. They captured the exact eco-chic look I envisioned while also making it simple and inviting for potential clients to use. Their creativity, attention to detail, and hard work truly exceeded my expectations. I am so grateful for their dedication and would highly recommend Six Foot Design Co. to anyone looking for a team that genuinely cares about bringing your vision to life.",
+    name: "Angie",
+    role: "CEO of Angi Cleans",
+    initials: "AC",
+    image: "/images/angie.jpg" // Placeholder for user 
   },
   { 
     id: 4, 
-    text: "Working with Luxe was a game-changer. They didn't just build software; they built a competitive advantage for our business.",
-    name: "Elena Rodriguez",
-    role: "Founder, GreenSpace",
-    initials: "ER"
+    text: "I cannot thank Six Foot Design Co. enough for the incredible work they did on my website. Jason and Josh went above and beyond to create a site that perfectly reflects my eco-friendly cleaning business. They captured the exact eco-chic look I envisioned while also making it simple and inviting for potential clients to use. Their creativity, attention to detail, and hard work truly exceeded my expectations. I am so grateful for their dedication and would highly recommend Six Foot Design Co. to anyone looking for a team that genuinely cares about bringing your vision to life.",
+    name: "Angie",
+    role: "CEO of Angi Cleans",
+    initials: "AC",
+    image: "/images/angie.jpg" // Placeholder for user 
   },
   { 
     id: 5, 
-    text: "Their attention to detail and user experience design is unmatched. Our customers love the new interface.",
-    name: "Michael Ross",
-    role: "Product Lead, Aether",
-    initials: "MR"
+    text: "I cannot thank Six Foot Design Co. enough for the incredible work they did on my website. Jason and Josh went above and beyond to create a site that perfectly reflects my eco-friendly cleaning business. They captured the exact eco-chic look I envisioned while also making it simple and inviting for potential clients to use. Their creativity, attention to detail, and hard work truly exceeded my expectations. I am so grateful for their dedication and would highly recommend Six Foot Design Co. to anyone looking for a team that genuinely cares about bringing your vision to life.",
+    name: "Angie",
+    role: "CEO of Angi Cleans",
+    initials: "AC",
+    image: "/images/angie.jpg" // Placeholder for user 
   },
 ];
 

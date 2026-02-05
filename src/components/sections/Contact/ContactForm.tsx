@@ -44,8 +44,12 @@ const ContactFormContent = () => {
     let value = e.target.value;
 
     if (e.target.name === "phone") {
-        const digits = value.replace(/\D/g, "");
+        let digits = value.replace(/\D/g, "");
         if (selectedCountry.code === "ZA") {
+           // Remove leading 0 if present (common in local format e.g. 082...)
+           if (digits.length > 9 && digits.startsWith('0')) {
+             digits = digits.substring(1);
+           }
            // ZA: XX XXX XXXX (9 digits)
            value = digits.substring(0, 9).replace(/^(\d{2})(\d{0,3})(\d{0,4}).*/, (_, p1, p2, p3) => {
              let res = p1;
@@ -54,6 +58,10 @@ const ContactFormContent = () => {
              return res;
            });
         } else if (selectedCountry.code === "US" || selectedCountry.code === "CA") {
+           // Remove leading 1 if present (country code)
+           if (digits.length > 10 && digits.startsWith('1')) {
+             digits = digits.substring(1);
+           }
            // US/CA: XXX XXX XXXX (10 digits)
            value = digits.substring(0, 10).replace(/^(\d{3})(\d{0,3})(\d{0,4}).*/, (_, p1, p2, p3) => {
              let res = p1;

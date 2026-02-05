@@ -1,0 +1,151 @@
+.section {
+  background-color: var(--background);
+  width: 100%;
+  padding: 8rem 2.5rem 4rem;
+  overflow: hidden;
+}
+
+.container {
+  width: 100%;
+  max-width: 100rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+/* Header Column */
+.headerContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.eyebrow {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.heading {
+  font-size: 4.5rem;
+  font-weight: 300;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+/* Images Row */
+.teamRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.memberCard {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  background-color: #1a1a1a;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.2);
+}
+
+.info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.name {
+  font-size: 1.5rem;
+  color: #fff;
+  font-family: var(--font-heading);
+  display: block;
+  font-weight: 300;
+}
+
+.role {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Desktop Layout */
+@media (min-width: 1024px) {
+  .container {
+    flex-direction: row;
+    align-items: center; /* or stretch */
+    gap: 6rem;
+  }
+
+  .headerContent {
+    flex: 0 0 40%;
+  }
+
+  .teamRow {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: center; /* Center them relative to each other? */
+  }
+
+  .memberCard {
+    flex: 1;
+  }
+
+  /* Offset Design: Push the second card down slightly */
+  .memberCard:nth-child(2) {
+    margin-top: 6rem;
+  }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .section {
+    padding: 5rem 1.25rem 0; 
+  }
+
+  .eyebrow {
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  
+  .heading {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+}
