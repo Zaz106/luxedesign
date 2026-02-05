@@ -1,0 +1,100 @@
+.section {
+  width: 100%;
+  padding: 6rem 2.5rem;
+  overflow: hidden;
+  background-color: transparent; /* Or match theme */
+}
+
+.container {
+  width: 100%;
+  max-width: 100rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+}
+
+.textColumn {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.heading {
+  font-size: 4.5rem;
+  font-weight: 300;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+.videoColumn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.videoContainer {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Placeholder styling - replace with actual video styles */
+.placeholderText {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .container {
+    flex-direction: row;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .textColumn {
+    width: 45%;
+    text-align: left;
+  }
+
+  .videoColumn {
+    width: 55%;
+  }
+}
+
+/* Mobile Styles adjustment */
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.25rem 4rem;
+  }
+  
+  .heading {
+    font-size: 3rem; /* Fallback if var not set suitable for mobile h2 */
+  }
+}

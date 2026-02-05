@@ -1,16 +1,46 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, PanInfo } from "motion/react";
 import styles from "./Solutions.module.css";
 
-const solutionsData = [
-  { id: 1, image: "/images/solution-1.svg", title: "Solution 1" },
-  { id: 2, image: "/images/solution-2.svg", title: "Solution 2" },
-  { id: 3, image: "/images/solution-3.svg", title: "Solution 3" },
-  { id: 4, image: "/images/solution-4.svg", title: "Solution 4" },
-  { id: 5, image: "/images/solution-5.svg", title: "Solution 5" },
+const testimonials = [
+  { 
+    id: 1, 
+    text: "I cannot thank Six Foot Design Co. enough for the incredible work they did on my website. Jason and Josh went above and beyond to create a site that perfectly reflects my eco-friendly cleaning business. They captured the exact eco-chic look I envisioned while also making it simple and inviting for potential clients to use. Their creativity, attention to detail, and hard work truly exceeded my expectations. I am so grateful for their dedication and would highly recommend Six Foot Design Co. to anyone looking for a team that genuinely cares about bringing your vision to life.",
+    name: "Angie",
+    role: "CEO of Angi Cleans",
+    initials: "AC",
+    image: "/images/angie.jpg" // Placeholder for user 
+  },
+  { 
+    id: 2, 
+    text: "Luxe transformed our digital presence. Their team understood our vision perfectly and delivered a platform that exceeded our expectations.",
+    name: "Sarah Jenkins",
+    role: "CEO, TechFlow",
+    initials: "SJ"
+  },
+  { 
+    id: 3, 
+    text: "The scalability of the solution provided by Luxe has allowed us to grow our user base by 300% without a hitch. Truly world-class engineering.",
+    name: "David Chen",
+    role: "CTO, InnovateX",
+    initials: "DC"
+  },
+  { 
+    id: 4, 
+    text: "Working with Luxe was a game-changer. They didn't just build software; they built a competitive advantage for our business.",
+    name: "Elena Rodriguez",
+    role: "Founder, GreenSpace",
+    initials: "ER"
+  },
+  { 
+    id: 5, 
+    text: "Their attention to detail and user experience design is unmatched. Our customers love the new interface.",
+    name: "Michael Ross",
+    role: "Product Lead, Aether",
+    initials: "MR"
+  },
 ];
 
 const Solutions = () => {
@@ -21,8 +51,8 @@ const Solutions = () => {
     if (isPaused) return;
 
     const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % solutionsData.length);
-    }, 2000); // 2 seconds per slide
+      setActiveIndex((prev) => (prev + 1) % testimonials.length);
+    }, 4000); // 4 seconds per slide
 
     return () => clearInterval(interval);
   }, [isPaused]);
@@ -30,9 +60,9 @@ const Solutions = () => {
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 50;
     if (info.offset.x > threshold) {
-      setActiveIndex((prev) => (prev - 1 + solutionsData.length) % solutionsData.length);
+      setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
     } else if (info.offset.x < -threshold) {
-      setActiveIndex((prev) => (prev + 1) % solutionsData.length);
+      setActiveIndex((prev) => (prev + 1) % testimonials.length);
     }
   };
 
@@ -47,10 +77,10 @@ const Solutions = () => {
     <section id="solutions" className={styles.section}>
       <div className={styles.content}>
         <div className={styles.header}>
-          <h2>Powerful Solutions Built for Growth</h2>
+          <h2>Transformative Client Results</h2>
           <p>
-            We partner with startups and businesses to create reliable,
-            high-performance software tailored to real-world needs.
+            Don&apos;t just take our word for it. See how we&apos;ve helped innovative companies 
+            achieve their digital goals.
           </p>
         </div>
 
@@ -68,17 +98,17 @@ const Solutions = () => {
             const threshold = 50; 
             // Pan Left (velocity negative or negative offset) -> Next
             if (info.offset.x < -threshold) {
-              setActiveIndex((prev) => (prev + 1) % solutionsData.length);
+              setActiveIndex((prev) => (prev + 1) % testimonials.length);
             } 
             // Pan Right -> Prev
             else if (info.offset.x > threshold) {
-              setActiveIndex((prev) => (prev - 1 + solutionsData.length) % solutionsData.length);
+              setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
             }
           }}
           style={{ touchAction: "pan-y" }} // Allow vertical scroll, capture horizontal
         >
-          {solutionsData.map((item, index) => {
-            const diff = getCircularDistance(index, activeIndex, solutionsData.length);
+          {testimonials.map((item, index) => {
+            const diff = getCircularDistance(index, activeIndex, testimonials.length);
             
             // Calculate styles based on position (diff)
             let x = "0%";
@@ -128,36 +158,50 @@ const Solutions = () => {
                 style={{
                   position: 'absolute',
                   cursor: 'pointer',
-                  transformStyle: 'preserve-3d',
+                  // transformStyle: 'preserve-3d', // Removed to prevent z-index/clipping issues
+                  backfaceVisibility: 'hidden', // Optimize performance
                 }}
               >
-                  <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '0.75rem', overflow: 'hidden', transform: "translateZ(0)" }}>
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      priority={diff === 0}
-                      sizes="(max-width: 768px) 80vw, 450px"
-                      style={{ 
-                        objectFit: 'cover',
-                        userSelect: 'none',
-                        pointerEvents: 'none',
-                      }}
-                      draggable={false}
-                    />
-                    {/* Darkening Overlay */}
-                    <motion.div 
-                      initial={false}
-                      animate={{ opacity: overlayOpacity }}
-                      transition={{ duration: 0.4 }}
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        backgroundColor: '#000',
-                        pointerEvents: 'none',
-                      }}
-                    />
+                  <div className={styles.cardContent}>
+                    <div className={styles.avatarWrapper} aria-hidden="true">
+                      {item.image && item.id === 1 ? (
+                         // eslint-disable-next-line @next/next/no-img-element
+                         <img 
+                           src={item.image} 
+                           alt={item.name}
+                           className={styles.avatarImage}
+                           onError={(e) => {
+                             e.currentTarget.style.display = 'none';
+                             e.currentTarget.nextElementSibling?.classList.remove(styles.hidden);
+                           }} 
+                          />
+                      ) : null}
+                      <span className={`${styles.avatarPlaceholder} ${item.image && item.id === 1 ? styles.hidden : ''}`}>{item.initials}</span>
+                    </div>
+                    
+                    <p className={styles.testimonialText}>
+                      &ldquo;{item.text}&rdquo;
+                    </p>
+                    
+                    <div className={styles.authorInfo}>
+                      <span className={styles.signature}>{item.name}</span>
+                      <span className={styles.role}>{item.role}</span>
+                    </div>
                   </div>
+
+                  {/* Darkening Overlay for inactive cards */}
+                  <motion.div 
+                    initial={false}
+                    animate={{ opacity: overlayOpacity }}
+                    transition={{ duration: 0.4 }}
+                    style={{
+                      position: 'absolute',
+                      inset: -2, // Extend beyond borders to ensure full coverage
+                      backgroundColor: '#000',
+                      pointerEvents: 'none',
+                      zIndex: 20,
+                    }}
+                  />
               </motion.div>
             );
           })}

@@ -7,6 +7,9 @@ import styles from "./page.module.css";
 const LogoCloud = dynamic(() => import("../components/sections/Landing Page/LogoCloud"), {
   loading: () => <div style={{ height: "200px" }} aria-hidden />,
 });
+const Intro = dynamic(() => import("../components/sections/Landing Page/Intro"), {
+  loading: () => <div style={{ height: "600px" }} aria-hidden />,
+});
 const Solutions = dynamic(() => import("../components/sections/Landing Page/Solutions"), {
   loading: () => <div style={{ height: "600px" }} aria-hidden />,
 });
@@ -33,6 +36,7 @@ export default function Home() {
       <main className={styles.main}>
         <Hero />
         <LogoCloud />
+        <Intro />
         <Solutions />
         <Services />
         <Feature />

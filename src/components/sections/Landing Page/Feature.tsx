@@ -21,7 +21,7 @@ const Feature = () => {
         </div>
         <div className={styles.imageWrapper}>
           <Image
-            src="/images/feature.png"
+            src="/images/feature.jpg"
             alt="Foggy forest landscape"
             fill
             className={styles.image}

@@ -41,9 +41,16 @@ const Header = () => {
 
   useEffect(() => {
     if (isMobileMenuOpen) {
+      // Get scrollbar width
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
+      // Add padding to body to prevent layout shift
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
     } else {
       document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     }
   }, [isMobileMenuOpen]);
 

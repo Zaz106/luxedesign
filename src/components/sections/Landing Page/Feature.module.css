@@ -1,5 +1,5 @@
 .section {
-  background-color: #1a1a1a;
+  background-color: #202020;
   width: 100%;
   position: relative;
 }
@@ -19,7 +19,7 @@
   justify-content: center;
   align-items: flex-start;
   text-align: left;
-  background-color: #212121;
+  background-color: #1a1a1a;
   z-index: 10;
   height: 100%;
 }

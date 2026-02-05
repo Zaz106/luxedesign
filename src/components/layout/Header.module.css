@@ -167,9 +167,9 @@
 
 .proxyBurger {
   position: fixed;
-  top: 1.5rem; /* Visual alignment with header padding + centering */
-  right: 2rem;
-  z-index: 210; /* Highest */
+  top: 1.5rem; /* Matches header inner padding-top */
+  right: 2.5rem; /* Matches container padding-right */
+  z-index: 202; /* Highest */
   display: none;
 }
 
@@ -177,21 +177,27 @@
   display: block;
 }
 
+/* Adjust top when scrolled to match reduced padding (1rem) */
 .proxyBurger.scrolled {
-  top: 1.6rem; /* Adjusted for scrolled padding */
+  top: 1rem; 
 }
 
 @media (max-width: 768px) {
   .proxyBurger {
-    right: 1.25rem;
+    right: 1.25rem; /* Match mobile padding */
+  }
+}
+@media (max-width: 768px) {
+  .proxyBurger {
+    right: 1.25rem; /* Match mobile padding */
   }
 }
 
 .mobileMenuBackdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px); /* Stronger blur */
   opacity: 0;
   transition: opacity 0.4s ease;
 }
@@ -205,9 +211,9 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 85%;
-  max-width: 400px;
-  background: #151515;
+  width: 100%;
+  max-width: 300px;
+  background: #111111; /* Consistent dark background */
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   transform: translateX(100%);
   /* Smooth bezier for both in and out */
@@ -215,7 +221,8 @@
   padding: 6rem 2rem 2rem;
   display: flex;
   flex-direction: column;
-  z-index: 100; /* Ensure panel is above backdrop */
+  z-index: 201; /* Ensure panel is ABOVE header logo (101) but BELOW proxy burger (202) */
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5); /* Shadow to separate from content */
 }
 
 .mobileClose {

@@ -62,9 +62,9 @@
   height: 34.375rem; /* 550px */
   border-radius: 0.75rem;
   overflow: hidden;
-  /* transition removed to prevent conflict with Framer Motion */
   cursor: pointer;
-  box-shadow: 0 1.25rem 3.125rem rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1.25rem 3.125rem rgba(0, 0, 0, 0.2); /* Softer shadow for light theme */
+  background: #ffffff;
 }
 
 @media (max-width: 768px) {
@@ -73,10 +73,10 @@
   }
 
   .card {
-    width: 80vw;
-    height: 100vw;
-    max-width: 20rem;
-    max-height: 25rem;
+    width: 90vw;
+    height: 110vw;
+    max-width: 21rem;
+    max-height: 26rem;
   }
 
   .carouselContainer {
@@ -85,12 +85,108 @@
   }
 }
 
-.card img {
+.cardContent {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.avatarWrapper {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: #f0f0f0;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative; /* For image filling */
+}
+
+.avatarImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: none; /* Prevent image drag */
-  display: block; /* Remove whitespace */
+}
+
+.hidden {
+  display: none;
+}
+
+.avatarPlaceholder {
+  font-size: 1.25rem;
+  color: #333;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.testimonialText {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: hsla(0, 0%, 20%, 0.8);
+  margin-bottom: auto; /* Push bottom content down */
+  display: flex;
+  align-items: center;
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.signature {
+  font-family: var(--font-signature);
+  font-size: 2.5rem;
+  color: #000;
+  line-height: 1;
+}
+
+.role {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .cardContent {
+    padding: 1.5rem;
+  }
+
+  .avatarWrapper {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .testimonialText {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+
+  .authorInfo {
+    margin-top: 1.5rem;
+  }
+
+  .signature {
+    font-size: 1.75rem;
+  }
+
+  .role {
+    font-size: 0.65rem;
+  }
 }
 
 /* Action Button (Matches Header) */
@@ -108,7 +204,7 @@
   background: #ffffff;
   color: #000000;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  font-size: var(--text-small);
+  font-size: var(--text-sm);
   padding: 14px 36px;
 }
 
@@ -117,17 +213,7 @@
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
 }
 
-.card:hover img {
-  opacity: 1;
-}
-
 .action {
   display: flex;
   justify-content: center;
-}
-
-@media (min-width: 768px) {
-  .card {
-    flex: 0 0 320px;
-  }
 }
