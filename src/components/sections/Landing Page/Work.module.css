@@ -2,13 +2,13 @@
   width: 100%;
   max-width: 100rem;
   margin: 0 auto;
-  padding: 4.5rem 2.5rem 4rem;
+  padding: 4.5rem 2.5rem 3rem;
 }
 
 
 .header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   margin-top: 2rem;
 }
 
@@ -29,7 +29,7 @@
 
 @media (max-width: 768px) {
   .section {
-    padding: 3rem 1.25rem 2rem;
+    padding: 4rem 1.25rem 1.5rem;
   }
 
   .header {
@@ -54,7 +54,7 @@
   }
 
   .card {
-    min-height: 400px;
+    min-height: 450px;
   }
 }
 
@@ -79,7 +79,7 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.8s ease;
-  filter: grayscale(0.2);
+  filter: grayscale(0.1);
 }
 
 .card:hover img {

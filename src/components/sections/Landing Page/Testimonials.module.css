@@ -1,0 +1,146 @@
+.section {
+  width: 100%;
+  padding: 5rem 2.5rem 8rem;
+  overflow-x: hidden;
+}
+
+.content {
+  width: 100%;
+  max-width: 100rem; /* Reduced max-width for better focus on text */
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h2 {
+  font-size: var(--h2-size);
+  margin-bottom: 16px;
+  font-weight: 300;
+  letter-spacing: -1px;
+}
+
+.header p {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Review Container */
+.reviewContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.quoteWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Hide slide artifacts if any */
+  cursor: grab;
+}
+
+.quoteWrapper:active {
+  cursor: grabbing;
+}
+
+.quoteContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  user-select: none;
+}
+
+.quoteText {
+  font-size: var(--h3-size);
+  line-height: 1.4;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 1400px;
+  margin-bottom: 2rem;
+}
+
+.meta {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.roleText {
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 4px;
+}
+
+/* Avatars */
+.avatarRow {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.avatarBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  padding: 3px; /* Space for border if needed, or just touch area */
+  filter: grayscale(100%);
+  opacity: 0.6;
+  margin: 0;
+}
+
+.avatarBtn:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.activeAvatar {
+  filter: grayscale(0%);
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.avatarImg {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.5rem 1rem;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+
+  .quoteText {
+    margin-bottom: 1rem;
+  }
+
+  .avatarBtn img {
+    width: 40px;
+    height: 40px;
+  }
+}

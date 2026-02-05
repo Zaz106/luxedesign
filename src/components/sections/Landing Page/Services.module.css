@@ -2,13 +2,12 @@
   width: 100%;
   max-width: 100rem;
   margin: 0 auto;
-  padding: 4rem 2.5rem 7rem;
+  padding: 4rem 2.5rem 2rem;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 4rem;
-  margin-top: -1rem;
+  margin-bottom: 3rem;
 }
 
 .header h2 {
@@ -36,7 +35,7 @@
   position: relative;
   min-height: 500px;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 8px;
 }
 
 .card img {
@@ -136,42 +135,92 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-@media (max-width: 768px) {
+/* Dots styles */
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.activeDot {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: scale(1.05);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1.5rem;
+    padding: 1rem 1.5rem 2rem; 
+    width: 100%;
+    margin: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    cursor: grab;
+  }
+  
+  .grid:active {
+    cursor: grabbing;
+  }
+  
+  .grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .card {
+    min-width: 80%;
+    max-width: 80%; 
+    scroll-snap-align: center;
+    min-height: 450px;
+    margin-inline: 0 !important;
+    width: auto !important;
+    user-select: none; /* Prevent text/image selection while dragging */
+  }
+  
+  .card img {
+    pointer-events: none; /* Prevent image dragging */
+  }
+  
+  .card:last-child:nth-child(odd) {
+    grid-column: auto;
+    width: auto !important;
+    min-width: 80%;
+    max-width: 80%; 
+  }
+
   .section {
-    padding: 5rem 1.25rem 4rem;
-    margin-top: 1.5rem;
+    position: relative;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .header {
-    margin-bottom: 2rem;
-  }
-
-  .card {
-    min-height: 400px;
-  }
-}
-
-@media (min-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .card {
-    aspect-ratio: 9/12;
-    min-height: auto;
-  }
-
-  /* Center the last card if it's the 3rd one (or any odd last child) */
-  .card:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-    width: calc(50% - 12px);
-    margin-inline: auto;
+    padding: 0rem 1.25rem;
+    margin-bottom: 1rem;
   }
 }
 
 @media (min-width: 900px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .dots {
+    display: none;
   }
 
   .card:last-child:nth-child(odd) {
@@ -181,7 +230,17 @@
   }
 }
 
+
 @media (max-width: 768px) {
+  .header {
+    margin-bottom: 1rem;
+  }
+
+  .section {
+    padding-top: 3rem;
+    margin-bottom: -2rem;
+  }
+
   .cardOverlay {
      background: linear-gradient(
     to bottom,
@@ -195,3 +254,4 @@
     transform: none !important;
   }
 }
+

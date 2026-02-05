@@ -10,7 +10,7 @@ const LogoCloud = dynamic(() => import("../components/sections/Landing Page/Logo
 const Intro = dynamic(() => import("../components/sections/Landing Page/Intro"), {
   loading: () => <div style={{ height: "600px" }} aria-hidden />,
 });
-const Solutions = dynamic(() => import("../components/sections/Landing Page/Solutions"), {
+const Testamonials = dynamic(() => import("../components/sections/Landing Page/Testamonials"), {
   loading: () => <div style={{ height: "600px" }} aria-hidden />,
 });
 const Services = dynamic(() => import("../components/sections/Landing Page/Services"), {
@@ -36,9 +36,9 @@ export default function Home() {
       <main className={styles.main}>
         <Hero />
         <LogoCloud />
-        <Intro />
-        <Solutions />
+        <Intro />       
         <Services />
+        <Testamonials />
         <Feature />
         <Work />
         <Pricing />
