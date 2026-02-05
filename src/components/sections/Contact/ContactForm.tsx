@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, Suspense } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import styles from "./ContactForm.module.css";
 import { 
@@ -126,20 +127,13 @@ const ContactFormContent = () => {
     <section className={styles.contactFormSection} id="contact-form">
       <div className={styles.formContainer}>
         <div className={styles.visualSide}>
-          <video 
-            className={styles.video} 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            disablePictureInPicture
-            controlsList="nodownload noplaybackrate"
-          >
-            <source
-              src="/images/contact-us-video.mp4"
-              type="video/mp4"
-            />
-          </video>
+          <Image 
+            src="/images/contact-us-image.jpg"
+            alt="Contact Us"
+            fill
+            className={styles.image}
+            priority
+          />
         </div>
 
         <div className={styles.formSide}>

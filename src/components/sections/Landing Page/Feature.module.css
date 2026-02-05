@@ -2,6 +2,7 @@
   background-color: #202020;
   width: 100%;
   position: relative;
+  margin: 3rem 0;
 }
 
 .container {
@@ -110,6 +111,10 @@
 }
 
 @media (max-width: 600px) {
+  .section {
+    margin: 1rem 0;
+  }
+
   .content h2 {
     font-size: 2.5rem;
   }

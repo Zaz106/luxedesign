@@ -21,11 +21,11 @@ const Results = () => {
           <div className={styles.card}>
             <div className={styles.statNumber}>
               <CountUp
-                from={500}
+                from={950}
                 to={1000}
                 separator=","
                 direction="up"
-                duration={1}
+                duration={0.5}
                 className={styles.countUp}
               />
               +
@@ -39,11 +39,11 @@ const Results = () => {
           <div className={styles.card}>
             <div className={styles.statNumber}>
               <CountUp
-                from={20.0}
+                from={95.9}
                 to={99.9}
                 separator=","
                 direction="up"
-                duration={1}
+                duration={0.5}
                 className={styles.countUp}
               />
               %
@@ -61,7 +61,7 @@ const Results = () => {
                 to={50}
                 separator=","
                 direction="up"
-                duration={2.5}
+                duration={0.5}
                 className={styles.countUp}
               />
               %

@@ -36,9 +36,9 @@ export default function Home() {
       <main className={styles.main}>
         <Hero />
         <LogoCloud />
+        <Testamonials />
         <Intro />       
         <Services />
-        <Testamonials />
         <Feature />
         <Work />
         <Pricing />

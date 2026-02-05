@@ -1,8 +1,14 @@
 .section {
-  padding: 3.125rem 0;
+  padding: 3rem 0;
   overflow: hidden;
   position: relative;
   width: 100%;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 2rem 0;
+  }
 }
 
 .scroller {

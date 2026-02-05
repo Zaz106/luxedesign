@@ -146,11 +146,10 @@ const Services = () => {
       
       <div className={styles.dots}>
         {servicesData.map((_, index) => (
-          <button
+          <div
             key={index}
             className={`${styles.dot} ${index === activeIndex ? styles.activeDot : ""}`}
             onClick={() => scrollToSlide(index)}
-            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>

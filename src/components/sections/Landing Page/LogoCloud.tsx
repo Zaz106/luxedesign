@@ -1,12 +1,12 @@
 import styles from "./LogoCloud.module.css";
 
 const logos = [
-  "MOMENTUM",
-  "QUANTUM",
-  "ECHO",
-  "NEBULA",
-  "HORIZON",
-  "VERTEX",
+  "NEXT.JS",
+  "REACT",
+  "FIGMA",
+  "STRIPE",
+  "VERCEL",
+  "AFFINITY",
 ];
 
 const LogoCloud = () => {

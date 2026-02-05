@@ -1,6 +1,13 @@
+"use client";
+
 import Image from "next/image";
-import ColorBends from "../../ui/ColorBends";
+import dynamic from "next/dynamic";
 import styles from "./Hero.module.css";
+
+const ColorBends = dynamic(() => import("../../ui/ColorBends"), {
+  ssr: false,
+  loading: () => <div style={{ width: "100%", height: "100%", background: "#111111" }} />,
+});
 
 const Hero = () => {
   return (

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Suspense } from "react";
+import { YouTubeEmbed } from "@next/third-parties/google";
 import styles from "./Intro.module.css";
 
 const Intro = () => {
@@ -19,14 +20,9 @@ const Intro = () => {
         </div>
         <div className={styles.videoColumn}>
           <div className={styles.videoContainer} aria-label="Introduction Video">
-            <iframe
-              className={styles.iframe}
-              src="https://www.youtube.com/embed/xnOwOBYaA3w?si=19ziG3ZhKuMOba9s"
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
+            <Suspense fallback={<div className={styles.videoSkeleton} />}>
+              <YouTubeEmbed videoid="xnOwOBYaA3w" params="controls=1&theme=light&color=white" /> 
+            </Suspense>
           </div>
         </div>
       </div>

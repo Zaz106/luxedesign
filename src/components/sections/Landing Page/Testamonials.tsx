@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, PanInfo, AnimatePresence } from "motion/react";
 import styles from "./Testimonials.module.css";
+import ShinyText from "@/components/ui/ShinyText"; // Added import
 
 const testimonials = [
   { 
     id: 1, 
     rating: 5,
-    text: "With the right coaching, I was able to push past my limits. I couldn't have reached my goals without the guidance and support of an experienced coach.",
+    text: "“With the right coaching, I was able to push past my limits. I couldn't have reached my goals without the guidance and support of an experienced coach.”",
     name: "Emily Johnson",
     role: "Yoga Instructor",
     image: "/images/angie.jpg" 
@@ -16,7 +17,7 @@ const testimonials = [
   { 
     id: 2, 
     rating: 5,
-    text: "I cannot thank Six Foot Design Co. enough for the incredible work they did on my website. They captured the exact eco-chic look I envisioned.",
+    text: "“I cannot thank Six Foot Design Co. enough for the incredible work they did on my website. They captured the exact eco-chic look I envisioned.”",
     name: "Angie",
     role: "CEO of Angi Cleans",
     image: "/images/angie.jpg"
@@ -24,7 +25,7 @@ const testimonials = [
   { 
     id: 3, 
     rating: 5,
-    text: "Their creativity, attention to detail, and hard work truly exceeded my expectations. I am so grateful for their dedication.",
+    text: "“Their creativity, attention to detail, and hard work truly exceeded my expectations. I am so grateful for their dedication.”",
     name: "Michael Chen",
     role: "Founder, TechStart",
     image: "/images/angie.jpg"
@@ -32,7 +33,7 @@ const testimonials = [
   { 
     id: 4, 
     rating: 5,
-    text: "They made it simple and inviting for potential clients to use. Highly recommend Six Foot Design Co. for their genuine care.",
+    text: "“They made it simple and inviting for potential clients to use. Highly recommend Six Foot Design Co. for their genuine care.”",
     name: "Sarah Williams",
     role: "Director of Marketing",
     image: "/images/angie.jpg"
@@ -94,7 +95,14 @@ const Testamonials = () => {
                   ))}
                 </div>
 
-                <h3 className={styles.quoteText}>&ldquo;{testimonials[activeIndex].text}&rdquo;</h3>
+                <h3 className={styles.quoteText}>
+                  <ShinyText 
+                    text={testimonials[activeIndex].text} 
+                    disabled={false} 
+                    speed={3} 
+                    className={styles.shinyText} 
+                  />
+                </h3>
                 <div className={styles.meta}>
                   <p>{testimonials[activeIndex].name}, <span className={styles.roleText}>{testimonials[activeIndex].role}</span></p>
                 </div>
