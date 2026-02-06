@@ -65,9 +65,15 @@
 }
 
 @keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0.6; }
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.6;
+  }
 }
 
 .videoContainer :global(lite-youtube) {
@@ -88,6 +94,11 @@
   color: rgba(255, 255, 255, 0.3);
   font-size: 1.25rem;
   letter-spacing: 1px;
+}
+
+.videoContainer :global(.lty-playbtn) {
+  filter: none;
+  opacity: 1;
 }
 
 /* Desktop Styles */
@@ -123,5 +134,13 @@
 
   .heading {
     font-size: 3rem; /* Fallback if var not set suitable for mobile h2 */
+  }
+
+  .textColumn {
+    gap: 1rem;
+  }
+
+  .container {
+    gap: 1.5rem;
   }
 }

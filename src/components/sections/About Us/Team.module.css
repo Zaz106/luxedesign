@@ -139,6 +139,10 @@
     padding: 6rem 1.25rem 0; 
   }
 
+.container {
+    gap: 2rem;
+  }
+
   .eyebrow {
     letter-spacing: 0.1em;
     margin-bottom: 1rem;

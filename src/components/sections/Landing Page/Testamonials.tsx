@@ -25,7 +25,7 @@ const testimonials = [
   { 
     id: 3, 
     rating: 5,
-    text: "“Their creativity, attention to detail, and hard work truly exceeded my expectations. I am so grateful for their dedication.”",
+    text: "“With the right coaching, I was able to push past my limits. I couldn't have reached my goals without the guidance and support of an experienced coach.”",
     name: "Michael Chen",
     role: "Founder, TechStart",
     image: "/images/angie.jpg"
@@ -33,7 +33,7 @@ const testimonials = [
   { 
     id: 4, 
     rating: 5,
-    text: "“They made it simple and inviting for potential clients to use. Highly recommend Six Foot Design Co. for their genuine care.”",
+    text: "“With the right coaching, I was able to push past my limits. I couldn't have reached my goals without the guidance and support of an experienced coach.”",
     name: "Sarah Williams",
     role: "Director of Marketing",
     image: "/images/angie.jpg"

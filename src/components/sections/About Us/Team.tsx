@@ -26,8 +26,8 @@ const Team = () => {
               PHOTO
             </div>
             <div className={styles.info}>
-              <span className={styles.name}>Jason</span>
-              <span className={styles.role}>Co-Founder / Designer</span>
+              <span className={styles.name}>Cianan Donald</span>
+              <span className={styles.role}>Co-Founder | Directional Lead</span>
             </div>
           </div>
 
@@ -37,8 +37,8 @@ const Team = () => {
               PHOTO
             </div>
             <div className={styles.info}>
-              <span className={styles.name}>Josh</span>
-              <span className={styles.role}>Co-Founder / Lead Developer</span>
+              <span className={styles.name}>Joshua</span>
+              <span className={styles.role}>Co-Founder | Lead Engineer</span>
             </div>
           </div>
         </div>

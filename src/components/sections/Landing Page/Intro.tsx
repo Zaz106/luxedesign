@@ -1,5 +1,7 @@
+"use client";
 import React, { Suspense } from "react";
-import { YouTubeEmbed } from "@next/third-parties/google";
+import LiteYouTubeEmbed from "react-lite-youtube-embed";
+import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import styles from "./Intro.module.css";
 
 const Intro = () => {
@@ -21,7 +23,11 @@ const Intro = () => {
         <div className={styles.videoColumn}>
           <div className={styles.videoContainer} aria-label="Introduction Video">
             <Suspense fallback={<div className={styles.videoSkeleton} />}>
-              <YouTubeEmbed videoid="xnOwOBYaA3w" params="controls=1&theme=light&color=white" /> 
+              <LiteYouTubeEmbed 
+                id="xnOwOBYaA3w" 
+                title="Building the Future of Digital Experiences"
+                params="controls=1&theme=light&color=white" 
+              /> 
             </Suspense>
           </div>
         </div>

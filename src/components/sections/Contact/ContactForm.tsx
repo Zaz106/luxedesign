@@ -128,7 +128,7 @@ const ContactFormContent = () => {
       <div className={styles.formContainer}>
         <div className={styles.visualSide}>
           <Image 
-            src="/images/contact-us-image.jpg"
+            src="/images/contact-us-image.png"
             alt="Contact Us"
             fill
             className={styles.image}
