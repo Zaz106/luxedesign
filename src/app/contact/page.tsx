@@ -12,7 +12,7 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <main style={{ backgroundColor: '#000' }}>
+    <main>
       <Header />
       <ContactHero />
       <ContactForm />

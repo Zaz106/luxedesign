@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
 import styles from "./Work.module.css";
 
 const projects = [
@@ -30,6 +33,76 @@ const projects = [
 ];
 
 const Work = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  
+  // Drag to scroll state
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, clientWidth } = container;
+      const center = scrollLeft + clientWidth / 2;
+      const children = Array.from(container.children) as HTMLElement[];
+      
+      let closestIndex = 0;
+      let minDiff = Infinity;
+
+      children.forEach((child, index) => {
+        const childCenter = child.offsetLeft + child.offsetWidth / 2;
+        const diff = Math.abs(center - childCenter);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIndex = index;
+        }
+      });
+      
+      setActiveIndex(closestIndex);
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSlide = (index: number) => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const child = container.children[index] as HTMLElement;
+    if (child) {
+        // Center the clicked slide
+        const scrollLeft = child.offsetLeft - (container.clientWidth / 2) + (child.offsetWidth / 2);
+        container.scrollTo({ left: scrollLeft, behavior: "smooth" });
+    }
+  };
+
   return (
     <section id="work" className={styles.section}>
       <div className={styles.header}>
@@ -39,7 +112,14 @@ const Work = () => {
           performance, and usability.
         </p>
       </div>
-      <div className={styles.grid}>
+      <div 
+        className={styles.grid}
+        ref={scrollRef}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseLeave}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+      >
         {projects.map((project) => (
           <div key={project.id} className={styles.card}>
             <Image
@@ -72,6 +152,16 @@ const Work = () => {
               </div>
             </div>
           ))}
+      </div>
+      
+      <div className={styles.dots}>
+        {projects.map((_, index) => (
+          <div
+            key={index}
+            className={`${styles.dot} ${index === activeIndex ? styles.activeDot : ""}`}
+            onClick={() => scrollToSlide(index)}
+          />
+        ))}
       </div>
     </section>
   );

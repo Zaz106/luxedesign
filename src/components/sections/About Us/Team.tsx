@@ -37,7 +37,7 @@ const Team = () => {
               PHOTO
             </div>
             <div className={styles.info}>
-              <span className={styles.name}>Joshua</span>
+              <span className={styles.name}>Joshua Huisman</span>
               <span className={styles.role}>Co-Founder | Lead Engineer</span>
             </div>
           </div>

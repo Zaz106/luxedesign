@@ -32,7 +32,7 @@
 }
 
 .heading {
-  font-size: 4.5rem;
+  font-size: var(--h2-size);
   font-weight: 300;
   letter-spacing: -1px;
   line-height: 1.1;
@@ -141,6 +141,12 @@
 
 .container {
     gap: 2rem;
+    text-align: center;
+  }
+
+  .headerContent {
+    align-items: center;
+    justify-content: center;
   }
 
   .eyebrow {
@@ -149,7 +155,6 @@
   }
   
   .heading {
-    font-size: 3rem;
     margin-bottom: 1rem;
   }
 }
