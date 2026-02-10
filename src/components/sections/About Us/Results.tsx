@@ -6,7 +6,7 @@ const Results = () => {
   return (
     <section className={styles.section}>
       <Image
-        src="/images/cover-image.png"
+        src="/images/cover-image.webp"
         alt="Skyscrapers looking up"
         fill
         className={styles.backgroundImage}
@@ -32,8 +32,9 @@ const Results = () => {
             </div>
             <div className={styles.statLabel}>Hours In Projects</div>
             <p className={styles.statDesc}>
-              UI idea: horizontal, glass cards with year, short headline, one-line
-              impact metric (e.g., “2023 — First 1M requests/month handled”).
+              UI idea: horizontal, glass cards with year, short headline,
+              one-line impact metric (e.g., “2023 — First 1M requests/month
+              handled”).
             </p>
           </div>
           <div className={styles.card}>
@@ -50,8 +51,9 @@ const Results = () => {
             </div>
             <div className={styles.statLabel}>Uptime</div>
             <p className={styles.statDesc}>
-              UI idea: horizontal, glass cards with year, short headline, one-line
-              impact metric (e.g., “2023 — First 1M requests/month handled”).
+              UI idea: horizontal, glass cards with year, short headline,
+              one-line impact metric (e.g., “2023 — First 1M requests/month
+              handled”).
             </p>
           </div>
           <div className={styles.card}>
@@ -68,8 +70,9 @@ const Results = () => {
             </div>
             <div className={styles.statLabel}>Avg. Bounce Rates</div>
             <p className={styles.statDesc}>
-              UI idea: horizontal, glass cards with year, short headline, one-line
-              impact metric (e.g., “2023 — First 1M requests/month handled”).
+              UI idea: horizontal, glass cards with year, short headline,
+              one-line impact metric (e.g., “2023 — First 1M requests/month
+              handled”).
             </p>
           </div>
         </div>
