@@ -1,0 +1,23 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.pricingContent {
+  width: 100%;
+  position: relative;
+  z-index: 10;
+  min-height: 800px;
+  /* Removed negative margin to use a safer, standard spacing approach which should fix the "broken" layout */
+  margin-top: 1rem;
+}

@@ -4,27 +4,45 @@ import Hero from "../components/sections/Landing Page/Hero";
 import styles from "./page.module.css";
 
 // Lazy load heavy/below-the-fold components
-const LogoCloud = dynamic(() => import("../components/sections/Landing Page/LogoCloud"), {
-  loading: () => <div style={{ height: "200px" }} aria-hidden />,
-});
-const Intro = dynamic(() => import("../components/sections/Landing Page/Intro"), {
-  loading: () => <div style={{ height: "600px" }} aria-hidden />,
-});
-const Testamonials = dynamic(() => import("../components/sections/Landing Page/Testamonials"), {
-  loading: () => <div style={{ height: "600px" }} aria-hidden />,
-});
-const Services = dynamic(() => import("../components/sections/Landing Page/Services"), {
-  loading: () => <div style={{ height: "600px" }} aria-hidden />,
-});
-const Feature = dynamic(() => import("../components/sections/Landing Page/Feature"), {
-  loading: () => <div style={{ height: "600px" }} aria-hidden />,
-});
+const LogoCloud = dynamic(
+  () => import("../components/sections/Landing Page/LogoCloud"),
+  {
+    loading: () => <div style={{ height: "200px" }} aria-hidden />,
+  },
+);
+const Intro = dynamic(
+  () => import("../components/sections/Landing Page/Intro"),
+  {
+    loading: () => <div style={{ height: "600px" }} aria-hidden />,
+  },
+);
+const Testamonials = dynamic(
+  () => import("../components/sections/Landing Page/Testamonials"),
+  {
+    loading: () => <div style={{ height: "600px" }} aria-hidden />,
+  },
+);
+const Services = dynamic(
+  () => import("../components/sections/Landing Page/Services"),
+  {
+    loading: () => <div style={{ height: "600px" }} aria-hidden />,
+  },
+);
+const Feature = dynamic(
+  () => import("../components/sections/Landing Page/Feature"),
+  {
+    loading: () => <div style={{ height: "600px" }} aria-hidden />,
+  },
+);
 const Work = dynamic(() => import("../components/sections/Landing Page/Work"), {
   loading: () => <div style={{ height: "600px" }} aria-hidden />,
 });
-const Pricing = dynamic(() => import("../components/sections/Landing Page/Pricing"), {
-  loading: () => <div style={{ height: "600px" }} aria-hidden />,
-});
+const Pricing = dynamic(
+  () => import("../components/sections/Landing Page/Pricing"),
+  {
+    loading: () => <div style={{ height: "600px" }} aria-hidden />,
+  },
+);
 const Footer = dynamic(() => import("../components/layout/Footer"), {
   loading: () => <div style={{ height: "400px" }} aria-hidden />,
 });
@@ -37,7 +55,7 @@ export default function Home() {
         <Hero />
         <LogoCloud />
         <Testamonials />
-        <Intro />       
+        <Intro />
         <Services />
         <Feature />
         <Work />

@@ -1,0 +1,144 @@
+.hero {
+  position: relative;
+  min-height: 70vh; /* Consistent with AboutHero but flexible */
+  width: 100%;
+  background-color: #111111;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding-top: 6rem;
+  padding-bottom: 4rem; /* Additional padding for the selector */
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 5%;
+}
+
+.heading {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.subHeading {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 40rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2.5rem;
+}
+
+/* Category Selector Styles */
+.selectorContainer {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+}
+
+.slider {
+  position: relative;
+  display: flex;
+  background: #111111; /* Spacey grey accent */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  padding: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.button {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s ease;
+  width: 140px; /* Fixed width for consistent slide */
+  text-align: center;
+}
+
+.button.active {
+  color: #fff;
+}
+
+.button:hover {
+  color: #fff;
+}
+
+.activePill {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 140px; /* Match button width */
+  height: calc(100% - 8px);
+  background: #2a2a2a; /* Slightly lighter than container */
+  border-radius: 9999px;
+  z-index: 1;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .hero {
+    min-height: 50vh;
+    padding-top: 5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .heading {
+    font-size: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heading {
+    font-size: 5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .button {
+    width: 100px;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+  .activePill {
+    width: 100px;
+  }
+}

@@ -3,14 +3,20 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import dynamic from 'next/dynamic';
-import { InstagramIcon, TikTokIcon, LinkedInIcon, GitHubIcon } from "../ui/Icons";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import {
+  InstagramIcon,
+  TikTokIcon,
+  LinkedInIcon,
+  GitHubIcon,
+} from "../ui/Icons";
 import styles from "./Footer.module.css";
 
 // Lazy load Prism with no SSR
-const Prism = dynamic(() => import('../ui/Prism'), { 
+const Prism = dynamic(() => import("../ui/Prism"), {
   ssr: false,
-  loading: () => <div style={{ height: '30rem' }} /> // Optional placeholder
+  loading: () => <div style={{ height: "30rem" }} />, // Optional placeholder
 });
 
 const Footer = () => {
@@ -59,7 +65,7 @@ const Footer = () => {
           suspendWhenOffscreen={true}
         />
       </div>
-      
+
       <div className={styles.contentWrapper}>
         <div className={styles.contactSection}>
           <h2>Get in Touch</h2>
@@ -90,17 +96,17 @@ const Footer = () => {
           <div className={styles.top}>
             <div className={styles.brand}>
               <div className={styles.logo}>
-                <Image 
-                  src="/images/Luxe Logo.png" 
-                  alt="Luxe Logo" 
-                  width={120} 
-                  height={40} 
+                <Image
+                  src="/images/Luxe Logo.png"
+                  alt="Luxe Logo"
+                  width={120}
+                  height={40}
                   style={{ objectFit: "contain" }}
                 />
               </div>
               <p>
-                Building scalable digital solutions for modern businesses, crafted
-                with precision.
+                Building scalable digital solutions for modern businesses,
+                crafted with precision.
               </p>
             </div>
             <div className={styles.columns}>
@@ -109,15 +115,15 @@ const Footer = () => {
                 <a href="#home">Home</a>
                 <a href="#about">About Us</a>
                 <a href="#projects">Web Builder</a>
-                <a href="/#pricing">Pricing</a>
+                <Link href="/pricing">Pricing</Link>
                 <a href="/contact">Contact Us</a>
               </div>
               <div>
                 <h4>About</h4>
                 <a href="/#services">Services</a>
                 <a href="/#work">Our Work</a>
-                <a href="/#pricing">Pricing</a>
-                <a href="/#pricing">Our Team</a>
+                <Link href="/pricing">Pricing</Link>
+                <Link href="/pricing">Our Team</Link>
               </div>
               <div>
                 <h4>Support</h4>
@@ -135,10 +141,18 @@ const Footer = () => {
             <div className={styles.socials}>
               <span>Our Story Continues:</span>
               <div className={styles.icons}>
-                <a href="#" aria-label="Instagram"><InstagramIcon /></a>
-                <a href="#" aria-label="TikTok"><TikTokIcon /></a>
-                <a href="#" aria-label="LinkedIn"><LinkedInIcon /></a>
-                <a href="#" aria-label="GitHub"><GitHubIcon /></a>
+                <a href="#" aria-label="Instagram">
+                  <InstagramIcon />
+                </a>
+                <a href="#" aria-label="TikTok">
+                  <TikTokIcon />
+                </a>
+                <a href="#" aria-label="LinkedIn">
+                  <LinkedInIcon />
+                </a>
+                <a href="#" aria-label="GitHub">
+                  <GitHubIcon />
+                </a>
               </div>
             </div>
           </div>

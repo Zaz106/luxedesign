@@ -5,7 +5,11 @@ import styles from "./Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
 
-const Header = () => {
+interface HeaderProps {
+  disableAutoHide?: boolean;
+}
+
+const Header = ({ disableAutoHide = false }: HeaderProps) => {
   const [isHidden, setIsHidden] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,9 +21,14 @@ const Header = () => {
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       // Determine if hidden (scrolling down & not at top)
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+      // If disableAutoHide is true, never hide
+      if (
+        !disableAutoHide &&
+        currentScrollY > lastScrollY &&
+        currentScrollY > 50
+      ) {
         setIsHidden(true);
       } else {
         setIsHidden(false);
@@ -42,7 +51,8 @@ const Header = () => {
   useEffect(() => {
     if (isMobileMenuOpen) {
       // Get scrollbar width
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       // Add padding to body to prevent layout shift
       if (scrollbarWidth > 0) {
@@ -62,32 +72,30 @@ const Header = () => {
 
   return (
     <>
-      <header 
-        className={headerClass}
-      >
+      <header className={headerClass}>
         <div className={styles.container}>
           <div className={styles.inner}>
             <div className={styles.logo}>
               <Link href="/" onClick={closeMobileMenu}>
-                <Image 
-                  src="/images/Luxe Logo.png" 
-                  alt="Luxe Logo" 
-                  width={150} 
-                  height={45} 
-                  style={{ width: 'auto', height: 'auto', maxHeight: '1.9rem' }} 
+                <Image
+                  src="/images/Luxe Logo.png"
+                  alt="Luxe Logo"
+                  width={150}
+                  height={45}
+                  style={{ width: "auto", height: "auto", maxHeight: "1.9rem" }}
                   priority
                 />
               </Link>
             </div>
-            
+
             {/* Desktop Navigation */}
             <nav className={styles.desktopNav}>
               <Link href="/">Home</Link>
               <Link href="/about">About Us</Link>
-              <Link href="/#pricing">Pricing</Link>
+              <Link href="/pricing">Pricing</Link>
               <Link href="/contact">Contact Us</Link>
             </nav>
-            
+
             {/* Desktop Action */}
             <div className={styles.desktopAction}>
               <Link href="/contact" className={styles.contactButton}>
@@ -96,10 +104,10 @@ const Header = () => {
             </div>
 
             {/* Mobile Toggle */}
-            <div 
+            <div
               className={`${styles.hamburger} ${styles.burgerWrapper} ${isMobileMenuOpen ? styles.active : ""}`}
               onClick={toggleMobileMenu}
-              style={{ opacity: isMobileMenuOpen ? 0 : 1 }} 
+              style={{ opacity: isMobileMenuOpen ? 0 : 1 }}
             >
               <div className={styles.burgerLabel}>
                 <div className={`${styles.bar} ${styles.barTop}`}></div>
@@ -111,39 +119,52 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu Overlay - Move INSIDE Header to share stacking context */}
-        {mounted && createPortal(
-          <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ""}`}>
-            <div className={styles.mobileMenuBackdrop} onClick={closeMobileMenu} />
-            
-            {/* Proxy Burger for High Z-Index Visibility */}
-             <div 
-              className={`${styles.hamburger} ${styles.burgerWrapper} ${styles.proxyBurger} ${isMobileMenuOpen ? styles.active : ""} ${isScrolled ? styles.scrolled : ""}`}
-              onClick={toggleMobileMenu}
+        {mounted &&
+          createPortal(
+            <div
+              className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ""}`}
             >
-              <div className={styles.burgerLabel}>
-                <div className={`${styles.bar} ${styles.barTop}`}></div>
-                <div className={`${styles.bar} ${styles.barMiddle}`}></div>
-                <div className={`${styles.bar} ${styles.barBottom}`}></div>
-              </div>
-            </div>
+              <div
+                className={styles.mobileMenuBackdrop}
+                onClick={closeMobileMenu}
+              />
 
-            <div className={styles.mobileMenuPanel}>
-              <div className={styles.mobileMenuContent}>
-                <nav className={styles.mobileNav}>
-                  <Link href="/" onClick={closeMobileMenu}>Home</Link>
-                  <Link href="/about" onClick={closeMobileMenu}>About Us</Link>
-                  <Link href="/#pricing" onClick={closeMobileMenu}>Pricing</Link>
-                  <Link href="/contact" onClick={closeMobileMenu}>Contact Us</Link>
-                </nav>
+              {/* Proxy Burger for High Z-Index Visibility */}
+              <div
+                className={`${styles.hamburger} ${styles.burgerWrapper} ${styles.proxyBurger} ${isMobileMenuOpen ? styles.active : ""} ${isScrolled ? styles.scrolled : ""}`}
+                onClick={toggleMobileMenu}
+              >
+                <div className={styles.burgerLabel}>
+                  <div className={`${styles.bar} ${styles.barTop}`}></div>
+                  <div className={`${styles.bar} ${styles.barMiddle}`}></div>
+                  <div className={`${styles.bar} ${styles.barBottom}`}></div>
+                </div>
               </div>
-            </div>
-          </div>,
-          document.body
-        )}
+
+              <div className={styles.mobileMenuPanel}>
+                <div className={styles.mobileMenuContent}>
+                  <nav className={styles.mobileNav}>
+                    <Link href="/" onClick={closeMobileMenu}>
+                      Home
+                    </Link>
+                    <Link href="/about" onClick={closeMobileMenu}>
+                      About Us
+                    </Link>
+                    <Link href="/pricing" onClick={closeMobileMenu}>
+                      Pricing
+                    </Link>
+                    <Link href="/contact" onClick={closeMobileMenu}>
+                      Contact Us
+                    </Link>
+                  </nav>
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )}
       </header>
     </>
   );
 };
-
 
 export default Header;
