@@ -359,6 +359,9 @@ const PricingHosting = () => {
             </div>
             <h3 style={{ color: "#000" }}>Enterprise</h3>
             <div className={styles.priceHighlight} style={{ color: "#987ed2" }}>
+              <span className={styles.currencySymbol}>
+                {selectedCurrency.symbol}
+              </span>
               {selectedCurrency.rates.enterprise}
               <span
                 className={styles.period}

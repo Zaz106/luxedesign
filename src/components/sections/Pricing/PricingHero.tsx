@@ -16,10 +16,7 @@ const PricingHero: React.FC<PricingHeroProps> = ({
   onSelectCategory,
 }) => {
   return (
-    <section
-      className={styles.hero}
-      style={{ height: "auto", minHeight: "70vh", paddingBottom: "4rem" }}
-    >
+    <section className={styles.hero}>
       <div className={styles.background} aria-hidden>
         <ColorBends
           colors={["#2400b3", "#987ed2"]}

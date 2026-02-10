@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  min-height: 70vh; /* Consistent with AboutHero but flexible */
+  height: 70vh; /* Reduced height as it's a sub-page hero */
   width: 100%;
   background-color: #111111;
   display: flex;
@@ -9,7 +9,6 @@
   align-items: center;
   overflow: hidden;
   padding-top: 6rem;
-  padding-bottom: 4rem; /* Additional padding for the selector */
 }
 
 .background {
@@ -115,12 +114,17 @@
 /* Media Queries */
 @media (max-width: 768px) {
   .hero {
-    min-height: 50vh;
-    padding-top: 5rem;
+    height: 75vh;
+    padding-top: 3rem;
   }
 }
 
 @media (min-width: 768px) {
+  .hero {
+    height: 70vh;
+    padding-top: 3rem;
+  }
+
   .heading {
     font-size: 4rem;
   }
