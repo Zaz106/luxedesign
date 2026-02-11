@@ -26,7 +26,7 @@ const BuilderHeader = () => {
           style={{
             background: "transparent",
             border: "none",
-            color: "var(--foreground)",
+            color: "rgba(255, 255, 255, 0.5)",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -37,7 +37,7 @@ const BuilderHeader = () => {
           aria-label="Go back"
         >
           <ArrowLeft size={18} />
-          Back
+          Return
         </button>
         <div
           style={{
