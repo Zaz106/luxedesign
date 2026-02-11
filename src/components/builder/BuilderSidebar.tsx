@@ -169,6 +169,8 @@ const BuilderSidebar = () => {
   const [activePage, setActivePage] = useState(1);
   const [isPageDropdownOpen, setIsPageDropdownOpen] = useState(false);
 
+  const [activeConfigId, setActiveConfigId] = useState<string | null>(null);
+
   const [expandedSections, setExpandedSections] = useState<ToolSection[]>([]); // Initial collapsed
 
   const [sections, setSections] = useState<SectionItem[]>(initialSections);
@@ -177,13 +179,14 @@ const BuilderSidebar = () => {
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
+  const sidebarRef = useRef<HTMLElement>(null);
+  const secondarySidebarRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // --- Click Outside Handler ---
   useEffect(() => {
-    // Use pointerdown to ensure we catch events even if other elements preventDefault on mousedown
     const handleClickOutside = (event: PointerEvent) => {
       // Check Header
       if (
@@ -200,13 +203,22 @@ const BuilderSidebar = () => {
       ) {
         searchInputRef.current.blur();
       }
+
+      // Check Secondary Sidebar
+      if (
+        activeConfigId &&
+        secondarySidebarRef.current &&
+        !secondarySidebarRef.current.contains(event.target as Node)
+      ) {
+        setActiveConfigId(null);
+      }
     };
 
     document.addEventListener("pointerdown", handleClickOutside);
     return () => {
       document.removeEventListener("pointerdown", handleClickOutside);
     };
-  }, []);
+  }, [activeConfigId]);
 
   // --- Handlers ---
   const toggleSection = (section: ToolSection) => {
@@ -247,6 +259,27 @@ const BuilderSidebar = () => {
     setIsPageDropdownOpen(false);
   };
 
+  const handleAddFeatureSection = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const featureCount = sections.filter((s) =>
+      s.id.startsWith("features"),
+    ).length;
+    if (featureCount >= 3) return; // Limit to 3
+
+    const newSection: SectionItem = {
+      id: `features-${Date.now()}`,
+      title: `Feature ${featureCount + 1}`,
+      isVisible: true,
+    };
+
+    const footerIndex = sections.findIndex((s) => s.id === "footer");
+    const insertIndex = footerIndex !== -1 ? footerIndex : sections.length;
+
+    const newSections = [...sections];
+    newSections.splice(insertIndex, 0, newSection);
+    setSections(newSections);
+  };
+
   const toggleVisibility = (id: string) => {
     setSections((prev) =>
       prev.map((s) =>
@@ -255,8 +288,18 @@ const BuilderSidebar = () => {
     );
   };
 
+  const handleSectionClick = (e: React.MouseEvent, section: SectionItem) => {
+    e.stopPropagation();
+    if (!section.isVisible) return;
+    setActiveConfigId((prev) => (prev === section.id ? null : section.id));
+  };
+
   // --- Drag and Drop Handlers ---
   const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (sections[index].isLocked) {
+      e.preventDefault();
+      return;
+    }
     setDraggedItemIndex(index);
     e.dataTransfer.effectAllowed = "move";
   };
@@ -271,6 +314,13 @@ const BuilderSidebar = () => {
   const handleDrop = (e: React.DragEvent, index: number) => {
     e.preventDefault();
 
+    const targetSection = sections[index];
+    if (targetSection.isLocked) {
+      setDraggedItemIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
     if (draggedItemIndex === null || draggedItemIndex === index) {
       setDraggedItemIndex(null);
       setDragOverIndex(null);
@@ -279,10 +329,19 @@ const BuilderSidebar = () => {
 
     const newSections = [...sections];
     const draggedItem = newSections[draggedItemIndex];
-    newSections.splice(draggedItemIndex, 1);
-    newSections.splice(index, 0, draggedItem);
 
-    setSections(newSections);
+    // Remove from old
+    newSections.splice(draggedItemIndex, 1);
+
+    // Manual reorder logic
+    const item = sections[draggedItemIndex];
+    const remaining = sections.filter((_, i) => i !== draggedItemIndex);
+    const targetId = sections[index].id;
+    const newTargetIndex = remaining.findIndex((s) => s.id === targetId);
+
+    remaining.splice(newTargetIndex, 0, item);
+    setSections(remaining);
+
     setDraggedItemIndex(null);
     setDragOverIndex(null);
   };
@@ -290,6 +349,152 @@ const BuilderSidebar = () => {
   const handleDragEnd = () => {
     setDraggedItemIndex(null);
     setDragOverIndex(null);
+  };
+
+  // --- Secondary Sidebar Content ---
+  const renderConfigContent = () => {
+    if (!activeConfigId) return null;
+
+    const section = sections.find((s) => s.id === activeConfigId);
+    if (!section) return null;
+
+    const configItemStyle = {
+      marginBottom: "20px",
+    };
+
+    const labelStyle = {
+      display: "block",
+      marginBottom: "8px",
+      color: "#ccc",
+      fontSize: "12px",
+    };
+
+    const inputStyle = {
+      width: "100%",
+      background: "#1a1a1a",
+      border: "1px solid rgba(255,255,255,0.1)",
+      color: "white",
+      padding: "8px 12px",
+      borderRadius: "6px",
+      fontSize: "13px",
+      outline: "none",
+    };
+
+    if (activeConfigId === "hero") {
+      return (
+        <>
+          <div style={configItemStyle}>
+            <label style={labelStyle}>Headline</label>
+            <input style={inputStyle} defaultValue="Welcome to Luxe" />
+          </div>
+          <div style={configItemStyle}>
+            <label style={labelStyle}>Subheadline</label>
+            <textarea
+              style={{ ...inputStyle, height: "80px", resize: "none" }}
+              defaultValue="Premium design for modern web applications. Built for speed and flexibility."
+            />
+          </div>
+          <div style={configItemStyle}>
+            <label style={labelStyle}>Button Text</label>
+            <input style={inputStyle} defaultValue="Get Started" />
+          </div>
+          <div style={configItemStyle}>
+            <label style={labelStyle}>Background</label>
+            <select style={inputStyle}>
+              <option>Gradient Mesh</option>
+              <option>Solid Color</option>
+              <option>Image</option>
+            </select>
+          </div>
+        </>
+      );
+    }
+
+    if (activeConfigId.startsWith("features")) {
+      return (
+        <>
+          <div style={configItemStyle}>
+            <label style={labelStyle}>Card Layout</label>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: "40px",
+                    height: "24px",
+                    background: i === 2 ? "#987ed2" : "rgba(255,255,255,0.1)",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    border:
+                      i === 2 ? "none" : "1px solid rgba(255,255,255,0.1)",
+                  }}
+                />
+              ))}
+            </div>
+            <div style={{ fontSize: "11px", color: "#666", marginTop: "6px" }}>
+              Grid (3 cols)
+            </div>
+          </div>
+          <div style={configItemStyle}>
+            <label style={labelStyle}>Items</label>
+            <input type="number" style={inputStyle} defaultValue="3" />
+          </div>
+        </>
+      );
+    }
+
+    if (activeConfigId === "nav") {
+      return (
+        <>
+          <div style={configItemStyle}>
+            <label style={labelStyle}>Logo Text</label>
+            <input style={inputStyle} defaultValue="Luxe." />
+          </div>
+          <div style={configItemStyle}>
+            <label style={labelStyle}>Links</label>
+            <div
+              style={{
+                background: "#1a1a1a",
+                padding: "8px",
+                borderRadius: "6px",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              {["Home", "Features", "Pricing"].map((l) => (
+                <div
+                  key={l}
+                  style={{
+                    padding: "4px 0",
+                    fontSize: "13px",
+                    color: "#aaa",
+                    borderBottom: "1px solid rgba(255,255,255,0.05)",
+                  }}
+                >
+                  {l}
+                </div>
+              ))}
+              <div
+                style={{
+                  color: "#987ed2",
+                  fontSize: "12px",
+                  marginTop: "8px",
+                  cursor: "pointer",
+                }}
+              >
+                + Add Link
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    // Default
+    return (
+      <div style={{ color: "#666", textAlign: "center", marginTop: "40px" }}>
+        No configuration options available for this section.
+      </div>
+    );
   };
 
   return (
@@ -302,433 +507,641 @@ const BuilderSidebar = () => {
           background: transparent;
         }
         .builder-sidebar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0);
           border-radius: 4px;
         }
         .builder-sidebar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.4);
+          background: rgba(255, 255, 255, 0);
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-5px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-      <aside
-        className="builder-sidebar"
-        style={{
-          width: "280px",
-          backgroundColor: "#161616",
-          borderRight: "1px solid rgba(255, 255, 255, 0.05)",
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-          zIndex: 10,
-          overflowY: "auto",
-          userSelect: "none",
-        }}
-      >
-        {/* Header */}
-        <div
-          ref={headerRef}
+      <div style={{ display: "flex", height: "100%", position: "relative" }}>
+        <aside
+          ref={sidebarRef}
+          className="builder-sidebar"
           style={{
-            padding: "20px 20px 10px 20px",
-            borderBottom: "1px solid rgba(255,255,255,0.05)",
+            width: "300px",
+            backgroundColor: "#161616",
+            borderRight: "1px solid rgba(255, 255, 255, 0.05)",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            zIndex: 10,
+            overflowY: "auto",
+            userSelect: "none",
+            position: "relative",
           }}
         >
+          {/* Header */}
           <div
+            ref={headerRef}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "5px",
+              padding: "20px 20px 10px 20px",
+              borderBottom: "1px solid rgba(255,255,255,0.05)",
             }}
           >
-            {/* Editable Title */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                flex: 1,
-                maxWidth: "150px",
-                height: "24px",
-              }}
-            >
-              {isEditingTitle ? (
-                <input
-                  ref={titleInputRef}
-                  value={projectTitle}
-                  onChange={onTitleChange}
-                  onBlur={onTitleBlur}
-                  onKeyDown={handleTitleKeyDown}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    borderBottom: "1px solid rgba(255,255,255,0.05)",
-                    color: "white",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    width: "100%",
-                    padding: "0",
-                    margin: "0",
-                    outline: "none",
-                    fontFamily: "inherit",
-                  }}
-                />
-              ) : (
-                <div
-                  onDoubleClick={handleTitleDoubleClick}
-                  style={{
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    color: "white",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    height: "100%",
-                    width: "100%",
-                  }}
-                  title="Double click to edit"
-                >
-                  {projectTitle}
-                  <Edit2
-                    size={10}
-                    color="#666"
-                    style={{ cursor: "pointer", flexShrink: 0 }}
-                    onClick={() => setIsEditingTitle(true)}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Page Selector */}
-            <div style={{ position: "relative" }}>
-              <div
-                onClick={() => setIsPageDropdownOpen(!isPageDropdownOpen)}
-                style={{
-                  fontSize: "12px",
-                  color: "#888",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  marginTop: "2px", // Alignment tweak for visual center with title
-                }}
-              >
-                <ChevronDown size={10} />
-                Page {activePage}
-              </div>
-
-              {isPageDropdownOpen && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    right: 0,
-                    background: "#222",
-                    border: "1px solid #333",
-                    borderRadius: "4px",
-                    padding: "4px 0",
-                    zIndex: 100,
-                    width: "100px",
-                  }}
-                >
-                  {pages.map((page) => (
-                    <div
-                      key={page}
-                      onClick={() => {
-                        setActivePage(page);
-                        setIsPageDropdownOpen(false);
-                      }}
-                      style={{
-                        padding: "6px 12px",
-                        fontSize: "12px",
-                        color: page === activePage ? "white" : "#888",
-                        cursor: "pointer",
-                        background:
-                          page === activePage
-                            ? "rgba(255,255,255,0.05)"
-                            : "transparent",
-                      }}
-                    >
-                      Page {page}
-                    </div>
-                  ))}
-                  {pages.length < 5 && (
-                    <div
-                      onClick={handleAddPage}
-                      style={{
-                        padding: "6px 12px",
-                        fontSize: "11px",
-                        color: "#987ed2",
-                        borderTop: "1px solid #333",
-                        marginTop: "4px",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      <Plus size={10} /> Add Page
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onBlurRef={searchInputRef}
-        />
-
-        {/* 1. Start */}
-        <Accordion
-          id="start"
-          label="1. Start"
-          isOpen={expandedSections.includes("start")}
-          onToggle={toggleSection}
-        >
-          <button
-            style={{
-              width: "100%",
-              padding: "10px",
-              background: "transparent",
-              border: "1px solid #333",
-              color: "#888",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "13px",
-            }}
-          >
-            Randomize
-          </button>
-        </Accordion>
-
-        {/* 2. Sections */}
-        <Accordion
-          id="sections"
-          label="2. Sections"
-          isOpen={expandedSections.includes("sections")}
-          onToggle={toggleSection}
-          extraAction={
-            <Edit2 size={12} color="#666" style={{ cursor: "pointer" }} />
-          }
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            {sections.map((section, index) => (
-              <div
-                key={section.id}
-                draggable={!section.isLocked}
-                onDragStart={(e) => handleDragStart(e, index)}
-                onDragOver={(e) => handleDragOver(e, index)}
-                onDrop={(e) => handleDrop(e, index)}
-                onDragEnd={handleDragEnd}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "8px",
-                  background: "#222",
-                  borderRadius: "4px",
-                  opacity: section.isVisible ? 1 : 0.5,
-                  border: "1px solid rgba(255,255,255,0.05)",
-                  borderTop:
-                    dragOverIndex === index && !section.isLocked
-                      ? "2px solid #987ed2"
-                      : "1px solid rgba(255,255,255,0.05)",
-                  cursor: section.isLocked ? "default" : "grab",
-                }}
-              >
-                {section.isLocked ? (
-                  <Lock size={12} color="#444" style={{ marginRight: "8px" }} />
-                ) : (
-                  <GripVertical
-                    size={12}
-                    color="#555"
-                    style={{ marginRight: "8px", cursor: "grab" }}
-                  />
-                )}
-
-                <span style={{ fontSize: "13px", color: "white", flex: 1 }}>
-                  {section.title}
-                </span>
-
-                {!section.isLocked && (
-                  <div
-                    onClick={() => toggleVisibility(section.id)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {section.isVisible ? (
-                      <Eye size={12} color="#666" />
-                    ) : (
-                      <EyeOff size={12} color="#444" />
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </Accordion>
-
-        {/* 3. Global Style */}
-        <Accordion
-          id="global"
-          label="3. Global Style"
-          isOpen={expandedSections.includes("global")}
-          onToggle={toggleSection}
-        >
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "16px" }}
-          >
-            {/* Color Palette */}
-            <div>
-              <div
-                style={{ fontSize: "12px", color: "#888", marginBottom: "8px" }}
-              >
-                Color Palette
-              </div>
-              <div style={{ display: "flex", gap: "8px" }}>
-                {["#FFFFFF", "#987ed2", "#222222", "#FF5555"].map((c) => (
-                  <div
-                    key={c}
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      borderRadius: "50%",
-                      background: c,
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      cursor: "pointer",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Font Pairings */}
-            <div>
-              <div
-                style={{ fontSize: "12px", color: "#888", marginBottom: "8px" }}
-              >
-                Font Pairings
-              </div>
-              <select
-                style={{
-                  width: "100%",
-                  background: "#222",
-                  border: "1px solid #333",
-                  color: "white",
-                  padding: "6px",
-                  borderRadius: "4px",
-                  fontSize: "12px",
-                }}
-              >
-                <option>Inter / Roboto</option>
-                <option>Satoshi / Instrument</option>
-              </select>
-            </div>
-
-            {/* Border Radius */}
-            <div>
-              <div
-                style={{ fontSize: "12px", color: "#888", marginBottom: "8px" }}
-              >
-                Border Radius
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  background: "#222",
-                  padding: "4px",
-                  borderRadius: "4px",
-                }}
-              >
-                {["Sharp", "Soft", "Rounded"].map((r) => (
-                  <div
-                    key={r}
-                    style={{
-                      fontSize: "11px",
-                      color: r === "Rounded" ? "white" : "#666",
-                      padding: "4px 8px",
-                      cursor: "pointer",
-                      background: r === "Rounded" ? "#333" : "transparent",
-                      borderRadius: "2px",
-                    }}
-                  >
-                    {r}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Theme */}
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                marginBottom: "5px",
               }}
             >
-              <div style={{ fontSize: "12px", color: "#888" }}>Dark Mode</div>
+              {/* Editable Title */}
               <div
                 style={{
-                  width: "32px",
-                  height: "18px",
-                  background: "#987ed2",
-                  borderRadius: "10px",
-                  position: "relative",
-                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  flex: 1,
+                  maxWidth: "140px",
+                  height: "24px",
                 }}
               >
+                {isEditingTitle ? (
+                  <input
+                    ref={titleInputRef}
+                    value={projectTitle}
+                    onChange={onTitleChange}
+                    onBlur={onTitleBlur}
+                    onKeyDown={handleTitleKeyDown}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      borderBottom: "1px solid rgba(255,255,255,0.05)",
+                      color: "white",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      width: "100%",
+                      height: "24px",
+                      padding: "0",
+                      margin: "0",
+                      outline: "none",
+                      fontFamily: "inherit",
+                      lineHeight: "24px",
+                    }}
+                  />
+                ) : (
+                  <div
+                    onDoubleClick={handleTitleDoubleClick}
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      color: "white",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      height: "24px",
+                      width: "100%",
+                      borderBottom: "1px solid transparent",
+                      lineHeight: "24px",
+                    }}
+                    title="Double click to edit"
+                  >
+                    {projectTitle}
+                    <Edit2
+                      size={10}
+                      color="#666"
+                      style={{ cursor: "pointer", flexShrink: 0 }}
+                      onClick={() => setIsEditingTitle(true)}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Page Selector */}
+              <div style={{ position: "relative" }}>
                 <div
+                  onClick={() => setIsPageDropdownOpen(!isPageDropdownOpen)}
                   style={{
-                    width: "14px",
-                    height: "14px",
-                    background: "white",
-                    borderRadius: "50%",
-                    position: "absolute",
-                    top: "2px",
-                    right: "2px",
+                    fontSize: "13px",
+                    color: "rgba(255,255,255,0.7)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    marginTop: "1px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    padding: "6px 11px",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                    transition: "all 0.2s ease",
                   }}
-                />
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background =
+                      "rgba(255,255,255,0.08)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background =
+                      "rgba(255,255,255,0.05)")
+                  }
+                >
+                  Page {activePage}
+                  <ChevronDown
+                    size={12}
+                    style={{
+                      transform: isPageDropdownOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                      transition: "transform 0.2s ease",
+                    }}
+                  />
+                </div>
+
+                {isPageDropdownOpen && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "125%",
+                      right: 0,
+                      background: "#1a1a1a",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "12px",
+                      padding: "6px",
+                      zIndex: 100,
+                      width: "140px",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                      transformOrigin: "top right",
+                      animation: "fadeIn 0.2s ease",
+                    }}
+                  >
+                    {pages.map((page) => (
+                      <div
+                        key={page}
+                        onClick={() => {
+                          setActivePage(page);
+                          setIsPageDropdownOpen(false);
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background =
+                            "rgba(255,255,255,0.08)";
+                          e.currentTarget.style.color = "white";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background =
+                            page === activePage
+                              ? "rgba(255,255,255,0.05)"
+                              : "transparent";
+                          e.currentTarget.style.color =
+                            page === activePage ? "white" : "#888";
+                        }}
+                        style={{
+                          padding: "8px 12px",
+                          fontSize: "13px",
+                          color: page === activePage ? "white" : "#888",
+                          cursor: "pointer",
+                          background:
+                            page === activePage
+                              ? "rgba(255,255,255,0.05)"
+                              : "transparent",
+                          borderRadius: "6px",
+                          transition: "all 0.1s ease",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        Page {page}
+                        {page === activePage && (
+                          <div
+                            style={{
+                              width: 4,
+                              height: 4,
+                              borderRadius: "50%",
+                              background: "#987ed2",
+                            }}
+                          />
+                        )}
+                      </div>
+                    ))}
+                    {pages.length < 5 && (
+                      <div
+                        onClick={handleAddPage}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.background =
+                            "rgba(255,255,255,0.08)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.background = "transparent")
+                        }
+                        style={{
+                          padding: "8px 12px",
+                          fontSize: "12px",
+                          color: "#987ed2",
+                          borderTop: "1px solid rgba(255,255,255,0.05)",
+                          marginTop: "4px",
+                          paddingTop: "8px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          borderRadius: "6px",
+                          transition: "background 0.1s ease",
+                        }}
+                      >
+                        <Plus size={12} /> Add Page
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </Accordion>
 
-        {/* 4. Content */}
-        <Accordion
-          id="content"
-          label="4. Content"
-          isOpen={expandedSections.includes("content")}
-          onToggle={toggleSection}
-          extraAction={
-            <Edit2 size={12} color="#666" style={{ cursor: "pointer" }} />
-          }
-        >
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onBlurRef={searchInputRef}
+          />
+
+          {/* 1. Start */}
+          <Accordion
+            id="start"
+            label="1. Start"
+            isOpen={expandedSections.includes("start")}
+            onToggle={toggleSection}
           >
-            {sections
-              .filter((s) => s.isVisible)
-              .map((section) => (
+            <button
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.05)",
+                color: "rgba(255,255,255,0.5)",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontSize: "13px",
+                fontWeight: 500,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+                e.currentTarget.style.color = "white";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
+              }}
+            >
+              Randomize Layout
+            </button>
+          </Accordion>
+
+          {/* 2. Sections */}
+          <Accordion
+            id="sections"
+            label="2. Sections"
+            isOpen={expandedSections.includes("sections")}
+            onToggle={toggleSection}
+            extraAction={
+              <Plus
+                size={16}
+                color="#666"
+                style={{ cursor: "pointer", opacity: 0.8 }}
+                onClick={handleAddFeatureSection}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
+              />
+            }
+          >
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+            >
+              {sections.map((section, index) => (
+                <React.Fragment key={section.id}>
+                  {/* Drop Indicator */}
+                  {dragOverIndex === index && !section.isLocked && (
+                    <div
+                      style={{
+                        height: "2px",
+                        background: "#987ed2",
+                        borderRadius: "1px",
+                        margin: "2px 0",
+                        width: "100%",
+                      }}
+                    />
+                  )}
+
+                  <div
+                    draggable={!section.isLocked}
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
+                    onClick={(e) => handleSectionClick(e, section)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 12px",
+                      background:
+                        activeConfigId === section.id
+                          ? "rgba(152, 126, 210, 0.1)"
+                          : "#222",
+                      borderRadius: "8px",
+                      opacity: section.isVisible ? 1 : 0.5,
+                      border:
+                        activeConfigId === section.id
+                          ? "1px solid rgba(152, 126, 210, 0.3)"
+                          : "1px solid rgba(255,255,255,0.03)",
+                      cursor: !section.isVisible
+                        ? "not-allowed"
+                        : section.isLocked
+                          ? "default"
+                          : "grab",
+                      transition: "all 0.2s cubic-bezier(0.2, 0, 0, 1)",
+                      height: "36px",
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    {section.isLocked ? (
+                      <Lock
+                        size={12}
+                        color="#444"
+                        style={{ marginRight: "12px" }}
+                      />
+                    ) : (
+                      <GripVertical
+                        size={12}
+                        color="#555"
+                        style={{ marginRight: "12px", cursor: "grab" }}
+                      />
+                    )}
+
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        color: "white",
+                        flex: 1,
+                        fontWeight: 400,
+                      }}
+                    >
+                      {section.title}
+                    </span>
+
+                    {!section.isLocked && (
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleVisibility(section.id);
+                        }}
+                        style={{
+                          cursor: "pointer",
+                          padding: "4px",
+                          display: "flex",
+                        }}
+                      >
+                        {section.isVisible ? (
+                          <Eye size={14} color="#666" />
+                        ) : (
+                          <EyeOff size={14} color="#444" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </Accordion>
+
+          {/* 3. Global Style */}
+          <Accordion
+            id="global"
+            label="3. Global Style"
+            isOpen={expandedSections.includes("global")}
+            onToggle={toggleSection}
+          >
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
+              {/* Color Palette */}
+              <div>
                 <div
-                  key={section.id}
                   style={{
-                    fontSize: "13px",
-                    color: "#aaa",
-                    paddingLeft: "10px",
-                    borderLeft: "2px solid #333",
+                    fontSize: "12px",
+                    color: "#888",
+                    marginBottom: "8px",
                   }}
                 >
-                  {section.title}
+                  Color Palette
                 </div>
-              ))}
+                <div style={{ display: "flex", gap: "8px" }}>
+                  {["#FFFFFF", "#987ed2", "#222222", "#FF5555"].map((c) => (
+                    <div
+                      key={c}
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        borderRadius: "50%",
+                        background: c,
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        cursor: "pointer",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Font Pairings */}
+              <div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#888",
+                    marginBottom: "8px",
+                  }}
+                >
+                  Font Pairings
+                </div>
+                <select
+                  style={{
+                    width: "100%",
+                    background: "#222",
+                    border: "1px solid #333",
+                    color: "white",
+                    padding: "6px",
+                    borderRadius: "4px",
+                    fontSize: "12px",
+                  }}
+                >
+                  <option>Inter / Roboto</option>
+                  <option>Satoshi / Instrument</option>
+                </select>
+              </div>
+
+              {/* Border Radius */}
+              <div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#888",
+                    marginBottom: "8px",
+                  }}
+                >
+                  Border Radius
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    background: "#222",
+                    padding: "4px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  {["Sharp", "Soft", "Rounded"].map((r) => (
+                    <div
+                      key={r}
+                      style={{
+                        fontSize: "11px",
+                        color: r === "Rounded" ? "white" : "#666",
+                        padding: "4px 8px",
+                        cursor: "pointer",
+                        background: r === "Rounded" ? "#333" : "transparent",
+                        borderRadius: "2px",
+                      }}
+                    >
+                      {r}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Theme */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ fontSize: "12px", color: "#888" }}>Dark Mode</div>
+                <div
+                  style={{
+                    width: "32px",
+                    height: "18px",
+                    background: "#987ed2",
+                    borderRadius: "10px",
+                    position: "relative",
+                    cursor: "pointer",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "14px",
+                      height: "14px",
+                      background: "white",
+                      borderRadius: "50%",
+                      position: "absolute",
+                      top: "2px",
+                      right: "2px",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Accordion>
+
+          {/* 4. Content */}
+          <Accordion
+            id="content"
+            label="4. Content"
+            isOpen={expandedSections.includes("content")}
+            onToggle={toggleSection}
+            extraAction={
+              <Edit2 size={12} color="#666" style={{ cursor: "pointer" }} />
+            }
+          >
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+            >
+              {sections
+                .filter((s) => s.isVisible)
+                .map((section) => (
+                  <div
+                    key={section.id}
+                    style={{
+                      fontSize: "13px",
+                      color: "#aaa",
+                      paddingLeft: "10px",
+                      borderLeft: "2px solid #333",
+                    }}
+                  >
+                    {section.title}
+                  </div>
+                ))}
+            </div>
+          </Accordion>
+        </aside>
+
+        {/* Secondary Configuration Sidebar (Always Rendered, Animated) */}
+        <div
+          ref={secondarySidebarRef}
+          style={{
+            position: "absolute",
+            left: "300px",
+            top: 0,
+            bottom: 0,
+            width: "280px",
+            backgroundColor: "#161616",
+            borderRight: "1px solid rgba(255, 255, 255, 0.05)",
+            zIndex: 20,
+            display: "flex",
+            flexDirection: "column",
+            overflowY: "auto",
+            transform: activeConfigId ? "translateX(0)" : "translateX(-10px)",
+            opacity: activeConfigId ? 1 : 0,
+            pointerEvents: activeConfigId ? "auto" : "none",
+            transition:
+              "transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease",
+            boxShadow: activeConfigId ? "5px 0 30px rgba(0,0,0,0.3)" : "none",
+          }}
+        >
+          <div
+            style={{
+              padding: "20px",
+              borderBottom: "1px solid rgba(255,255,255,0.05)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span style={{ color: "white", fontWeight: 500 }}>
+              {sections.find((s) => s.id === activeConfigId)?.title}
+            </span>
+            <div
+              onClick={() => setActiveConfigId(null)}
+              style={{ cursor: "pointer", padding: "4px" }}
+            >
+              <Plus
+                size={18}
+                color="#666"
+                style={{ transform: "rotate(45deg)" }}
+              />
+            </div>
           </div>
-        </Accordion>
-      </aside>
+
+          <div style={{ padding: "20px", color: "#888", fontSize: "13px" }}>
+            {renderConfigContent()}
+          </div>
+        </div>
+      </div>
     </>
   );
 };
