@@ -6,7 +6,7 @@ const Results = () => {
   return (
     <section className={styles.section}>
       <Image
-        src="/images/cover-image.webp"
+        src="/images/cover-image-1.jpg"
         alt="Skyscrapers looking up"
         fill
         className={styles.backgroundImage}

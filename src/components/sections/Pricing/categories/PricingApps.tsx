@@ -280,7 +280,7 @@ const PricingApps = () => {
               <span className={styles.check}>
                 <CheckIcon />
               </span>{" "}
-              Timeline: ~1–2 months
+              Timeline: ~2–3 months
             </li>
           </ul>
           <Link href="/contact" className={styles.whiteButton}>
@@ -348,7 +348,7 @@ const PricingApps = () => {
               <span className={styles.check}>
                 <CheckIcon />
               </span>{" "}
-              Timeline: 3–4 months
+              Timeline: 4-8 months
             </li>
           </ul>
           <Link href="/contact" className={styles.whiteButton}>
@@ -411,7 +411,7 @@ const PricingApps = () => {
               <span className={styles.checkDark}>
                 <CheckIcon />
               </span>{" "}
-              Timeline: 4–8 months+
+              Timeline: 8 months+
             </li>
           </ul>
           <Link href="/contact" className={styles.blackButton}>

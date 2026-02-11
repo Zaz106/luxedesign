@@ -112,11 +112,11 @@ const Footer = () => {
             <div className={styles.columns}>
               <div>
                 <h4>Explore</h4>
-                <a href="#home">Home</a>
-                <a href="#about">About Us</a>
-                <a href="#projects">Web Builder</a>
+                <Link href="/">Home</Link>
+                <Link href="/about">About Us</Link>
+                <Link href="/web-builder">Web Builder</Link>
                 <Link href="/pricing">Pricing</Link>
-                <a href="/contact">Contact Us</a>
+                <Link href="/contact">Contact Us</Link>
               </div>
               <div>
                 <h4>About</h4>
@@ -163,3 +163,7 @@ const Footer = () => {
 };
 
 export default Footer;
+
+// Force re-compile to fix hydration mismatch
+
+// Force re-compile to fix hydration mismatch

@@ -92,6 +92,7 @@ const Header = ({ disableAutoHide = false }: HeaderProps) => {
             <nav className={styles.desktopNav}>
               <Link href="/">Home</Link>
               <Link href="/about">About Us</Link>
+              <Link href="/web-builder">Web Builder</Link>
               <Link href="/pricing">Pricing</Link>
               <Link href="/contact">Contact Us</Link>
             </nav>
@@ -152,6 +153,9 @@ const Header = ({ disableAutoHide = false }: HeaderProps) => {
                     </Link>
                     <Link href="/pricing" onClick={closeMobileMenu}>
                       Pricing
+                    </Link>
+                    <Link href="/web-builder" onClick={closeMobileMenu}>
+                      Web Builder
                     </Link>
                     <Link href="/contact" onClick={closeMobileMenu}>
                       Contact Us
