@@ -6,15 +6,16 @@ import {
   ChevronRight,
   Search,
   Edit2,
-  Eye,
-  EyeOff,
   GripVertical,
   Lock,
   Plus,
+  Trash2,
 } from "lucide-react";
+import BuilderSecondarySidebar from "./BuilderSecondarySidebar";
+import "./BuilderSidebar.css";
 
 // --- Types ---
-type SectionItem = {
+export type SectionItem = {
   id: string;
   title: string;
   isVisible: boolean;
@@ -27,7 +28,7 @@ type ToolSection = "start" | "sections" | "global" | "content";
 const initialSections: SectionItem[] = [
   { id: "nav", title: "Navigation", isVisible: true, isLocked: true },
   { id: "hero", title: "Hero Section", isVisible: true, isLocked: true },
-  { id: "features", title: "Features", isVisible: true },
+  { id: "features", title: "Feature Section 1", isVisible: true },
   { id: "testimonials", title: "Testimonials", isVisible: true },
   { id: "gallery", title: "Gallery", isVisible: true },
   { id: "pricing", title: "Pricing", isVisible: true },
@@ -47,31 +48,15 @@ const SearchBar = ({
   onChange: (val: string) => void;
   onBlurRef?: React.RefObject<HTMLInputElement | null>;
 }) => (
-  <div style={{ padding: "15px 20px" }}>
-    <div
-      style={{
-        background: "#222",
-        display: "flex",
-        alignItems: "center",
-        padding: "8px 12px",
-        borderRadius: "6px",
-        gap: "8px",
-      }}
-    >
+  <div className="search-container">
+    <div className="search-wrapper">
       <Search size={14} color="#666" />
       <input
         ref={onBlurRef}
         placeholder="Search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={{
-          background: "transparent",
-          border: "none",
-          color: "white",
-          fontSize: "13px",
-          width: "100%",
-          outline: "none",
-        }}
+        className="search-input"
       />
     </div>
   </div>
@@ -93,32 +78,14 @@ const Accordion = ({
   extraAction?: React.ReactNode;
 }) => {
   return (
-    <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-      <div
-        style={{
-          padding: "16px 20px",
-          cursor: "pointer",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        onClick={() => onToggle(id)}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            transition: "all 0.3s ease",
-          }}
-        >
+    <div className="accordion-item">
+      <div className="accordion-header" onClick={() => onToggle(id)}>
+        <div className="accordion-title-wrapper">
           {/* Merged Header: Large when closed, small when open */}
           <span
+            className="accordion-title"
             style={{
-              fontSize: "14px", // Fixed size
-              fontWeight: 400,
-              color: isOpen ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.7", // Only color changes
-              letterSpacing: "0.5px", // Fixed spacing
-              transition: "color 0.2s ease", // Only color transition
+              color: isOpen ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.7)",
             }}
           >
             {label}
@@ -133,18 +100,16 @@ const Accordion = ({
       </div>
 
       <div
+        className="accordion-content-wrapper"
         style={{
-          display: "grid",
           gridTemplateRows: isOpen ? "1fr" : "0fr",
-          transition: "grid-template-rows 0.3s ease-out",
         }}
       >
-        <div style={{ overflow: "hidden" }}>
+        <div className="accordion-content-inner">
           <div
+            className="accordion-content"
             style={{
-              padding: "0 20px 20px 20px",
               opacity: isOpen ? 1 : 0,
-              transition: "opacity 0.2s ease-in-out 0.1s",
             }}
           >
             {children}
@@ -175,50 +140,81 @@ const BuilderSidebar = () => {
 
   const [sections, setSections] = useState<SectionItem[]>(initialSections);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAddSectionDropdownOpen, setIsAddSectionDropdownOpen] =
+    useState(false);
 
-  const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  // Drag State
+  const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
+  const [dropIndicatorIndex, setDropIndicatorIndex] = useState<number | null>(
+    null,
+  );
+  const [originalSections, setOriginalSections] = useState<
+    SectionItem[] | null
+  >(null);
 
   const sidebarRef = useRef<HTMLElement>(null);
-  const secondarySidebarRef = useRef<HTMLDivElement>(null);
+  // Ref for secondary sidebar is now likely inside the child component,
+  // but we need to detect clicks outside of it.
+  // We can wrap the secondary sidebar in a div that we ref here, or pass a ref.
+  const secondarySidebarWrapperRef = useRef<HTMLDivElement>(null);
+  const addSectionDropdownRef = useRef<HTMLDivElement>(null);
+
   const titleInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // --- Click Outside Handler ---
   useEffect(() => {
-    const handleClickOutside = (event: PointerEvent) => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      // Check if target is still in the DOM (fixes issue where clicking a toggle that unmounts itself triggers close)
+      if (!target.isConnected) return;
+
+      // Check if click comes from a trigger element that handles its own toggling
+      const isTrigger = target.closest("[data-prevent-outside-close]");
+
       // Check Header
-      if (
-        headerRef.current &&
-        !headerRef.current.contains(event.target as Node)
-      ) {
+      if (headerRef.current && !headerRef.current.contains(target as Node)) {
         setIsEditingTitle(false);
         setIsPageDropdownOpen(false);
       }
       // Check Search
       if (
         searchInputRef.current &&
-        !searchInputRef.current.contains(event.target as Node)
+        !searchInputRef.current.contains(target as Node)
       ) {
         searchInputRef.current.blur();
       }
 
+      // Check Add Section Dropdown
+      // Close if click is outside the dropdown AND not on the toggle button
+      if (
+        isAddSectionDropdownOpen &&
+        addSectionDropdownRef.current &&
+        !addSectionDropdownRef.current.contains(target as Node) &&
+        !isTrigger
+      ) {
+        setIsAddSectionDropdownOpen(false);
+      }
+
       // Check Secondary Sidebar
+      // Close if click is outside secondary sidebar AND not on a list item (trigger)
       if (
         activeConfigId &&
-        secondarySidebarRef.current &&
-        !secondarySidebarRef.current.contains(event.target as Node)
+        secondarySidebarWrapperRef.current &&
+        !secondarySidebarWrapperRef.current.contains(target as Node) &&
+        !isTrigger
       ) {
         setActiveConfigId(null);
       }
     };
 
-    document.addEventListener("pointerdown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener("pointerdown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
-  }, [activeConfigId]);
+  }, [activeConfigId, isAddSectionDropdownOpen]);
 
   // --- Handlers ---
   const toggleSection = (section: ToolSection) => {
@@ -259,25 +255,80 @@ const BuilderSidebar = () => {
     setIsPageDropdownOpen(false);
   };
 
-  const handleAddFeatureSection = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const featureCount = sections.filter((s) =>
-      s.id.startsWith("features"),
-    ).length;
-    if (featureCount >= 3) return; // Limit to 3
+  const handleAddSection = (sectionIdOrType: string) => {
+    console.log("handleAddSection called with:", sectionIdOrType);
+    console.log("Current sections:", sections);
 
-    const newSection: SectionItem = {
-      id: `features-${Date.now()}`,
-      title: `Feature ${featureCount + 1}`,
-      isVisible: true,
-    };
+    // 1. Try to find existing hidden section by ID (Restore)
+    const existingHidden = sections.find(
+      (s) => s.id === sectionIdOrType && !s.isVisible,
+    );
+    console.log("Found existing hidden section:", existingHidden);
 
-    const footerIndex = sections.findIndex((s) => s.id === "footer");
-    const insertIndex = footerIndex !== -1 ? footerIndex : sections.length;
+    if (existingHidden) {
+      console.log("Restoring hidden section:", existingHidden.id);
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === existingHidden.id ? { ...s, isVisible: true } : s,
+        ),
+      );
+      setIsAddSectionDropdownOpen(false);
+      return;
+    }
 
-    const newSections = [...sections];
-    newSections.splice(insertIndex, 0, newSection);
-    setSections(newSections);
+    // 2. Logic for New Feature Section
+    if (sectionIdOrType.startsWith("Feature Section")) {
+      console.log("Adding new feature section");
+      let targetNum = 0;
+
+      const featureSections = sections.filter((s) =>
+        s.title.startsWith("Feature Section"),
+      );
+      const usedNumbers = featureSections.map((s) => {
+        const match = s.title.match(/Feature Section (\d+)/);
+        return match ? parseInt(match[1]) : 0;
+      });
+
+      const match = sectionIdOrType.match(/Feature Section (\d+)/);
+      if (match) {
+        targetNum = parseInt(match[1]);
+      }
+
+      if (targetNum === 0 || usedNumbers.includes(targetNum)) {
+        let nextNum = 1;
+        while (usedNumbers.includes(nextNum)) nextNum++;
+        targetNum = nextNum;
+      }
+
+      const newTitle = `Feature Section ${targetNum}`;
+      const newSection: SectionItem = {
+        id: `features-${Date.now()}`,
+        title: newTitle,
+        isVisible: true,
+      };
+
+      // Insert after last visible feature, or after Hero
+      let insertIndex = -1;
+      for (let i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].isVisible && sections[i].id.startsWith("features")) {
+          insertIndex = i + 1;
+          break;
+        }
+      }
+
+      if (insertIndex === -1) {
+        const heroIndex = sections.findIndex((s) => s.id === "hero");
+        insertIndex = heroIndex !== -1 ? heroIndex + 1 : sections.length - 1;
+      }
+
+      console.log("Inserting new section at index:", insertIndex);
+      const newSections = [...sections];
+      newSections.splice(insertIndex, 0, newSection);
+      setSections(newSections);
+      setIsAddSectionDropdownOpen(false);
+    } else {
+      console.log("No matching condition for:", sectionIdOrType);
+    }
   };
 
   const toggleVisibility = (id: string) => {
@@ -295,273 +346,186 @@ const BuilderSidebar = () => {
   };
 
   // --- Drag and Drop Handlers ---
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    if (sections[index].isLocked) {
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    const section = sections.find((s) => s.id === id);
+    if (!section || section.isLocked) {
       e.preventDefault();
       return;
     }
-    setDraggedItemIndex(index);
+    setDraggedItemId(id);
+    setOriginalSections([...sections]); // Backup state
+
+    // Create a custom drag image or styling if needed, but standard is fine
     e.dataTransfer.effectAllowed = "move";
+
+    // Hack: delay adding 'dragging' class slightly so the drag image isn't invisible
+    // if we were hiding the original element. But here we just ghost it.
   };
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
+  // Centralized Drag Over handler - Drop Indicator Approach
+  const handleContainerDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    const targetSection = sections[index];
-    if (targetSection.isLocked) return;
-    setDragOverIndex(index);
-  };
+    e.dataTransfer.dropEffect = "move"; // Always allow move
 
-  const handleDrop = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
+    if (!draggedItemId) return;
 
-    const targetSection = sections[index];
-    if (targetSection.isLocked) {
-      setDraggedItemIndex(null);
-      setDragOverIndex(null);
+    const container = e.currentTarget as HTMLDivElement;
+
+    // Use all items (including ghost) for geometric calculation to ensure stability
+    // The ghost is scale(0.95) but still occupies space, which is good for targeting.
+    let finalIndex = 0;
+    const allItems = Array.from(container.children).filter(
+      (child) =>
+        child instanceof HTMLElement && child.hasAttribute("data-drag-id"),
+    ) as HTMLElement[];
+
+    for (let i = 0; i < allItems.length; i++) {
+      const child = allItems[i];
+      const rect = child.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      if (e.clientY < midY) {
+        finalIndex = i;
+        break;
+      }
+      if (i === allItems.length - 1) {
+        finalIndex = i + 1;
+      }
+    }
+
+    // Now apply constraints on `finalIndex` relative to `visibleSections` (which aligns with `allItems`).
+    const visibleList = sections.filter((s) => s.isVisible);
+
+    // Correct for the fact that we are moving the item *from* somewhere.
+    // But `finalIndex` is the visual drop target.
+    // If I drop at index `i`, I basically want to be "between i-1 and i".
+
+    const prev = finalIndex > 0 ? visibleList[finalIndex - 1] : null;
+    const next =
+      finalIndex < visibleList.length ? visibleList[finalIndex] : null;
+
+    // We can't put it *between* two locked items.
+
+    // Note: If `prev` OR `next` is the item acting as "dragged"?
+    // If we are dragging valid item X. X overlaps itself.
+    // But we are finding the drop index.
+    // If we drop at index X, we are putting X back at X.
+
+    // We need to check if the DESTINATION is blocked.
+    // The previous implementation used `effectivePrev` to skip the dragged item if it was the neighbor.
+
+    const effectivePrev =
+      prev && prev.id === draggedItemId
+        ? finalIndex > 1
+          ? visibleList[finalIndex - 2]
+          : null
+        : prev;
+    const effectiveNext =
+      next && next.id === draggedItemId
+        ? finalIndex < visibleList.length - 1
+          ? visibleList[finalIndex + 1]
+          : null
+        : next;
+
+    // Constraint: Don't separate two locked items.
+    if (effectivePrev?.isLocked && effectiveNext?.isLocked) {
+      setDropIndicatorIndex(null);
+      return;
+    }
+    // Constraint: Don't go before first locked item (header preservation)
+    if (!effectivePrev && effectiveNext?.isLocked) {
+      setDropIndicatorIndex(null);
+      return;
+    }
+    // Constraint: Don't go after last locked item (footer preservation)
+    if (effectivePrev?.isLocked && !effectiveNext) {
+      setDropIndicatorIndex(null);
       return;
     }
 
-    if (draggedItemIndex === null || draggedItemIndex === index) {
-      setDraggedItemIndex(null);
-      setDragOverIndex(null);
+    setDropIndicatorIndex(finalIndex);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+
+    if (!draggedItemId || dropIndicatorIndex === null) {
+      setDraggedItemId(null);
+      setDropIndicatorIndex(null);
       return;
     }
 
-    const newSections = [...sections];
-    const draggedItem = newSections[draggedItemIndex];
+    // Get visible sections only (drag only affects visible)
+    const visibleSections = sections.filter((s) => s.isVisible);
 
-    // Remove from old
-    newSections.splice(draggedItemIndex, 1);
+    // Remove dragged item from current position
+    const currentIndex = visibleSections.findIndex(
+      (s) => s.id === draggedItemId,
+    );
+    const newVisibleSections = [...visibleSections];
+    const [movedItem] = newVisibleSections.splice(currentIndex, 1);
 
-    // Manual reorder logic
-    const item = sections[draggedItemIndex];
-    const remaining = sections.filter((_, i) => i !== draggedItemIndex);
-    const targetId = sections[index].id;
-    const newTargetIndex = remaining.findIndex((s) => s.id === targetId);
+    // Calculate adjusted insert index
+    // If we dropped *after* the original position, the index shifts by 1 because we removed the item.
+    let adjustedInsertIndex = dropIndicatorIndex;
+    if (currentIndex < dropIndicatorIndex) {
+      adjustedInsertIndex--;
+    }
 
-    remaining.splice(newTargetIndex, 0, item);
-    setSections(remaining);
+    // Insert at new position
+    newVisibleSections.splice(adjustedInsertIndex, 0, movedItem);
 
-    setDraggedItemIndex(null);
-    setDragOverIndex(null);
+    // Merge back with hidden sections
+    // Reconstruct the full list preserving the relative order of visible items
+    // and keeping hidden items where they were approx?
+    // Actually, simple merge:
+    // iterate original `sections`. If visible, take from `newVisibleSections`. If hidden, keep.
+
+    // Better strategy for stability:
+    // Filter out all visible from original.
+    // Re-inject them at appropriate places? No, that's hard.
+
+    // Current strategy implemented previously:
+    // const hiddenSections = sections.filter((s) => !s.isVisible);
+    // const finalSections = [...newVisibleSections, ...hiddenSections];
+    // This moves all visible items to the top and hidden to bottom. That might be annoying.
+
+    // Improved Merge:
+    // Create a map/list.
+    // Construct the new list.
+    // Using `newVisibleSections` order.
+    // Append hidden ones at end? Or try to keep them?
+    // For this Builder, hidden items are in the "Add" menu. They don't have a position in the rendered list.
+    // So appending them at the end of the data array is fine, or keeping them separate.
+    // Appending `...hiddenSections` is acceptable behavior.
+
+    const hiddenSections = sections.filter((s) => !s.isVisible);
+    const finalSections = [...newVisibleSections, ...hiddenSections];
+
+    setSections(finalSections);
+    setOriginalSections(null);
+    setDraggedItemId(null);
+    setDropIndicatorIndex(null);
   };
 
   const handleDragEnd = () => {
-    setDraggedItemIndex(null);
-    setDragOverIndex(null);
-  };
-
-  // --- Secondary Sidebar Content ---
-  const renderConfigContent = () => {
-    if (!activeConfigId) return null;
-
-    const section = sections.find((s) => s.id === activeConfigId);
-    if (!section) return null;
-
-    const configItemStyle = {
-      marginBottom: "20px",
-    };
-
-    const labelStyle = {
-      display: "block",
-      marginBottom: "8px",
-      color: "#ccc",
-      fontSize: "12px",
-    };
-
-    const inputStyle = {
-      width: "100%",
-      background: "#1a1a1a",
-      border: "1px solid rgba(255,255,255,0.1)",
-      color: "white",
-      padding: "8px 12px",
-      borderRadius: "6px",
-      fontSize: "13px",
-      outline: "none",
-    };
-
-    if (activeConfigId === "hero") {
-      return (
-        <>
-          <div style={configItemStyle}>
-            <label style={labelStyle}>Headline</label>
-            <input style={inputStyle} defaultValue="Welcome to Luxe" />
-          </div>
-          <div style={configItemStyle}>
-            <label style={labelStyle}>Subheadline</label>
-            <textarea
-              style={{ ...inputStyle, height: "80px", resize: "none" }}
-              defaultValue="Premium design for modern web applications. Built for speed and flexibility."
-            />
-          </div>
-          <div style={configItemStyle}>
-            <label style={labelStyle}>Button Text</label>
-            <input style={inputStyle} defaultValue="Get Started" />
-          </div>
-          <div style={configItemStyle}>
-            <label style={labelStyle}>Background</label>
-            <select style={inputStyle}>
-              <option>Gradient Mesh</option>
-              <option>Solid Color</option>
-              <option>Image</option>
-            </select>
-          </div>
-        </>
-      );
+    // Restore original order if drag was cancelled
+    if (originalSections) {
+      setSections(originalSections);
     }
-
-    if (activeConfigId.startsWith("features")) {
-      return (
-        <>
-          <div style={configItemStyle}>
-            <label style={labelStyle}>Card Layout</label>
-            <div style={{ display: "flex", gap: "8px" }}>
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: "40px",
-                    height: "24px",
-                    background: i === 2 ? "#987ed2" : "rgba(255,255,255,0.1)",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    border:
-                      i === 2 ? "none" : "1px solid rgba(255,255,255,0.1)",
-                  }}
-                />
-              ))}
-            </div>
-            <div style={{ fontSize: "11px", color: "#666", marginTop: "6px" }}>
-              Grid (3 cols)
-            </div>
-          </div>
-          <div style={configItemStyle}>
-            <label style={labelStyle}>Items</label>
-            <input type="number" style={inputStyle} defaultValue="3" />
-          </div>
-        </>
-      );
-    }
-
-    if (activeConfigId === "nav") {
-      return (
-        <>
-          <div style={configItemStyle}>
-            <label style={labelStyle}>Logo Text</label>
-            <input style={inputStyle} defaultValue="Luxe." />
-          </div>
-          <div style={configItemStyle}>
-            <label style={labelStyle}>Links</label>
-            <div
-              style={{
-                background: "#1a1a1a",
-                padding: "8px",
-                borderRadius: "6px",
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}
-            >
-              {["Home", "Features", "Pricing"].map((l) => (
-                <div
-                  key={l}
-                  style={{
-                    padding: "4px 0",
-                    fontSize: "13px",
-                    color: "#aaa",
-                    borderBottom: "1px solid rgba(255,255,255,0.05)",
-                  }}
-                >
-                  {l}
-                </div>
-              ))}
-              <div
-                style={{
-                  color: "#987ed2",
-                  fontSize: "12px",
-                  marginTop: "8px",
-                  cursor: "pointer",
-                }}
-              >
-                + Add Link
-              </div>
-            </div>
-          </div>
-        </>
-      );
-    }
-
-    // Default
-    return (
-      <div style={{ color: "#666", textAlign: "center", marginTop: "40px" }}>
-        No configuration options available for this section.
-      </div>
-    );
+    setDraggedItemId(null);
+    setDropIndicatorIndex(null);
+    setOriginalSections(null);
   };
 
   return (
     <>
-      <style>{`
-        .builder-sidebar::-webkit-scrollbar {
-          width: 1px;
-        }
-        .builder-sidebar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .builder-sidebar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0);
-          border-radius: 4px;
-        }
-        .builder-sidebar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0);
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-5px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
       <div style={{ display: "flex", height: "100%", position: "relative" }}>
-        <aside
-          ref={sidebarRef}
-          className="builder-sidebar"
-          style={{
-            width: "300px",
-            backgroundColor: "#161616",
-            borderRight: "1px solid rgba(255, 255, 255, 0.05)",
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-            zIndex: 10,
-            overflowY: "auto",
-            userSelect: "none",
-            position: "relative",
-          }}
-        >
+        <aside ref={sidebarRef} className="builder-sidebar">
           {/* Header */}
-          <div
-            ref={headerRef}
-            style={{
-              padding: "20px 20px 10px 20px",
-              borderBottom: "1px solid rgba(255,255,255,0.05)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
+          <div ref={headerRef} className="sidebar-header">
+            <div className="sidebar-header-content">
               {/* Editable Title */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  flex: 1,
-                  maxWidth: "140px",
-                  height: "24px",
-                }}
-              >
+              <div className="title-container">
                 {isEditingTitle ? (
                   <input
                     ref={titleInputRef}
@@ -569,72 +533,29 @@ const BuilderSidebar = () => {
                     onChange={onTitleChange}
                     onBlur={onTitleBlur}
                     onKeyDown={handleTitleKeyDown}
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      borderBottom: "1px solid rgba(255,255,255,0.05)",
-                      color: "white",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      width: "100%",
-                      height: "24px",
-                      padding: "0",
-                      margin: "0",
-                      outline: "none",
-                      fontFamily: "inherit",
-                      lineHeight: "24px",
-                    }}
+                    className="title-input"
                   />
                 ) : (
                   <div
-                    onDoubleClick={handleTitleDoubleClick}
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      color: "white",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      height: "24px",
-                      width: "100%",
-                      borderBottom: "1px solid transparent",
-                      lineHeight: "24px",
-                    }}
-                    title="Double click to edit"
+                    onClick={handleTitleDoubleClick}
+                    className="title-display"
+                    title="Click to edit"
                   >
                     {projectTitle}
                     <Edit2
                       size={10}
                       color="#666"
                       style={{ cursor: "pointer", flexShrink: 0 }}
-                      onClick={() => setIsEditingTitle(true)}
                     />
                   </div>
                 )}
               </div>
 
               {/* Page Selector */}
-              <div style={{ position: "relative" }}>
+              <div className="page-selector">
                 <div
                   onClick={() => setIsPageDropdownOpen(!isPageDropdownOpen)}
-                  style={{
-                    fontSize: "13px",
-                    color: "rgba(255,255,255,0.7)",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    marginTop: "1px",
-                    background: "rgba(255, 255, 255, 0.05)",
-                    padding: "6px 11px",
-                    borderRadius: "8px",
-                    border: "1px solid rgba(255,255,255,0.05)",
-                    transition: "all 0.2s ease",
-                  }}
+                  className="page-selector-button"
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.background =
                       "rgba(255,255,255,0.08)")
@@ -657,25 +578,7 @@ const BuilderSidebar = () => {
                 </div>
 
                 {isPageDropdownOpen && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "125%",
-                      right: 0,
-                      background: "#1a1a1a",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      borderRadius: "12px",
-                      padding: "6px",
-                      zIndex: 100,
-                      width: "140px",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "2px",
-                      transformOrigin: "top right",
-                      animation: "fadeIn 0.2s ease",
-                    }}
-                  >
+                  <div className="page-selector-dropdown">
                     {pages.map((page) => (
                       <div
                         key={page}
@@ -696,20 +599,13 @@ const BuilderSidebar = () => {
                           e.currentTarget.style.color =
                             page === activePage ? "white" : "#888";
                         }}
+                        className="page-item"
                         style={{
-                          padding: "8px 12px",
-                          fontSize: "13px",
-                          color: page === activePage ? "white" : "#888",
-                          cursor: "pointer",
                           background:
                             page === activePage
                               ? "rgba(255,255,255,0.05)"
                               : "transparent",
-                          borderRadius: "6px",
-                          transition: "all 0.1s ease",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          color: page === activePage ? "white" : "#888",
                         }}
                       >
                         Page {page}
@@ -735,20 +631,7 @@ const BuilderSidebar = () => {
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.background = "transparent")
                         }
-                        style={{
-                          padding: "8px 12px",
-                          fontSize: "12px",
-                          color: "#987ed2",
-                          borderTop: "1px solid rgba(255,255,255,0.05)",
-                          marginTop: "4px",
-                          paddingTop: "8px",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          borderRadius: "6px",
-                          transition: "background 0.1s ease",
-                        }}
+                        className="add-page-button"
                       >
                         <Plus size={12} /> Add Page
                       </div>
@@ -772,36 +655,23 @@ const BuilderSidebar = () => {
             isOpen={expandedSections.includes("start")}
             onToggle={toggleSection}
           >
-            <button
-              style={{
-                width: "100%",
-                padding: "10px 12px",
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.05)",
-                color: "rgba(255,255,255,0.5)",
-                borderRadius: "8px",
-                cursor: "pointer",
-                fontSize: "13px",
-                fontWeight: 500,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-                e.currentTarget.style.color = "white";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-                e.currentTarget.style.color = "rgba(255,255,255,0.5)";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
-              }}
-            >
-              Randomize Layout
-            </button>
+            <div style={{ padding: "0 4px" }}>
+              <button
+                className="randomize-button"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+                  e.currentTarget.style.color = "white";
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                  e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
+                }}
+              >
+                Randomize Layout
+              </button>
+            </div>
           </Accordion>
 
           {/* 2. Sections */}
@@ -811,112 +681,219 @@ const BuilderSidebar = () => {
             isOpen={expandedSections.includes("sections")}
             onToggle={toggleSection}
             extraAction={
-              <Plus
-                size={16}
-                color="#666"
-                style={{ cursor: "pointer", opacity: 0.8 }}
-                onClick={handleAddFeatureSection}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
-              />
+              expandedSections.includes("sections") ? (
+                <div style={{ position: "relative" }}>
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsAddSectionDropdownOpen(!isAddSectionDropdownOpen);
+                    }}
+                    data-prevent-outside-close="true" // prevent outside click handler from closing immediately
+                    style={{
+                      cursor: "pointer",
+                      borderRadius: "4px",
+                      opacity: 0.7,
+                      transition: "all 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background =
+                        "rgba(255,255,255,0.05)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = "transparent")
+                    }
+                  >
+                    <Plus size={18} color="#aaa" />
+                  </div>
+
+                  {isAddSectionDropdownOpen && (
+                    <div
+                      ref={addSectionDropdownRef}
+                      className="add-section-dropdown"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="add-section-header">ADD SECTION</div>
+
+                      {/* Hidden Sections (Restore) */}
+                      {sections
+                        .filter((s) => !s.isVisible)
+                        .map((s) => (
+                          <div
+                            key={s.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddSection(s.id);
+                            }}
+                            className="add-section-item"
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background =
+                                "rgba(255,255,255,0.05)";
+                              e.currentTarget.style.color = "white";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = "transparent";
+                              e.currentTarget.style.color = "#ccc";
+                            }}
+                          >
+                            <Plus size={12} /> {s.title}
+                          </div>
+                        ))}
+
+                      {/* Feature Sections */}
+                      {[1, 2, 3].map((num) => {
+                        const title = `Feature Section ${num}`;
+                        const exists = sections.some((s) => s.title === title);
+                        if (!exists) {
+                          return (
+                            <div
+                              key={title}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddSection(title);
+                              }}
+                              className="add-section-item"
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background =
+                                  "rgba(255,255,255,0.05)";
+                                e.currentTarget.style.color = "white";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background =
+                                  "transparent";
+                                e.currentTarget.style.color = "#ccc";
+                              }}
+                            >
+                              <Plus size={12} /> {title}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                    </div>
+                  )}
+                </div>
+              ) : null
             }
           >
             <div
-              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+              className={`section-list ${draggedItemId ? "dragging" : ""}`}
+              onDragOver={handleContainerDragOver} // Use new container handler
+              onDrop={handleDrop}
             >
-              {sections.map((section, index) => (
-                <React.Fragment key={section.id}>
-                  {/* Drop Indicator */}
-                  {dragOverIndex === index && !section.isLocked && (
-                    <div
-                      style={{
-                        height: "2px",
-                        background: "#987ed2",
-                        borderRadius: "1px",
-                        margin: "2px 0",
-                        width: "100%",
-                      }}
-                    />
-                  )}
-
-                  <div
-                    draggable={!section.isLocked}
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragOver={(e) => handleDragOver(e, index)}
-                    onDrop={(e) => handleDrop(e, index)}
-                    onDragEnd={handleDragEnd}
-                    onClick={(e) => handleSectionClick(e, section)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 12px",
-                      background:
-                        activeConfigId === section.id
-                          ? "rgba(152, 126, 210, 0.1)"
-                          : "#222",
-                      borderRadius: "8px",
-                      opacity: section.isVisible ? 1 : 0.5,
-                      border:
-                        activeConfigId === section.id
-                          ? "1px solid rgba(152, 126, 210, 0.3)"
-                          : "1px solid rgba(255,255,255,0.03)",
-                      cursor: !section.isVisible
-                        ? "not-allowed"
-                        : section.isLocked
-                          ? "default"
-                          : "grab",
-                      transition: "all 0.2s cubic-bezier(0.2, 0, 0, 1)",
-                      height: "36px",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    {section.isLocked ? (
-                      <Lock
-                        size={12}
-                        color="#444"
-                        style={{ marginRight: "12px" }}
-                      />
-                    ) : (
-                      <GripVertical
-                        size={12}
-                        color="#555"
-                        style={{ marginRight: "12px", cursor: "grab" }}
+              {sections
+                .filter((s) => s.isVisible) // Only show visible
+                .map((section, index) => (
+                  <React.Fragment key={section.id}>
+                    {/* Drop indicator line */}
+                    {dropIndicatorIndex === index && draggedItemId && (
+                      <div
+                        style={{
+                          height: "2px",
+                          background:
+                            "linear-gradient(90deg, transparent, #987ed2, transparent)",
+                          marginBottom: "8px",
+                          boxShadow: "0 0 8px rgba(152, 126, 210, 0.6)",
+                          borderRadius: "2px",
+                        }}
                       />
                     )}
-
-                    <span
+                    <div
+                      data-id={section.id}
+                      data-drag-id={section.id} // Add explicit drag ID for container handler
+                      draggable={!section.isLocked}
+                      onDragStart={(e) => handleDragStart(e, section.id)}
+                      onDragEnd={handleDragEnd}
+                      onClick={(e) => handleSectionClick(e, section)}
+                      data-prevent-outside-close="true" // Prevent secondary sidebar flickering/closing when clicking items
+                      className="section-item"
                       style={{
-                        fontSize: "13px",
-                        color: "white",
-                        flex: 1,
-                        fontWeight: 400,
+                        background:
+                          activeConfigId === section.id
+                            ? "rgba(152, 126, 210, 0.1)"
+                            : "#222",
+                        opacity:
+                          draggedItemId === section.id
+                            ? 0
+                            : section.isVisible
+                              ? 1
+                              : 0.5, // Ghost effect
+                        border:
+                          activeConfigId === section.id
+                            ? "1px solid rgba(152, 126, 210, 0.3)"
+                            : "1px solid rgba(255,255,255,0.03)",
+                        cursor: !section.isVisible
+                          ? "not-allowed"
+                          : section.isLocked
+                            ? "default"
+                            : "default", // Row is default, handle is grab
+                        transform:
+                          draggedItemId === section.id
+                            ? "scale(0.95)"
+                            : "scale(1)",
                       }}
                     >
-                      {section.title}
-                    </span>
+                      {section.isLocked ? (
+                        <Lock
+                          size={12}
+                          color="#444"
+                          style={{ marginRight: "12px" }}
+                        />
+                      ) : (
+                        <GripVertical
+                          size={12}
+                          color="#555"
+                          style={{ marginRight: "12px", cursor: "grab" }}
+                        />
+                      )}
 
-                    {!section.isLocked && (
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleVisibility(section.id);
-                        }}
+                      <span
                         style={{
-                          cursor: "pointer",
-                          padding: "4px",
-                          display: "flex",
+                          fontSize: "13px",
+                          color: "white",
+                          flex: 1,
+                          fontWeight: 400,
                         }}
                       >
-                        {section.isVisible ? (
-                          <Eye size={14} color="#666" />
-                        ) : (
-                          <EyeOff size={14} color="#444" />
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </React.Fragment>
-              ))}
+                        {section.title}
+                      </span>
+
+                      {!section.isLocked && (
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleVisibility(section.id);
+                          }}
+                          style={{
+                            cursor: "pointer",
+                            padding: "4px",
+                            display: "flex",
+                          }}
+                        >
+                          <Trash2 size={14} color="#666" />
+                        </div>
+                      )}
+                    </div>
+                  </React.Fragment>
+                ))}
+
+              {/* Drop indicator at the end */}
+              {dropIndicatorIndex ===
+                sections.filter((s) => s.isVisible).length &&
+                draggedItemId && (
+                  <div
+                    style={{
+                      height: "2px",
+                      background:
+                        "linear-gradient(90deg, transparent, #987ed2, transparent)",
+                      marginTop: "-2px",
+                      boxShadow: "0 0 8px rgba(152, 126, 210, 0.6)",
+                      borderRadius: "2px",
+                    }}
+                  />
+                )}
             </div>
           </Accordion>
 
@@ -927,132 +904,80 @@ const BuilderSidebar = () => {
             isOpen={expandedSections.includes("global")}
             onToggle={toggleSection}
           >
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
-            >
+            <div className="global-style-container">
               {/* Color Palette */}
-              <div>
-                <div
-                  style={{
-                    fontSize: "12px",
-                    color: "#888",
-                    marginBottom: "8px",
-                  }}
-                >
-                  Color Palette
+              <div className="style-section">
+                <div className="global-style-label">Color Palette</div>
+                <div className="palette-row">
+                  <span className="palette-label">Primary</span>
+                  <div
+                    className="palette-swatch"
+                    style={{ background: "#FFFFFF" }}
+                  />
                 </div>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  {["#FFFFFF", "#987ed2", "#222222", "#FF5555"].map((c) => (
-                    <div
-                      key={c}
-                      style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: c,
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        cursor: "pointer",
-                      }}
-                    />
-                  ))}
+                <div className="palette-row">
+                  <span className="palette-label">Secondary</span>
+                  <div
+                    className="palette-swatch"
+                    style={{ background: "#555555" }}
+                  />
+                </div>
+                <div className="palette-row">
+                  <span className="palette-label">Accent</span>
+                  <div
+                    className="palette-swatch"
+                    style={{ background: "#00FFFF" }}
+                  />
                 </div>
               </div>
 
               {/* Font Pairings */}
-              <div>
-                <div
-                  style={{
-                    fontSize: "12px",
-                    color: "#888",
-                    marginBottom: "8px",
-                  }}
-                >
-                  Font Pairings
+              <div className="style-section">
+                <div className="global-style-label">Font Pairings</div>
+                {/* Placeholder for Font Pairing UI as seen in image (implied dropdown/selection) */}
+                <div className="font-pairing-preview">
+                  <span className="font-primary">Nueue Montreal</span>
+                  <span className="font-divider">/</span>
+                  <span className="font-secondary">Garamond</span>
                 </div>
-                <select
-                  style={{
-                    width: "100%",
-                    background: "#222",
-                    border: "1px solid #333",
-                    color: "white",
-                    padding: "6px",
-                    borderRadius: "4px",
-                    fontSize: "12px",
-                  }}
-                >
-                  <option>Inter / Roboto</option>
-                  <option>Satoshi / Instrument</option>
-                </select>
               </div>
 
               {/* Border Radius */}
-              <div>
-                <div
-                  style={{
-                    fontSize: "12px",
-                    color: "#888",
-                    marginBottom: "8px",
-                  }}
-                >
-                  Border Radius
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    background: "#222",
-                    padding: "4px",
-                    borderRadius: "4px",
-                  }}
-                >
-                  {["Sharp", "Soft", "Rounded"].map((r) => (
-                    <div
-                      key={r}
-                      style={{
-                        fontSize: "11px",
-                        color: r === "Rounded" ? "white" : "#666",
-                        padding: "4px 8px",
-                        cursor: "pointer",
-                        background: r === "Rounded" ? "#333" : "transparent",
-                        borderRadius: "2px",
-                      }}
-                    >
-                      {r}
+              <div className="style-section">
+                <div className="global-style-label">Border Radius</div>
+                <div className="checkbox-list">
+                  <div className="checkbox-row">
+                    <span>Sharp</span>
+                    <div className="custom-checkbox" />
+                  </div>
+                  <div className="checkbox-row">
+                    <span>Soft</span>
+                    <div className="custom-checkbox" />
+                  </div>
+                  <div className="checkbox-row">
+                    <span>Rounded</span>
+                    <div className="custom-checkbox checked">
+                      <div className="checkbox-inner" />
                     </div>
-                  ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Button Style */}
+              <div className="style-section">
+                <div className="global-style-label">Button Style</div>
+                <div className="segmented-control">
+                  <div className="segment-option">Filled</div>
+                  <div className="segment-option active">Outlined</div>
                 </div>
               </div>
 
               {/* Theme */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div style={{ fontSize: "12px", color: "#888" }}>Dark Mode</div>
-                <div
-                  style={{
-                    width: "32px",
-                    height: "18px",
-                    background: "#987ed2",
-                    borderRadius: "10px",
-                    position: "relative",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "14px",
-                      height: "14px",
-                      background: "white",
-                      borderRadius: "50%",
-                      position: "absolute",
-                      top: "2px",
-                      right: "2px",
-                    }}
-                  />
+              <div className="style-section">
+                <div className="global-style-label">Theme</div>
+                <div className="segmented-control">
+                  <div className="segment-option">Light</div>
+                  <div className="segment-option active">Dark</div>
                 </div>
               </div>
             </div>
@@ -1068,21 +993,11 @@ const BuilderSidebar = () => {
               <Edit2 size={12} color="#666" style={{ cursor: "pointer" }} />
             }
           >
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-            >
+            <div className="content-list">
               {sections
                 .filter((s) => s.isVisible)
                 .map((section) => (
-                  <div
-                    key={section.id}
-                    style={{
-                      fontSize: "13px",
-                      color: "#aaa",
-                      paddingLeft: "10px",
-                      borderLeft: "2px solid #333",
-                    }}
-                  >
+                  <div key={section.id} className="content-item">
                     {section.title}
                   </div>
                 ))}
@@ -1091,55 +1006,12 @@ const BuilderSidebar = () => {
         </aside>
 
         {/* Secondary Configuration Sidebar (Always Rendered, Animated) */}
-        <div
-          ref={secondarySidebarRef}
-          style={{
-            position: "absolute",
-            left: "300px",
-            top: 0,
-            bottom: 0,
-            width: "280px",
-            backgroundColor: "#161616",
-            borderRight: "1px solid rgba(255, 255, 255, 0.05)",
-            zIndex: 20,
-            display: "flex",
-            flexDirection: "column",
-            overflowY: "auto",
-            transform: activeConfigId ? "translateX(0)" : "translateX(-10px)",
-            opacity: activeConfigId ? 1 : 0,
-            pointerEvents: activeConfigId ? "auto" : "none",
-            transition:
-              "transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease",
-            boxShadow: activeConfigId ? "5px 0 30px rgba(0,0,0,0.3)" : "none",
-          }}
-        >
-          <div
-            style={{
-              padding: "20px",
-              borderBottom: "1px solid rgba(255,255,255,0.05)",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span style={{ color: "white", fontWeight: 500 }}>
-              {sections.find((s) => s.id === activeConfigId)?.title}
-            </span>
-            <div
-              onClick={() => setActiveConfigId(null)}
-              style={{ cursor: "pointer", padding: "4px" }}
-            >
-              <Plus
-                size={18}
-                color="#666"
-                style={{ transform: "rotate(45deg)" }}
-              />
-            </div>
-          </div>
-
-          <div style={{ padding: "20px", color: "#888", fontSize: "13px" }}>
-            {renderConfigContent()}
-          </div>
+        <div ref={secondarySidebarWrapperRef}>
+          <BuilderSecondarySidebar
+            activeConfigId={activeConfigId}
+            setActiveConfigId={setActiveConfigId}
+            sections={sections}
+          />
         </div>
       </div>
     </>

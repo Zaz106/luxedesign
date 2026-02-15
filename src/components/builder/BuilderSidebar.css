@@ -1,0 +1,438 @@
+/* BuilderSidebar.css */
+.builder-sidebar {
+  width: 300px;
+  background-color: #161616;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  z-index: 10;
+  overflow-y: auto;
+  user-select: none;
+  position: relative;
+}
+
+.builder-sidebar::-webkit-scrollbar {
+  width: 1px;
+}
+.builder-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.builder-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0);
+  border-radius: 4px;
+}
+.builder-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-header {
+  padding: 20px 20px 10px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 140px;
+  height: 24px;
+}
+
+.title-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  height: 24px;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  font-family: inherit;
+  line-height: 24px;
+}
+
+.title-display {
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 24px;
+  width: 100%;
+  border-bottom: 1px solid transparent;
+  line-height: 24px;
+}
+
+.page-selector {
+  position: relative;
+}
+
+.page-selector-button {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.page-selector-dropdown {
+  position: absolute;
+  top: 125%;
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 6px;
+  z-index: 100;
+  width: 140px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transform-origin: top right;
+  animation: fadeIn 0.2s ease;
+}
+
+.page-item {
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.1s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-page-button {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #987ed2;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+  padding-top: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px;
+  transition: background 0.1s ease;
+}
+
+.search-container {
+  padding: 15px 20px;
+}
+
+.search-wrapper {
+  background: #222;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  gap: 8px;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+
+.accordion-item {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.accordion-header {
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion-title-wrapper {
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.accordion-title {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  transition: color 0.2s ease;
+}
+
+.accordion-content-wrapper {
+  display: grid;
+  transition: grid-template-rows 0.3s ease-out;
+}
+
+.accordion-content-inner {
+  overflow: hidden;
+}
+
+.accordion-content {
+  padding: 0 20px 20px 20px;
+  transition: opacity 0.2s ease-in-out 0.1s;
+}
+
+.randomize-button {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.section-list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  padding-bottom: 14px;
+}
+
+/* Force consistent cursor during drag to prevent flickering */
+.section-list.dragging {
+  cursor: grabbing !important;
+}
+
+.section-list.dragging * {
+  cursor: grabbing !important;
+}
+
+/* Prevent child elements from interfering with drag events */
+.section-list.dragging .section-item * {
+  pointer-events: none;
+}
+
+.section-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  height: 36px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.section-item:last-child {
+  margin-bottom: 0;
+}
+
+.add-section-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px;
+  z-index: 100;
+  width: 130px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s ease;
+  margin-top: 4px;
+}
+
+.add-section-header {
+  font-size: 11px;
+  color: #666;
+  padding: 6px 8px;
+  font-weight: 600;
+}
+
+.add-section-item {
+  padding: 6px;
+  font-size: 13px;
+  color: #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Global Styles Section */
+.global-style-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px 4px;
+}
+
+.style-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.global-style-label {
+  font-size: 13px;
+  color: #fff;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+/* Palette Rows */
+.palette-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.palette-label {
+  font-size: 13px;
+  color: #888;
+}
+
+.palette-swatch {
+  width: 20px;
+  height: 20px;
+  /* border-radius: 4px; */ /* Reference image shows sharp squares? Or slightly rounded. Using sharp for now as per "squares" description */
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Font Pairing */
+.font-pairing-preview {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #aaa;
+  cursor: pointer;
+}
+.font-primary {
+  color: #fff;
+}
+.font-divider {
+  color: #444;
+}
+
+/* Checkbox List */
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.checkbox-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+}
+
+.custom-checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #444;
+  /* border-radius: 2px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-checkbox.checked {
+  border-color: #fff;
+  background-color: transparent;
+}
+
+.checkbox-inner {
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+}
+
+/* Segmented Control (Button Style, Theme) */
+.segmented-control {
+  display: flex;
+  background-color: #1a1a1a;
+  border-radius: 20px; /* Fully rounded container */
+  padding: 2px;
+  height: 32px;
+  border: 1px solid #333;
+}
+
+.segment-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.segment-option.active {
+  background-color: #000;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.content-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.content-item {
+  font-size: 13px;
+  color: #aaa;
+  padding-left: 10px;
+  border-left: 2px solid #333;
+}

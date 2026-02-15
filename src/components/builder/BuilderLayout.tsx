@@ -2,27 +2,13 @@ import React from "react";
 import BuilderHeader from "./BuilderHeader";
 import BuilderSidebar from "./BuilderSidebar";
 import BuilderCanvas from "./BuilderCanvas";
+import "./BuilderLayout.css";
 
 const BuilderLayout = () => {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        width: "100vw",
-        overflow: "hidden",
-        backgroundColor: "var(--background)",
-      }}
-    >
+    <div className="builder-layout">
       <BuilderHeader />
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          overflow: "hidden",
-        }}
-      >
+      <div className="builder-main">
         <BuilderSidebar />
         <BuilderCanvas />
       </div>
