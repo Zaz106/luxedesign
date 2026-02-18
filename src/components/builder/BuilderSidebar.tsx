@@ -779,10 +779,23 @@ const BuilderSidebar = () => {
             }
           >
             <div
-              className={`section-list ${draggedItemId ? "dragging" : ""}`}
-              onDragOver={handleContainerDragOver} // Use new container handler
-              onDrop={handleDrop}
-            >
+                className={`section-list ${draggedItemId ? "dragging" : ""}`}
+                onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  try {
+                    e.dataTransfer.dropEffect = "move";
+                  } catch (err) {
+                    /* some browsers may restrict dataTransfer access */
+                  }
+                  handleContainerDragOver(e);
+                }}
+                onDrop={(e: React.DragEvent<HTMLDivElement>) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleDrop(e);
+                }}
+              >
               {sections
                 .filter((s) => s.isVisible) // Only show visible
                 .map((section, index) => (
@@ -791,6 +804,7 @@ const BuilderSidebar = () => {
                     {dropIndicatorIndex === index && draggedItemId && (
                       <div
                         style={{
+                          pointerEvents: "none",
                           height: "2px",
                           background:
                             "linear-gradient(90deg, transparent, #987ed2, transparent)",
@@ -827,8 +841,10 @@ const BuilderSidebar = () => {
                         cursor: !section.isVisible
                           ? "not-allowed"
                           : section.isLocked
-                            ? "default"
-                            : "default", // Row is default, handle is grab
+                            ? "not-allowed"
+                            : draggedItemId === section.id
+                              ? "grabbing"
+                              : "grab",
                         transform:
                           draggedItemId === section.id
                             ? "scale(0.95)"
@@ -885,6 +901,7 @@ const BuilderSidebar = () => {
                 draggedItemId && (
                   <div
                     style={{
+                      pointerEvents: "none",
                       height: "2px",
                       background:
                         "linear-gradient(90deg, transparent, #987ed2, transparent)",
