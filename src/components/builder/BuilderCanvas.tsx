@@ -10,8 +10,14 @@ const BuilderCanvas = () => {
   const [viewState, setViewState] = useState({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
+  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
   const sectionClickedRef = useRef(false);
   const { pageSections, activePage, activeConfigId, setActiveConfigId } = useBuilder();
+
+  // Touch tracking refs
+  const touchesRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const lastPinchDistRef = useRef<number | null>(null);
+  const lastPinchCenterRef = useRef<{ x: number; y: number } | null>(null);
 
   const sections = pageSections[activePage] ?? [];
 
@@ -96,11 +102,132 @@ const BuilderCanvas = () => {
     };
   }, []); // Empty dependency array, state accessed via ref
 
+  // ---- Touch handlers for pinch-to-zoom and faster panning ----
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const getTouchDist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      Math.hypot(a.x - b.x, a.y - b.y);
+
+    const getTouchCenter = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
+      x: (a.x + b.x) / 2,
+      y: (a.y + b.y) / 2,
+    });
+
+    const onTouchStart = (e: TouchEvent) => {
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const t = e.changedTouches[i];
+        touchesRef.current.set(t.identifier, { x: t.clientX, y: t.clientY });
+      }
+      if (touchesRef.current.size === 1) {
+        const [first] = touchesRef.current.values();
+        startPosRef.current = { x: first.x, y: first.y };
+        lastPosRef.current = { x: first.x, y: first.y };
+      }
+      if (touchesRef.current.size === 2) {
+        const pts = [...touchesRef.current.values()];
+        lastPinchDistRef.current = getTouchDist(pts[0], pts[1]);
+        lastPinchCenterRef.current = getTouchCenter(pts[0], pts[1]);
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault(); // prevent browser scroll/zoom
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const t = e.changedTouches[i];
+        touchesRef.current.set(t.identifier, { x: t.clientX, y: t.clientY });
+      }
+
+      if (touchesRef.current.size === 2) {
+        // Pinch zoom
+        const pts = [...touchesRef.current.values()];
+        const dist = getTouchDist(pts[0], pts[1]);
+        const center = getTouchCenter(pts[0], pts[1]);
+
+        if (lastPinchDistRef.current !== null && lastPinchCenterRef.current !== null) {
+          const scaleFactor = dist / lastPinchDistRef.current;
+          const { x, y, scale } = viewStateRef.current;
+          const rect = container.getBoundingClientRect();
+          const cx = center.x - rect.left;
+          const cy = center.y - rect.top;
+
+          const newScale = Math.min(Math.max(scale * scaleFactor, minZoom), maxZoom);
+          const newX = cx - (cx - x) * (newScale / scale) + (center.x - lastPinchCenterRef.current.x);
+          const newY = cy - (cy - y) * (newScale / scale) + (center.y - lastPinchCenterRef.current.y);
+
+          setViewState({ x: newX, y: newY, scale: newScale });
+        }
+        lastPinchDistRef.current = dist;
+        lastPinchCenterRef.current = center;
+      } else if (touchesRef.current.size === 1 && lastPosRef.current) {
+        // Single finger pan
+        const [current] = touchesRef.current.values();
+        const dx = current.x - lastPosRef.current.x;
+        const dy = current.y - lastPosRef.current.y;
+        lastPosRef.current = { x: current.x, y: current.y };
+        setViewState((prev) => ({ ...prev, x: prev.x + dx, y: prev.y + dy }));
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      // Check for tap on section before removing touches
+      if (touchesRef.current.size === 1 && startPosRef.current) {
+        const [endPos] = touchesRef.current.values();
+        const dx = endPos.x - startPosRef.current.x;
+        const dy = endPos.y - startPosRef.current.y;
+        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+          // This was a tap — find the section under the finger
+          const el = document.elementFromPoint(endPos.x, endPos.y);
+          const sectionWrapper = el?.closest("[data-canvas-section-id]");
+          if (sectionWrapper) {
+            const sectionId = sectionWrapper.getAttribute("data-canvas-section-id");
+            if (sectionId) {
+              sectionClickedRef.current = true;
+              const current = viewStateRef.current; // use ref for latest
+              setActiveConfigId(activeConfigId === sectionId ? null : sectionId);
+            }
+          }
+        }
+      }
+
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        touchesRef.current.delete(e.changedTouches[i].identifier);
+      }
+      if (touchesRef.current.size < 2) {
+        lastPinchDistRef.current = null;
+        lastPinchCenterRef.current = null;
+      }
+      if (touchesRef.current.size === 1) {
+        const [remaining] = touchesRef.current.values();
+        lastPosRef.current = { x: remaining.x, y: remaining.y };
+      }
+      if (touchesRef.current.size === 0) {
+        startPosRef.current = null;
+        lastPosRef.current = null;
+      }
+    };
+
+    container.addEventListener("touchstart", onTouchStart, { passive: false });
+    container.addEventListener("touchmove", onTouchMove, { passive: false });
+    container.addEventListener("touchend", onTouchEnd);
+    container.addEventListener("touchcancel", onTouchEnd);
+
+    return () => {
+      container.removeEventListener("touchstart", onTouchStart);
+      container.removeEventListener("touchmove", onTouchMove);
+      container.removeEventListener("touchend", onTouchEnd);
+      container.removeEventListener("touchcancel", onTouchEnd);
+    };
+  }, [activeConfigId]);
+
   const handlePointerDown = (e: React.PointerEvent) => {
-    // Middle mouse (button 1) only, or Space+Left (not implemented yet).
+    // Skip touch events — handled by touch listeners above
+    if (e.pointerType === "touch") return;
     if (e.button === 1 || e.button === 0) {
       e.preventDefault();
       startPosRef.current = { x: e.clientX, y: e.clientY };
+      lastPosRef.current = { x: e.clientX, y: e.clientY };
       setIsPanning(true);
       if (containerRef.current) {
         containerRef.current.setPointerCapture(e.pointerId);
@@ -109,16 +236,22 @@ const BuilderCanvas = () => {
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isPanning) return;
+    if (e.pointerType === "touch") return;
+    if (!isPanning || !lastPosRef.current) return;
+
+    const dx = e.clientX - lastPosRef.current.x;
+    const dy = e.clientY - lastPosRef.current.y;
+    lastPosRef.current = { x: e.clientX, y: e.clientY };
 
     setViewState((prev) => ({
       ...prev,
-      x: prev.x + e.movementX,
-      y: prev.y + e.movementY,
+      x: prev.x + dx,
+      y: prev.y + dy,
     }));
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch") return;
     setIsPanning(false);
     if (containerRef.current) {
       containerRef.current.releasePointerCapture(e.pointerId);
@@ -140,6 +273,7 @@ const BuilderCanvas = () => {
       }
     }
     startPosRef.current = null;
+    lastPosRef.current = null;
   };
 
   const resetView = () => {

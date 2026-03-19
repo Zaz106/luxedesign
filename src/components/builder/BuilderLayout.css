@@ -57,10 +57,10 @@
   .sidebar-drawer {
     /* Full width on mobile */
     right: 0;
-    top: 50px;
+    top: 56px;
   }
 
   .sidebar-overlay {
-    top: 50px;
+    top: 56px;
   }
 }

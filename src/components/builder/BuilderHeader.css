@@ -74,8 +74,8 @@
 /* ===== Mobile ===== */
 @media (max-width: 640px) {
   .builder-header {
-    height: 50px;
-    padding: 0 14px;
+    height: 56px;
+    padding: 0 16px;
   }
 
   .back-button-label {
