@@ -40,11 +40,9 @@ const CmsField: React.FC<{
       <label
         style={{
           display: "block",
-          fontSize: 11,
-          color: "rgba(255,255,255,0.35)",
+          fontSize: 12,
+          color: "rgba(255,255,255,0.45)",
           marginBottom: 5,
-          textTransform: "uppercase",
-          letterSpacing: 0.5,
           fontWeight: 500,
         }}
       >
@@ -79,47 +77,47 @@ const FontItem: React.FC<{
 }> = ({ fontName, category, isActive, onClick }) => (
   <div
     onClick={onClick}
+    className="font-item"
     style={{
-      padding: "10px 12px",
-      borderRadius: 6,
       border: isActive
-        ? "1px solid rgba(255,255,255,0.25)"
+        ? "1px solid rgba(152, 126, 210, 0.4)"
         : "1px solid rgba(255,255,255,0.06)",
-      cursor: "pointer",
-      background: isActive ? "rgba(255,255,255,0.05)" : "transparent",
-      transition: "border-color 0.15s, background 0.15s",
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
+      background: isActive ? "rgba(152, 126, 210, 0.08)" : "transparent",
     }}
   >
-    <div>
-      <div
-        style={{
-          fontFamily: `"${fontName}", ${category}`,
-          fontSize: 16,
-          fontWeight: 500,
-          color: isActive ? "#fff" : "rgba(255,255,255,0.6)",
-          lineHeight: 1.3,
-        }}
-      >
-        {fontName}
-      </div>
-      <div
-        style={{
-          fontFamily: `"${fontName}", ${category}`,
-          fontSize: 12,
-          color: "rgba(255,255,255,0.25)",
-          marginTop: 2,
-        }}
-      >
-        Aa Bb Cc Dd Ee
-      </div>
+    <div
+      style={{
+        fontFamily: `"${fontName}", ${category}`,
+        fontSize: 20,
+        fontWeight: 500,
+        color: isActive ? "#fff" : "rgba(255,255,255,0.55)",
+        lineHeight: 1.4,
+        letterSpacing: -0.3,
+      }}
+    >
+      {fontName}
+    </div>
+    <div
+      style={{
+        fontFamily: `"${fontName}", ${category}`,
+        fontSize: 13,
+        color: isActive ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.2)",
+        marginTop: 2,
+      }}
+    >
+      The quick brown fox jumps over the lazy dog
     </div>
     {isActive && (
-      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>
+      <div
+        style={{
+          marginTop: 6,
+          fontSize: 11,
+          color: "#987ed2",
+          fontWeight: 500,
+        }}
+      >
         Active
-      </span>
+      </div>
     )}
   </div>
 );
@@ -179,22 +177,14 @@ const BuilderSecondarySidebar: React.FC<BuilderSecondarySidebarProps> = ({
 
   /* ── Font pairing view ─────────────────────────────────────── */
   const renderFontPairing = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
       {/* Heading font */}
       <div>
-        <div
-          style={{
-            fontSize: 11,
-            color: "rgba(255,255,255,0.35)",
-            textTransform: "uppercase",
-            letterSpacing: 0.5,
-            fontWeight: 500,
-            marginBottom: 10,
-          }}
-        >
-          Heading Font
+        <div className="font-section-label">
+          <span>Heading Font</span>
+          <span className="font-section-active">{globalStyles.fonts.heading}</span>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {GOOGLE_FONTS.map((f) => (
             <FontItem
               key={f.name}
@@ -209,19 +199,11 @@ const BuilderSecondarySidebar: React.FC<BuilderSecondarySidebarProps> = ({
 
       {/* Body font */}
       <div>
-        <div
-          style={{
-            fontSize: 11,
-            color: "rgba(255,255,255,0.35)",
-            textTransform: "uppercase",
-            letterSpacing: 0.5,
-            fontWeight: 500,
-            marginBottom: 10,
-          }}
-        >
-          Text Font
+        <div className="font-section-label">
+          <span>Text Font</span>
+          <span className="font-section-active">{globalStyles.fonts.body}</span>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {GOOGLE_FONTS.map((f) => (
             <FontItem
               key={f.name}
@@ -243,107 +225,14 @@ const BuilderSecondarySidebar: React.FC<BuilderSecondarySidebarProps> = ({
     if (!section) return null;
 
     const variant = section.designVariant;
-    const designs = getDesignsForSection(contentSectionId);
     const schema = variant ? variantContentSchemas[variant] ?? null : null;
     const content = sectionContent[contentSectionId] ?? {};
 
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-        {/* Compact design picker */}
-        {designs && designs.length > 1 && (
-          <div>
-            <div
-              style={{
-                fontSize: 11,
-                color: "rgba(255,255,255,0.35)",
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-                fontWeight: 500,
-                marginBottom: 10,
-              }}
-            >
-              Design
-            </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              {designs.map((d) => {
-                const isActive = variant === d.id;
-                return (
-                  <div
-                    key={d.id}
-                    onClick={() => handleSelectDesign(contentSectionId, d.id)}
-                    style={{
-                      flex: 1,
-                      padding: "10px 8px",
-                      borderRadius: 6,
-                      border: isActive
-                        ? "1px solid rgba(255,255,255,0.25)"
-                        : "1px solid rgba(255,255,255,0.06)",
-                      cursor: "pointer",
-                      background: isActive
-                        ? "rgba(255,255,255,0.05)"
-                        : "transparent",
-                      textAlign: "center",
-                      transition: "border-color 0.15s",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "100%",
-                        height: 48,
-                        borderRadius: 4,
-                        background: isActive
-                          ? "rgba(255,255,255,0.06)"
-                          : "rgba(255,255,255,0.02)",
-                        marginBottom: 6,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="rgba(255,255,255,0.12)"
-                        strokeWidth="1.5"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                        <polyline points="21 15 16 10 5 21" />
-                      </svg>
-                    </div>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 500,
-                        color: isActive ? "#fff" : "rgba(255,255,255,0.4)",
-                      }}
-                    >
-                      {d.name}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         {/* CMS fields */}
-        {schema && schema.length > 0 && (
-          <div>
-            <div
-              style={{
-                fontSize: 11,
-                color: "rgba(255,255,255,0.35)",
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-                fontWeight: 500,
-                marginBottom: 12,
-              }}
-            >
-              Content
-            </div>
+        {schema && schema.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
             {schema.map((field) => (
               <CmsField
                 key={field.key}
@@ -355,7 +244,17 @@ const BuilderSecondarySidebar: React.FC<BuilderSecondarySidebarProps> = ({
               />
             ))}
           </div>
+        ) : (
+          <div className="empty-state">No editable content for this section.</div>
         )}
+
+        {/* Save button */}
+        <button
+          className="save-content-button"
+          onClick={() => setActiveConfigId(null)}
+        >
+          Save
+        </button>
       </div>
     );
   };
@@ -382,7 +281,7 @@ const BuilderSecondarySidebar: React.FC<BuilderSecondarySidebarProps> = ({
                   cursor: "pointer",
                   borderRadius: 8,
                   border: isActive
-                    ? "2px solid rgba(255,255,255,0.3)"
+                    ? "2px solid rgba(152, 126, 210, 0.4)"
                     : "1px solid rgba(255,255,255,0.06)",
                   overflow: "hidden",
                   transition: "border-color 0.15s ease",
@@ -393,7 +292,7 @@ const BuilderSecondarySidebar: React.FC<BuilderSecondarySidebarProps> = ({
                     width: "100%",
                     height: 120,
                     background: isActive
-                      ? "rgba(255,255,255,0.06)"
+                      ? "rgba(152, 126, 210, 0.08)"
                       : "rgba(255,255,255,0.02)",
                     display: "flex",
                     alignItems: "center",
@@ -436,7 +335,7 @@ const BuilderSecondarySidebar: React.FC<BuilderSecondarySidebarProps> = ({
                     <span
                       style={{
                         fontSize: 11,
-                        color: "rgba(255,255,255,0.3)",
+                        color: "#987ed2",
                         fontWeight: 500,
                       }}
                     >

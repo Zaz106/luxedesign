@@ -27,7 +27,7 @@ const GallerySection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#111" : "#f5f5f5";
   const heading = theme === "dark" ? colors.primary : "#111";
-  const text = theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+  const text = colors.paragraph;
 
   return (
     <div style={{ padding: "80px 40px", background: bg }}>
@@ -45,7 +45,7 @@ const GallerySection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
+          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
           gap: 20,
         }}
       >

@@ -27,7 +27,7 @@ const FeatureSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
   const cardBg = theme === "dark" ? "#151515" : "#f7f7f7";
   const heading = theme === "dark" ? colors.primary : "#111";
-  const text = theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+  const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)";
 
   return (
@@ -55,12 +55,13 @@ const FeatureSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
       >
         {subtitle}
       </p>
-      <div style={{ display: "flex", gap: 20 }}>
+      <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
         {features.map((f) => (
           <div
             key={f.title}
             style={{
-              flex: 1,
+              flex: "1 1 240px",
+              minWidth: 0,
               padding: 28,
               background: cardBg,
               borderRadius: radiusMap[borderRadius],

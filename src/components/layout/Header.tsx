@@ -151,11 +151,11 @@ const Header = ({ disableAutoHide = false }: HeaderProps) => {
                     <Link href="/about" onClick={closeMobileMenu}>
                       About Us
                     </Link>
-                    <Link href="/pricing" onClick={closeMobileMenu}>
-                      Pricing
-                    </Link>
                     <Link href="/web-builder" onClick={closeMobileMenu}>
                       Web Builder
+                    </Link>
+                    <Link href="/pricing" onClick={closeMobileMenu}>
+                      Pricing
                     </Link>
                     <Link href="/contact" onClick={closeMobileMenu}>
                       Contact Us

@@ -9,7 +9,9 @@ const BuilderCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewState, setViewState] = useState({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
-  const { pageSections, activePage } = useBuilder();
+  const startPosRef = useRef<{ x: number; y: number } | null>(null);
+  const sectionClickedRef = useRef(false);
+  const { pageSections, activePage, activeConfigId, setActiveConfigId } = useBuilder();
 
   const sections = pageSections[activePage] ?? [];
 
@@ -23,6 +25,23 @@ const BuilderCanvas = () => {
   React.useEffect(() => {
     viewStateRef.current = viewState;
   }, [viewState]);
+
+  // Intercept the click event that fires after pointerUp.
+  // If pointerUp handled a section click, stop propagation so the
+  // outside-click handler doesn't immediately clear activeConfigId.
+  // Otherwise let it propagate (clicking canvas background closes sidebar).
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const onClick = (e: MouseEvent) => {
+      if (sectionClickedRef.current) {
+        sectionClickedRef.current = false;
+        e.stopPropagation();
+      }
+    };
+    container.addEventListener("click", onClick);
+    return () => container.removeEventListener("click", onClick);
+  }, []);
 
   React.useEffect(() => {
     const container = containerRef.current;
@@ -81,6 +100,7 @@ const BuilderCanvas = () => {
     // Middle mouse (button 1) only, or Space+Left (not implemented yet).
     if (e.button === 1 || e.button === 0) {
       e.preventDefault();
+      startPosRef.current = { x: e.clientX, y: e.clientY };
       setIsPanning(true);
       if (containerRef.current) {
         containerRef.current.setPointerCapture(e.pointerId);
@@ -103,6 +123,23 @@ const BuilderCanvas = () => {
     if (containerRef.current) {
       containerRef.current.releasePointerCapture(e.pointerId);
     }
+    // Detect click (minimal movement) on a canvas section
+    if (startPosRef.current && e.button === 0) {
+      const dx = e.clientX - startPosRef.current.x;
+      const dy = e.clientY - startPosRef.current.y;
+      if (Math.abs(dx) < 5 && Math.abs(dy) < 5) {
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        const sectionWrapper = el?.closest("[data-canvas-section-id]");
+        if (sectionWrapper) {
+          const sectionId = sectionWrapper.getAttribute("data-canvas-section-id");
+          if (sectionId) {
+            sectionClickedRef.current = true;
+            setActiveConfigId(activeConfigId === sectionId ? null : sectionId);
+          }
+        }
+      }
+    }
+    startPosRef.current = null;
   };
 
   const resetView = () => {
@@ -176,7 +213,11 @@ const BuilderCanvas = () => {
                 section.designVariant,
               );
               if (!Component) return null;
-              return <Component key={section.id + (section.designVariant ?? "")} sectionId={section.id} />;
+              return (
+                <div key={section.id + (section.designVariant ?? "")} data-canvas-section-id={section.id}>
+                  <Component sectionId={section.id} />
+                </div>
+              );
             })}
         </div>
       </div>

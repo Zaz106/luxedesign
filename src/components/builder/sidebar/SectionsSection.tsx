@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { GripVertical, Lock, Trash2 } from "lucide-react";
+import { GripVertical, Pin, Trash2 } from "lucide-react";
 import { SectionItem } from "./types";
 import "./SectionsSection.css";
 
@@ -145,41 +145,28 @@ const SectionsSection: React.FC<SectionsSectionProps> = ({
               onDragEnd={handleDragEnd}
               onClick={(e) => handleSectionClick(e, section)}
               data-prevent-outside-close="true"
-              className="section-item"
+              className={`section-item${activeConfigId === section.id ? " active" : ""}`}
               style={{
-                background:
-                  activeConfigId === section.id
-                    ? "rgba(152, 126, 210, 0.1)"
-                    : "#222",
-                opacity: draggedItemId === section.id ? 0 : section.isVisible ? 1 : 0.5,
-                border:
-                  activeConfigId === section.id
-                    ? "1px solid rgba(152, 126, 210, 0.3)"
-                    : "1px solid rgba(255,255,255,0.03)",
-                cursor: !section.isVisible
-                  ? "not-allowed"
-                  : section.isLocked
-                    ? "not-allowed"
-                    : draggedItemId === section.id
-                      ? "grabbing"
-                      : "grab",
-                transform: draggedItemId === section.id ? "scale(0.95)" : "scale(1)",
+                opacity: draggedItemId === section.id ? 0 : 1,
+                cursor: section.isLocked
+                  ? "default"
+                  : draggedItemId === section.id
+                    ? "grabbing"
+                    : "pointer",
               }}
             >
               {section.isLocked ? (
-                <Lock size={12} color="#444" style={{ marginRight: "12px" }} />
+                <Pin size={12} className="section-lock" />
               ) : (
-                <GripVertical size={12} color="#555" style={{ marginRight: "12px", cursor: "grab" }} />
+                <GripVertical size={12} className="section-grip" />
               )}
-              <span style={{ fontSize: "13px", color: "white", flex: 1, fontWeight: 400 }}>
-                {section.title}
-              </span>
+              <span className="section-title">{section.title}</span>
               {!section.isLocked && (
                 <div
+                  className="section-delete"
                   onClick={(e) => { e.stopPropagation(); toggleVisibility(section.id); }}
-                  style={{ cursor: "pointer", padding: "4px", display: "flex" }}
                 >
-                  <Trash2 size={14} color="#666" />
+                  <Trash2 size={13} />
                 </div>
               )}
             </div>

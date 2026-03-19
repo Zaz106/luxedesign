@@ -24,7 +24,7 @@ const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fafafa";
   const heading = theme === "dark" ? "#fff" : "#111";
-  const text = theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)";
+  const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
 
   const socials = ["Tw", "Ig", "Li", "Gh"];

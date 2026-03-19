@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronRight, Search, Edit2, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, SquarePen, Plus } from "lucide-react";
 import BuilderSecondarySidebar from "./BuilderSecondarySidebar";
 import { useBuilder } from "./BuilderContext";
 import StartSection from "./sidebar/StartSection";
@@ -93,7 +93,7 @@ interface BuilderSidebarProps {
 }
 
 const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePage }) => {
-  const { pageSections, setPageSections } = useBuilder();
+  const { pageSections, setPageSections, activeConfigId, setActiveConfigId: setActiveConfigIdCtx } = useBuilder();
   const sections = pageSections[activePage] ?? [];
   const setSections = (updater: SectionItem[] | ((prev: SectionItem[]) => SectionItem[])) => {
     setPageSections((prev) => ({
@@ -107,10 +107,17 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [pages, setPages] = useState([1]);
   const [isPageDropdownOpen, setIsPageDropdownOpen] = useState(false);
-  const [activeConfigId, setActiveConfigId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<ToolSection[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddSectionDropdownOpen, setIsAddSectionDropdownOpen] = useState(false);
+
+  const setActiveConfigId = (id: string | null) => {
+    setActiveConfigIdCtx(id);
+    if (id !== null) {
+      setIsPageDropdownOpen(false);
+      setIsAddSectionDropdownOpen(false);
+    }
+  };
 
   const sidebarRef = useRef<HTMLElement>(null);
   const secondarySidebarWrapperRef = useRef<HTMLDivElement>(null);
@@ -271,8 +278,8 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
                     title="Click to edit"
                   >
                     {projectTitle}
-                    <Edit2
-                      size={10}
+                    <SquarePen
+                      size={13}
                       color="#666"
                       style={{ cursor: "pointer", flexShrink: 0 }}
                     />
@@ -282,7 +289,10 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
 
               <div className="page-selector">
                 <div
-                  onClick={() => setIsPageDropdownOpen(!isPageDropdownOpen)}
+                  onClick={() => {
+                    setIsPageDropdownOpen(!isPageDropdownOpen);
+                    setIsAddSectionDropdownOpen(false);
+                  }}
                   className="page-selector-button"
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.background =
@@ -409,6 +419,7 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsAddSectionDropdownOpen(!isAddSectionDropdownOpen);
+                      setIsPageDropdownOpen(false);
                     }}
                     data-prevent-outside-close="true"
                     style={{
@@ -427,7 +438,7 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
                       (e.currentTarget.style.background = "transparent")
                     }
                   >
-                    <Plus size={18} color="#aaa" />
+                    <Plus size={16} color="#aaa" />
                   </div>
 
                   {isAddSectionDropdownOpen && (
@@ -436,7 +447,7 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
                       className="add-section-dropdown"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="add-section-header">ADD SECTION</div>
+                      <div className="add-section-header">Add Section</div>
 
                       {sections
                         .filter((s) => !s.isVisible)
@@ -445,8 +456,6 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
                             key={s.id}
                             onClick={(e) => { e.stopPropagation(); handleAddSection(s.id); }}
                             className="add-section-item"
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "white"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ccc"; }}
                           >
                             <Plus size={12} /> {s.title}
                           </div>
@@ -461,8 +470,6 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
                               key={title}
                               onClick={(e) => { e.stopPropagation(); handleAddSection(title); }}
                               className="add-section-item"
-                              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "white"; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ccc"; }}
                             >
                               <Plus size={12} /> {title}
                             </div>

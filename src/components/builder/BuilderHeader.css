@@ -40,3 +40,57 @@
   margin: 0;
   font-family: var(--font-heading);
 }
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Toggle button — hidden on desktop */
+.sidebar-toggle-button {
+  display: none;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.sidebar-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ===== Tablet & below ===== */
+@media (max-width: 1024px) {
+  .sidebar-toggle-button {
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 640px) {
+  .builder-header {
+    height: 50px;
+    padding: 0 14px;
+  }
+
+  .back-button-label {
+    display: none;
+  }
+
+  .header-title {
+    font-size: 14px;
+  }
+
+  .header-left {
+    gap: 12px;
+  }
+
+  .divider {
+    height: 18px;
+  }
+}

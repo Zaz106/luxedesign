@@ -148,21 +148,18 @@ const ColorPickerPopup: React.FC<ColorPickerPopupProps> = ({
     if (top < 8) top = 8;
   }
 
+  const pickerRef = useRef<HTMLDivElement>(null);
+
   return (
-    <>
-      <div
-        style={{ position: "fixed", inset: 0, zIndex: 998 }}
-        data-prevent-outside-close="true"
-        onClick={onClose}
-      />
-      <div
-        data-prevent-outside-close="true"
-        style={{
-          position: "fixed",
-          top,
-          left,
-          zIndex: 999,
-          background: "#1e1e1e",
+    <div
+      ref={pickerRef}
+      data-prevent-outside-close="true"
+      style={{
+        position: "fixed",
+        top,
+        left,
+        zIndex: 999,
+        background: "#1e1e1e",
           border: "1px solid rgba(255,255,255,0.12)",
           borderRadius: 8,
           padding: 12,
@@ -395,7 +392,6 @@ const ColorPickerPopup: React.FC<ColorPickerPopupProps> = ({
           </div>
         </div>
       </div>
-    </>
   );
 };
 

@@ -26,7 +26,7 @@ const TestimonialsSection: React.FC<{ sectionId: string }> = ({ sectionId }) => 
   const bg = theme === "dark" ? "#111" : "#f5f5f5";
   const cardBg = theme === "dark" ? "#181818" : "#fff";
   const heading = theme === "dark" ? colors.primary : "#111";
-  const text = theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+  const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)";
 
   return (
@@ -43,12 +43,13 @@ const TestimonialsSection: React.FC<{ sectionId: string }> = ({ sectionId }) => 
       >
         {title}
       </h2>
-      <div style={{ display: "flex", gap: 20 }}>
+      <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
         {testimonials.map((t) => (
           <div
             key={t.name}
             style={{
-              flex: 1,
+              flex: "1 1 240px",
+              minWidth: 0,
               padding: 28,
               background: cardBg,
               borderRadius: radiusMap[borderRadius],

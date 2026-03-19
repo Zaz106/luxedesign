@@ -39,6 +39,7 @@ const CTASection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
           justifyContent: "space-between",
           alignItems: "center",
           gap: 40,
+          flexWrap: "wrap",
         }}
       >
         <div style={{ maxWidth: 480 }}>
@@ -49,7 +50,7 @@ const CTASection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
             {subheading}
           </p>
         </div>
-        <div style={{ display: "flex", gap: 12, flexShrink: 0 }}>
+        <div style={{ display: "flex", gap: 12, flexShrink: 0, flexWrap: "wrap" }}>
           <button
             style={{
               padding: "12px 28px",

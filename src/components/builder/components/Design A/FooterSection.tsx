@@ -21,12 +21,12 @@ const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
   const heading = theme === "dark" ? colors.primary : "#111";
-  const text = theme === "dark" ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.4)";
+  const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.08)";
 
   return (
     <div style={{ padding: "60px 40px 32px", background: bg, borderTop: `1px solid ${border}` }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 40 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 40, flexWrap: "wrap", gap: 32 }}>
         <div>
           <div style={{ fontSize: 18, fontWeight: 600, color: heading, marginBottom: 8, fontFamily: hFont }}>
             {logo}
@@ -35,7 +35,7 @@ const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
             {tagline}
           </div>
         </div>
-        <div style={{ display: "flex", gap: 64 }}>
+        <div style={{ display: "flex", gap: 64, flexWrap: "wrap" }}>
           {columns.map((col) => (
             <div key={col.title}>
               <div style={{ fontSize: 13, fontWeight: 600, color: heading, marginBottom: 12, fontFamily: hFont }}>

@@ -33,10 +33,12 @@ const NavSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         padding: "16px 40px",
         background: bg,
         borderBottom: `1px solid ${border}`,
+        flexWrap: "wrap",
+        gap: 12,
       }}
     >
       <div style={{ fontSize: 18, fontWeight: 600, color: text, fontFamily: hFont }}>{logo}</div>
-      <div style={{ display: "flex", gap: 24 }}>
+      <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
         {links.map((item) => (
           <span
             key={item}

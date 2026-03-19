@@ -21,7 +21,7 @@ const GallerySection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
   const heading = theme === "dark" ? colors.primary : "#111";
-  const text = theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+  const text = colors.paragraph;
 
   const placeholders = Array.from({ length: 6 }, (_, i) => i);
 
@@ -53,7 +53,7 @@ const GallerySection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
+          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
           gap: 16,
         }}
       >

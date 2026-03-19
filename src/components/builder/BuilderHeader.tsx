@@ -2,10 +2,14 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, PanelLeft } from "lucide-react";
 import "./BuilderHeader.css";
 
-const BuilderHeader = () => {
+interface BuilderHeaderProps {
+  onToggleSidebar: () => void;
+}
+
+const BuilderHeader: React.FC<BuilderHeaderProps> = ({ onToggleSidebar }) => {
   const router = useRouter();
 
   return (
@@ -17,14 +21,21 @@ const BuilderHeader = () => {
           aria-label="Go back"
         >
           <ArrowLeft size={18} />
-          Return
+          <span className="back-button-label">Return</span>
         </button>
         <div className="divider"></div>
         <h1 className="header-title">Web Builder Tool</h1>
       </div>
 
-      {/* Placeholder for future header actions */}
-      <div></div>
+      <div className="header-right">
+        <button
+          onClick={onToggleSidebar}
+          className="sidebar-toggle-button"
+          aria-label="Toggle sidebar"
+        >
+          <PanelLeft size={20} />
+        </button>
+      </div>
     </header>
   );
 };

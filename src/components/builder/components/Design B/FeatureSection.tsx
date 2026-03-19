@@ -27,7 +27,7 @@ const FeatureSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
   const heading = theme === "dark" ? colors.primary : "#111";
-  const text = theme === "dark" ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.5)";
+  const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
 
   return (

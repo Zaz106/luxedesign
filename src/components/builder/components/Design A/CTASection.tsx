@@ -22,7 +22,7 @@ const CTASection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#111" : "#f5f5f5";
   const heading = theme === "dark" ? colors.primary : "#111";
-  const text = theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+  const text = colors.paragraph;
 
   const btnBg = buttonStyle === "filled" ? colors.accent : "transparent";
   const btnColor = buttonStyle === "filled" ? "#000" : colors.accent;

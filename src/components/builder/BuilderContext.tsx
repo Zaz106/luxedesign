@@ -8,6 +8,7 @@ import { GOOGLE_FONTS_URL } from "./components/contentSchemas";
 export type PaletteColors = {
   primary: string;
   secondary: string;
+  paragraph: string;
   accent: string;
 };
 
@@ -43,6 +44,8 @@ type BuilderContextValue = {
   sectionContent: SectionContent;
   setSectionContent: React.Dispatch<React.SetStateAction<SectionContent>>;
   activePage: number;
+  activeConfigId: string | null;
+  setActiveConfigId: (id: string | null) => void;
 };
 
 const BuilderContext = createContext<BuilderContextValue | null>(null);
@@ -71,7 +74,7 @@ export const BuilderProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ activePage, children }) => {
   const [globalStyles, setGlobalStyles] = useState<GlobalStyles>({
-    colors: { primary: "#FFFFFF", secondary: "#555555", accent: "#00FFFF" },
+    colors: { primary: "#FFFFFF", secondary: "#555555", paragraph: "#888888", accent: "#00FFFF" },
     borderRadius: "rounded",
     buttonStyle: "outlined",
     theme: "dark",
@@ -83,6 +86,7 @@ export const BuilderProvider: React.FC<{
   });
 
   const [sectionContent, setSectionContent] = useState<SectionContent>({});
+  const [activeConfigId, setActiveConfigId] = useState<string | null>(null);
 
   // Load Google Fonts for the builder font picker
   useEffect(() => {
@@ -106,6 +110,8 @@ export const BuilderProvider: React.FC<{
         sectionContent,
         setSectionContent,
         activePage,
+        activeConfigId,
+        setActiveConfigId,
       }}
     >
       {children}

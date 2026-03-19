@@ -23,7 +23,7 @@ const HeroSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fafafa";
   const headingColor = theme === "dark" ? colors.primary : "#111";
-  const sub = theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+  const sub = colors.paragraph;
 
   const btnBg = buttonStyle === "filled" ? colors.accent : "transparent";
   const btnColor = buttonStyle === "filled" ? "#000" : colors.accent;
@@ -40,6 +40,7 @@ const HeroSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
           margin: "0 0 16px",
           fontFamily: hFont,
           whiteSpace: "pre-line",
+          maxWidth: "100%",
         }}
       >
         {heading}
@@ -56,7 +57,7 @@ const HeroSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
       >
         {subheading}
       </p>
-      <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+      <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
         <div
           style={{
             padding: "12px 28px",

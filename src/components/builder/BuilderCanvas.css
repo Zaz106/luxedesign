@@ -52,6 +52,7 @@
   top: 100px;
   margin-left: -600px;
   overflow: hidden;
+  cursor: default;
 }
 
 .reset-view-button {
@@ -102,4 +103,47 @@
   justify-content: center;
   color: white;
   font-family: var(--font-body);
+}
+
+/* ===== Tablet & below: scale canvas page narrower ===== */
+@media (max-width: 1024px) {
+  .canvas-page {
+    width: 900px;
+    margin-left: -450px;
+  }
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 640px) {
+  .canvas-page {
+    width: 600px;
+    margin-left: -300px;
+    top: 60px;
+  }
+
+  .reset-view-button {
+    bottom: 12px;
+    left: 12px;
+    padding: 10px 14px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+
+  .zoom-controls {
+    bottom: 12px;
+    right: 12px;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 6px;
+  }
+
+  .zoom-button {
+    width: 26px;
+    height: 26px;
+  }
+
+  .zoom-display {
+    font-size: 11px;
+    min-width: 34px;
+  }
 }

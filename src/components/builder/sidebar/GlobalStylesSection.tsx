@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Edit2 } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { SquarePen } from "lucide-react";
 import ColorPickerPopup from "./ColorPickerPopup";
 import { useBuilder, PaletteColors } from "../BuilderContext";
 import "./GlobalStylesSection.css";
@@ -12,8 +12,9 @@ interface GlobalStylesSectionProps {
 }
 
 const PALETTE_KEYS: { key: keyof PaletteColors; label: string }[] = [
-  { key: "primary", label: "Primary" },
-  { key: "secondary", label: "Secondary" },
+  { key: "primary", label: "Headings" },
+  { key: "secondary", label: "Sub-Headings" },
+  { key: "paragraph", label: "Paragraphs" },
   { key: "accent", label: "Accent" },
 ];
 
@@ -26,6 +27,29 @@ const GlobalStylesSection: React.FC<GlobalStylesSectionProps> = ({
 
   const [activeColorKey, setActiveColorKey] = useState<keyof PaletteColors | null>(null);
   const [colorPickerAnchorRect, setColorPickerAnchorRect] = useState<DOMRect | null>(null);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+
+  // Close color picker when secondary sidebar opens
+  React.useEffect(() => {
+    if (activeConfigId) {
+      setActiveColorKey(null);
+      setColorPickerAnchorRect(null);
+    }
+  }, [activeConfigId]);
+
+  // Close color picker on outside click — same pattern as dropdown menus
+  useEffect(() => {
+    if (!activeColorKey) return;
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest(".palette-swatch")) return;
+      if (colorPickerRef.current && colorPickerRef.current.contains(target)) return;
+      setActiveColorKey(null);
+      setColorPickerAnchorRect(null);
+    };
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, [activeColorKey]);
 
   const handleSwatchClick = (
     key: keyof PaletteColors,
@@ -35,6 +59,8 @@ const GlobalStylesSection: React.FC<GlobalStylesSectionProps> = ({
       setActiveColorKey(null);
       setColorPickerAnchorRect(null);
     } else {
+      // Close secondary sidebar when opening color picker
+      if (activeConfigId) setActiveConfigId(null);
       setActiveColorKey(key);
       setColorPickerAnchorRect(e.currentTarget.getBoundingClientRect());
     }
@@ -60,7 +86,7 @@ const GlobalStylesSection: React.FC<GlobalStylesSectionProps> = ({
                   background: colors[key],
                   outline:
                     activeColorKey === key
-                      ? "2px solid rgba(255,255,255,0.4)"
+                      ? "1.5px solid rgba(255,255,255,0.2)"
                       : "none",
                   outlineOffset: 2,
                 }}
@@ -81,11 +107,11 @@ const GlobalStylesSection: React.FC<GlobalStylesSectionProps> = ({
             style={{ justifyContent: "space-between" }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span className="font-primary">Nueue Montreal</span>
+              <span className="font-primary">{globalStyles.fonts.heading}</span>
               <span className="font-divider">/</span>
-              <span className="font-secondary">Garamond</span>
+              <span className="font-secondary">{globalStyles.fonts.body}</span>
             </div>
-            <Edit2
+            <SquarePen
               size={13}
               color={
                 activeConfigId === "font-pairing"
@@ -158,7 +184,8 @@ const GlobalStylesSection: React.FC<GlobalStylesSectionProps> = ({
 
       {/* Color Picker Popup — rendered at root level via portal-like fixed positioning */}
       {activeColorKey && colorPickerAnchorRect && (
-        <ColorPickerPopup
+        <div ref={colorPickerRef}>
+          <ColorPickerPopup
           color={colors[activeColorKey]}
           anchorRect={colorPickerAnchorRect}
           onChange={(hex) =>
@@ -172,6 +199,7 @@ const GlobalStylesSection: React.FC<GlobalStylesSectionProps> = ({
             setColorPickerAnchorRect(null);
           }}
         />
+        </div>
       )}
     </>
   );
