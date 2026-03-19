@@ -45,30 +45,13 @@
   width: 1200px;
   min-height: 100vh;
   height: max-content;
-  background-color: white;
+  background-color: transparent;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
   position: absolute;
   left: 50%;
   top: 100px;
   margin-left: -600px;
-}
-
-.page-content {
-  padding: 40px;
-  color: #333;
-  font-family: var(--font-body);
-}
-
-.header-placeholder {
-  border: 1px dashed #ccc;
-  padding: 20px;
-  text-align: center;
-}
-
-.content-placeholder {
-  margin-top: 20px;
-  text-align: center;
-  color: #999;
+  overflow: hidden;
 }
 
 .reset-view-button {

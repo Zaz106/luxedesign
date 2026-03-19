@@ -1,0 +1,204 @@
+export type ContentFieldType = "text" | "textarea" | "list";
+
+export type ContentField = {
+  key: string;
+  label: string;
+  type: ContentFieldType;
+  defaultValue: string;
+};
+
+export const GOOGLE_FONTS = [
+  { name: "Inter", category: "sans-serif" },
+  { name: "Poppins", category: "sans-serif" },
+  { name: "DM Sans", category: "sans-serif" },
+  { name: "Space Grotesk", category: "sans-serif" },
+  { name: "Montserrat", category: "sans-serif" },
+  { name: "Raleway", category: "sans-serif" },
+  { name: "Open Sans", category: "sans-serif" },
+  { name: "Playfair Display", category: "serif" },
+  { name: "Lora", category: "serif" },
+  { name: "Merriweather", category: "serif" },
+];
+
+export const GOOGLE_FONTS_URL =
+  "https://fonts.googleapis.com/css2?" +
+  [
+    "family=Inter:wght@400;500;600;700",
+    "family=Poppins:wght@400;500;600;700",
+    "family=DM+Sans:wght@400;500;600;700",
+    "family=Space+Grotesk:wght@400;500;600;700",
+    "family=Montserrat:wght@400;500;600;700",
+    "family=Raleway:wght@400;500;600;700",
+    "family=Open+Sans:wght@400;500;600;700",
+    "family=Playfair+Display:wght@400;500;600;700",
+    "family=Lora:wght@400;500;600;700",
+    "family=Merriweather:wght@400;700",
+  ].join("&") +
+  "&display=swap";
+
+export const variantContentSchemas: Record<string, ContentField[]> = {
+  "nav-a": [
+    { key: "logo", label: "Logo Text", type: "text", defaultValue: "Logo" },
+    { key: "links", label: "Nav Links", type: "list", defaultValue: "Home, About, Work, Contact" },
+    { key: "ctaText", label: "Button Text", type: "text", defaultValue: "Get Started" },
+  ],
+  "nav-b": [
+    { key: "logo", label: "Logo Text", type: "text", defaultValue: "LOGO" },
+    { key: "links", label: "Nav Links", type: "list", defaultValue: "Home, About, Services, Work, Contact" },
+  ],
+  "hero-a": [
+    { key: "heading", label: "Heading", type: "textarea", defaultValue: "Build beautiful websites\nwithout the complexity" },
+    { key: "subheading", label: "Subheading", type: "textarea", defaultValue: "A modern, intuitive web builder that lets you bring your vision to life with zero friction." },
+    { key: "primaryBtn", label: "Primary Button", type: "text", defaultValue: "Start Building" },
+    { key: "secondaryBtn", label: "Secondary Button", type: "text", defaultValue: "Learn More" },
+  ],
+  "hero-b": [
+    { key: "label", label: "Label", type: "text", defaultValue: "Welcome" },
+    { key: "heading", label: "Heading", type: "textarea", defaultValue: "We craft digital\nexperiences that matter" },
+    { key: "subheading", label: "Subheading", type: "textarea", defaultValue: "Strategy, design and technology — fused into seamless products people love to use." },
+    { key: "primaryBtn", label: "Button Text", type: "text", defaultValue: "View Our Work" },
+  ],
+  "features-a": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "Features" },
+    { key: "subtitle", label: "Subtitle", type: "text", defaultValue: "Everything you need to build a standout website." },
+    { key: "card1Title", label: "Card 1 Title", type: "text", defaultValue: "Lightning Fast" },
+    { key: "card1Desc", label: "Card 1 Description", type: "textarea", defaultValue: "Optimised performance out of the box with near-instant load times." },
+    { key: "card2Title", label: "Card 2 Title", type: "text", defaultValue: "Pixel Perfect" },
+    { key: "card2Desc", label: "Card 2 Description", type: "textarea", defaultValue: "Every element is crafted to be crisp and precise on any screen size." },
+    { key: "card3Title", label: "Card 3 Title", type: "text", defaultValue: "Fully Responsive" },
+    { key: "card3Desc", label: "Card 3 Description", type: "textarea", defaultValue: "Layouts that automatically adapt to any device or viewport." },
+  ],
+  "features-b": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "How we work" },
+    { key: "item1Title", label: "Step 1 Title", type: "text", defaultValue: "Strategy" },
+    { key: "item1Desc", label: "Step 1 Description", type: "textarea", defaultValue: "We start with deep research to understand your goals and audience." },
+    { key: "item2Title", label: "Step 2 Title", type: "text", defaultValue: "Design" },
+    { key: "item2Desc", label: "Step 2 Description", type: "textarea", defaultValue: "Pixel-perfect interfaces built with your brand identity in mind." },
+    { key: "item3Title", label: "Step 3 Title", type: "text", defaultValue: "Development" },
+    { key: "item3Desc", label: "Step 3 Description", type: "textarea", defaultValue: "Clean, performant code that scales with your business." },
+    { key: "item4Title", label: "Step 4 Title", type: "text", defaultValue: "Launch" },
+    { key: "item4Desc", label: "Step 4 Description", type: "textarea", defaultValue: "We handle deployment, testing and post-launch support." },
+  ],
+  "testimonials-a": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "What people are saying" },
+    { key: "quote1", label: "Quote 1", type: "textarea", defaultValue: "This builder completely transformed how we approach our web presence." },
+    { key: "author1", label: "Author 1", type: "text", defaultValue: "Alex Chen" },
+    { key: "role1", label: "Role 1", type: "text", defaultValue: "Founder, Pixel Co" },
+    { key: "quote2", label: "Quote 2", type: "textarea", defaultValue: "The attention to detail is remarkable. Best tool I've used in years." },
+    { key: "author2", label: "Author 2", type: "text", defaultValue: "Sarah Kim" },
+    { key: "role2", label: "Role 2", type: "text", defaultValue: "Designer, Studio M" },
+    { key: "quote3", label: "Quote 3", type: "textarea", defaultValue: "Saved our team weeks of development time. Absolutely worth it." },
+    { key: "author3", label: "Author 3", type: "text", defaultValue: "James Okoro" },
+    { key: "role3", label: "Role 3", type: "text", defaultValue: "CTO, Launchpad" },
+  ],
+  "testimonials-b": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "Client Stories" },
+    { key: "quote1", label: "Quote 1", type: "textarea", defaultValue: "They delivered beyond our expectations. The attention to craft is unmatched." },
+    { key: "author1", label: "Author 1", type: "text", defaultValue: "Maria Reynolds" },
+    { key: "role1", label: "Role 1", type: "text", defaultValue: "CEO, Vortex Labs" },
+    { key: "quote2", label: "Quote 2", type: "textarea", defaultValue: "Working with this team felt like having an in-house design department." },
+    { key: "author2", label: "Author 2", type: "text", defaultValue: "Tom Bradley" },
+    { key: "role2", label: "Role 2", type: "text", defaultValue: "Head of Product, Arc" },
+  ],
+  "gallery-a": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "Our Work" },
+    { key: "subtitle", label: "Subtitle", type: "text", defaultValue: "A selection of projects we're proud of." },
+  ],
+  "gallery-b": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "Selected Work" },
+    { key: "item1Title", label: "Project 1 Name", type: "text", defaultValue: "Brand Refresh" },
+    { key: "item1Cat", label: "Project 1 Category", type: "text", defaultValue: "Branding" },
+    { key: "item2Title", label: "Project 2 Name", type: "text", defaultValue: "Mobile App" },
+    { key: "item2Cat", label: "Project 2 Category", type: "text", defaultValue: "Development" },
+    { key: "item3Title", label: "Project 3 Name", type: "text", defaultValue: "E-Commerce" },
+    { key: "item3Cat", label: "Project 3 Category", type: "text", defaultValue: "Web Design" },
+    { key: "item4Title", label: "Project 4 Name", type: "text", defaultValue: "Dashboard" },
+    { key: "item4Cat", label: "Project 4 Category", type: "text", defaultValue: "UI/UX" },
+  ],
+  "pricing-a": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "Pricing" },
+    { key: "plan1Name", label: "Plan 1 Name", type: "text", defaultValue: "Starter" },
+    { key: "plan1Price", label: "Plan 1 Price", type: "text", defaultValue: "$19" },
+    { key: "plan1Desc", label: "Plan 1 Description", type: "text", defaultValue: "Perfect for personal projects" },
+    { key: "plan1Features", label: "Plan 1 Features", type: "list", defaultValue: "1 Website, Basic Analytics, Email Support" },
+    { key: "plan2Name", label: "Plan 2 Name", type: "text", defaultValue: "Pro" },
+    { key: "plan2Price", label: "Plan 2 Price", type: "text", defaultValue: "$49" },
+    { key: "plan2Desc", label: "Plan 2 Description", type: "text", defaultValue: "For growing businesses" },
+    { key: "plan2Features", label: "Plan 2 Features", type: "list", defaultValue: "5 Websites, Advanced Analytics, Priority Support, Custom Domain" },
+    { key: "plan3Name", label: "Plan 3 Name", type: "text", defaultValue: "Enterprise" },
+    { key: "plan3Price", label: "Plan 3 Price", type: "text", defaultValue: "$99" },
+    { key: "plan3Desc", label: "Plan 3 Description", type: "text", defaultValue: "For teams at scale" },
+    { key: "plan3Features", label: "Plan 3 Features", type: "list", defaultValue: "Unlimited Websites, Full Analytics, Dedicated Manager, SLA Guarantee" },
+    { key: "btnText", label: "Button Text", type: "text", defaultValue: "Get Started" },
+  ],
+  "pricing-b": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "Simple, transparent pricing" },
+    { key: "subtitle", label: "Subtitle", type: "text", defaultValue: "No hidden fees. Cancel anytime." },
+    { key: "plan1Name", label: "Plan 1 Name", type: "text", defaultValue: "Basic" },
+    { key: "plan1Price", label: "Plan 1 Price", type: "text", defaultValue: "$29" },
+    { key: "plan1Features", label: "Plan 1 Features", type: "list", defaultValue: "Up to 3 pages, Mobile responsive, Basic SEO, Email support" },
+    { key: "plan2Name", label: "Plan 2 Name", type: "text", defaultValue: "Growth" },
+    { key: "plan2Price", label: "Plan 2 Price", type: "text", defaultValue: "$79" },
+    { key: "plan2Features", label: "Plan 2 Features", type: "list", defaultValue: "Up to 15 pages, Advanced SEO, Analytics dashboard, Priority support, Custom integrations" },
+    { key: "plan3Name", label: "Plan 3 Name", type: "text", defaultValue: "Scale" },
+    { key: "plan3Price", label: "Plan 3 Price", type: "text", defaultValue: "$149" },
+    { key: "plan3Features", label: "Plan 3 Features", type: "list", defaultValue: "Unlimited pages, Dedicated account manager, Custom API access, White-label option, SLA guarantee, 24/7 phone support" },
+    { key: "btnText", label: "Button Text", type: "text", defaultValue: "Get Started" },
+  ],
+  "faq-a": [
+    { key: "title", label: "Section Title", type: "text", defaultValue: "Frequently Asked Questions" },
+    { key: "q1", label: "Question 1", type: "text", defaultValue: "How do I get started?" },
+    { key: "a1", label: "Answer 1", type: "textarea", defaultValue: "Sign up for a free account and choose a template to begin building your website." },
+    { key: "q2", label: "Question 2", type: "text", defaultValue: "Can I use my own domain?" },
+    { key: "a2", label: "Answer 2", type: "textarea", defaultValue: "Yes, all Pro and Enterprise plans include custom domain support." },
+    { key: "q3", label: "Question 3", type: "text", defaultValue: "Is there a free trial?" },
+    { key: "a3", label: "Answer 3", type: "textarea", defaultValue: "We offer a 14-day free trial on all paid plans, no credit card required." },
+    { key: "q4", label: "Question 4", type: "text", defaultValue: "Do you offer refunds?" },
+    { key: "a4", label: "Answer 4", type: "textarea", defaultValue: "Yes, we have a 30-day money-back guarantee on all plans." },
+  ],
+  "faq-b": [
+    { key: "title", label: "Section Title", type: "textarea", defaultValue: "Questions?\nWe've got answers." },
+    { key: "q1", label: "Question 1", type: "text", defaultValue: "What is included in the free trial?" },
+    { key: "a1", label: "Answer 1", type: "textarea", defaultValue: "Full access to all features for 14 days. No credit card required." },
+    { key: "q2", label: "Question 2", type: "text", defaultValue: "Can I cancel at any time?" },
+    { key: "a2", label: "Answer 2", type: "textarea", defaultValue: "Absolutely. There are no long-term contracts and you can cancel with one click." },
+    { key: "q3", label: "Question 3", type: "text", defaultValue: "Do you offer custom plans?" },
+    { key: "a3", label: "Answer 3", type: "textarea", defaultValue: "Yes — for teams of 10+ we can create a bespoke package tailored to your needs." },
+    { key: "q4", label: "Question 4", type: "text", defaultValue: "How do I migrate my existing site?" },
+    { key: "a4", label: "Answer 4", type: "textarea", defaultValue: "Our onboarding team will handle the full migration at no extra cost." },
+    { key: "q5", label: "Question 5", type: "text", defaultValue: "Is there a setup fee?" },
+    { key: "a5", label: "Answer 5", type: "textarea", defaultValue: "No setup fees on any plan. You only pay the monthly or annual subscription." },
+  ],
+  "cta-a": [
+    { key: "heading", label: "Heading", type: "text", defaultValue: "Ready to get started?" },
+    { key: "subheading", label: "Subheading", type: "textarea", defaultValue: "Join thousands of creators building stunning websites with ease." },
+    { key: "btnText", label: "Button Text", type: "text", defaultValue: "Start Free Trial" },
+  ],
+  "cta-b": [
+    { key: "heading", label: "Heading", type: "text", defaultValue: "Ready to elevate your brand?" },
+    { key: "subheading", label: "Subheading", type: "textarea", defaultValue: "Join hundreds of businesses already growing with us. Start your free trial today." },
+    { key: "primaryBtn", label: "Primary Button", type: "text", defaultValue: "Get Started" },
+    { key: "secondaryBtn", label: "Secondary Button", type: "text", defaultValue: "Learn More" },
+  ],
+  "footer-a": [
+    { key: "logo", label: "Logo Text", type: "text", defaultValue: "Logo" },
+    { key: "tagline", label: "Tagline", type: "textarea", defaultValue: "Building the future of web creation, one pixel at a time." },
+    { key: "col1Title", label: "Column 1 Title", type: "text", defaultValue: "Product" },
+    { key: "col1Links", label: "Column 1 Links", type: "list", defaultValue: "Features, Pricing, Changelog" },
+    { key: "col2Title", label: "Column 2 Title", type: "text", defaultValue: "Company" },
+    { key: "col2Links", label: "Column 2 Links", type: "list", defaultValue: "About, Blog, Careers" },
+    { key: "col3Title", label: "Column 3 Title", type: "text", defaultValue: "Support" },
+    { key: "col3Links", label: "Column 3 Links", type: "list", defaultValue: "Help Centre, Contact, Status" },
+    { key: "copyright", label: "Copyright", type: "text", defaultValue: "\u00a9 2026 Company. All rights reserved." },
+  ],
+  "footer-b": [
+    { key: "logo", label: "Logo Text", type: "text", defaultValue: "Brand" },
+    { key: "links", label: "Footer Links", type: "list", defaultValue: "Home, About, Services, Work, Blog, Contact" },
+    { key: "copyright", label: "Copyright", type: "text", defaultValue: "\u00a9 2025 Brand. All rights reserved." },
+  ],
+};
+
+/** Get the content schema for a given variant ID */
+export const getContentSchema = (variantId: string): ContentField[] | null => {
+  return variantContentSchemas[variantId] ?? null;
+};

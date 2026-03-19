@@ -1,16 +1,20 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-// import { motion, useMotionValue, useTransform } from "motion/react"; // Unused imports
+import { useBuilder } from "./BuilderContext";
+import { getComponentForSectionVariant } from "./components";
 import "./BuilderCanvas.css";
 
 const BuilderCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewState, setViewState] = useState({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
+  const { pageSections, activePage } = useBuilder();
+
+  const sections = pageSections[activePage] ?? [];
 
   // Limits for zoom
-  const minZoom = 0.5;
+  const minZoom = 0.25;
   const maxZoom = 3;
 
   // Use a ref to access current state inside the non-passive event listener
@@ -164,11 +168,16 @@ const BuilderCanvas = () => {
 
         {/* Content Container - The "Page" being built */}
         <div className="canvas-page">
-          {/* Content will go here */}
-          <div className="page-content">
-            <div className="header-placeholder">Header Section Placeholder</div>
-            <div className="content-placeholder">Canvas Content Area</div>
-          </div>
+          {sections
+            .filter((s) => s.isVisible)
+            .map((section) => {
+              const Component = getComponentForSectionVariant(
+                section.id,
+                section.designVariant,
+              );
+              if (!Component) return null;
+              return <Component key={section.id + (section.designVariant ?? "")} sectionId={section.id} />;
+            })}
         </div>
       </div>
 
