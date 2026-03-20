@@ -5,6 +5,7 @@ import { useBuilder } from "./BuilderContext";
 import { getComponentForSectionVariant } from "./components";
 import "./BuilderCanvas.css";
 
+
 const BuilderCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewState, setViewState] = useState({ x: 0, y: 0, scale: 1 });
@@ -12,7 +13,9 @@ const BuilderCanvas = () => {
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
   const sectionClickedRef = useRef(false);
-  const { pageSections, activePage, activeConfigId, setActiveConfigId } = useBuilder();
+  const { pageSections, activePage, activeConfigId, setActiveConfigId, globalStyles, scrollToSectionId, setScrollToSectionId } = useBuilder();
+  const [hoveredSectionId, setHoveredSectionId] = useState<string | null>(null);
+  const themeBg = globalStyles.theme === "dark" ? "#0a0a0a" : "#fff";
 
   // Touch tracking refs
   const touchesRef = useRef<Map<number, { x: number; y: number }>>(new Map());
@@ -221,6 +224,52 @@ const BuilderCanvas = () => {
     };
   }, [activeConfigId]);
 
+  // Scroll-to-section: animate the canvas to center the target section
+  React.useEffect(() => {
+    if (!scrollToSectionId || !containerRef.current) return;
+    const sectionEl = containerRef.current.querySelector(
+      `[data-canvas-section-id="${CSS.escape(scrollToSectionId)}"]`
+    ) as HTMLElement | null;
+    const pageEl = containerRef.current.querySelector(".canvas-page") as HTMLElement | null;
+    if (!sectionEl || !pageEl) { setScrollToSectionId(null); return; }
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const { scale } = viewStateRef.current;
+
+    // Get section position relative to the page element
+    const sectionTop = sectionEl.offsetTop;
+    const sectionHeight = sectionEl.offsetHeight;
+    const sectionCenterY = sectionTop + sectionHeight / 2;
+
+    // Page is positioned at left:50%, margin-left:-600px, top:100px
+    const pageOriginX = pageEl.offsetLeft + pageEl.offsetWidth / 2;
+    const pageOriginY = 100 + sectionCenterY;
+
+    // Target: center of container viewport
+    const targetX = containerRect.width / 2 - pageOriginX * scale;
+    const targetY = containerRect.height / 2 - pageOriginY * scale;
+
+    // Animate from current position to target
+    const startX = viewStateRef.current.x;
+    const startY = viewStateRef.current.y;
+    const duration = 400;
+    const startTime = performance.now();
+
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutCubic(progress);
+      const x = startX + (targetX - startX) * eased;
+      const y = startY + (targetY - startY) * eased;
+      setViewState((prev) => ({ ...prev, x, y }));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+    setScrollToSectionId(null);
+  }, [scrollToSectionId]);
+
   const handlePointerDown = (e: React.PointerEvent) => {
     // Skip touch events — handled by touch listeners above
     if (e.pointerType === "touch") return;
@@ -338,7 +387,7 @@ const BuilderCanvas = () => {
         <div className="infinite-grid-background" />
 
         {/* Content Container - The "Page" being built */}
-        <div className="canvas-page">
+        <div className="canvas-page" style={{ backgroundColor: themeBg }}>
           {sections
             .filter((s) => s.isVisible)
             .map((section) => {
@@ -347,9 +396,23 @@ const BuilderCanvas = () => {
                 section.designVariant,
               );
               if (!Component) return null;
+              const isActive = activeConfigId === section.id;
+              const isHovered = hoveredSectionId === section.id;
+              const showHighlight = isHovered || isActive;
               return (
-                <div key={section.id + (section.designVariant ?? "")} data-canvas-section-id={section.id}>
+                <div
+                  key={section.id + (section.designVariant ?? "")}
+                  data-canvas-section-id={section.id}
+                  className="canvas-section-wrapper"
+                  onMouseEnter={() => setHoveredSectionId(section.id)}
+                  onMouseLeave={() => setHoveredSectionId(null)}
+                >
                   <Component sectionId={section.id} />
+                  {showHighlight && (
+                    <div className={`canvas-section-overlay${isActive ? " active" : ""}`}>
+                      <span className="canvas-section-label">{section.title}</span>
+                    </div>
+                  )}
                 </div>
               );
             })}

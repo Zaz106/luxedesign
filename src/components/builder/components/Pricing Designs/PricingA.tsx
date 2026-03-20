@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useBuilder, BorderRadius } from "../../BuilderContext";
+import { contrastText } from "../../sidebar/colorUtils";
 
 const radiusMap: Record<BorderRadius, string> = {
   sharp: "0px",
@@ -26,7 +27,7 @@ const PricingSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#111" : "#f5f5f5";
   const cardBg = theme === "dark" ? "#161616" : "#fff";
-  const heading = theme === "dark" ? colors.primary : "#111";
+  const heading = colors.primary;
   const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)";
 
@@ -48,7 +49,7 @@ const PricingSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         {plans.map((plan) => {
           const isFeatured = plan.featured;
           const btnBg = buttonStyle === "filled" ? colors.accent : "transparent";
-          const btnColor = buttonStyle === "filled" ? "#000" : colors.accent;
+          const btnColor = buttonStyle === "filled" ? contrastText(colors.accent) : colors.accent;
           const btnBorder = buttonStyle === "outlined" ? `1.5px solid ${colors.accent}` : "none";
 
           return (
@@ -90,7 +91,7 @@ const PricingSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
                   fontWeight: 500,
                   borderRadius: radiusMap[borderRadius],
                   background: isFeatured ? colors.accent : btnBg,
-                  color: isFeatured ? "#000" : btnColor,
+                  color: isFeatured ? contrastText(colors.accent) : btnColor,
                   border: isFeatured ? "none" : btnBorder,
                   textAlign: "center",
                   cursor: "pointer",

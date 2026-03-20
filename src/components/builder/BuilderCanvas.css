@@ -45,14 +45,46 @@
   width: 1200px;
   min-height: 100vh;
   height: max-content;
-  background-color: transparent;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
   position: absolute;
   left: 50%;
   top: 100px;
   margin-left: -600px;
-  overflow: hidden;
   cursor: default;
+}
+
+/* Section hover & active — Framer-style overlay */
+.canvas-section-wrapper {
+  position: relative;
+}
+
+.canvas-section-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  border: 1.5px solid #0099ff;
+}
+
+.canvas-section-overlay.active {
+  border-width: 2px;
+}
+
+/* Section name label */
+.canvas-section-label {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  background: #0099ff;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
 }
 
 .reset-view-button {

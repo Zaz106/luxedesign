@@ -10,7 +10,7 @@ const radiusMap: Record<BorderRadius, string> = {
 };
 
 /** Design B: Centered single-column footer with stacked links and social icons */
-const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
+const FooterB: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
   const { colors, borderRadius, theme } = globalStyles;
   const r = radiusMap[borderRadius];
@@ -19,11 +19,11 @@ const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const bFont = globalStyles.fonts.body;
 
   const logo = ct.logo ?? "Brand";
-  const links = (ct.links ?? "Home, About, Services, Work, Blog, Contact").split(", ").filter(Boolean);
+  const links = (typeof ct.links === 'string' ? ct.links : "Home, About, Services, Work, Blog, Contact").split(", ").filter(Boolean);
   const copyright = ct.copyright ?? "\u00a9 2025 Brand. All rights reserved.";
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fafafa";
-  const heading = theme === "dark" ? "#fff" : "#111";
+  const heading = colors.primary;
   const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
 
@@ -85,4 +85,4 @@ const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   );
 };
 
-export default FooterSection;
+export default FooterB;

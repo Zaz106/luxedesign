@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronRight, Search, SquarePen, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, SquarePen, Plus, Sun, Moon } from "lucide-react";
 import BuilderSecondarySidebar from "./BuilderSecondarySidebar";
 import { useBuilder } from "./BuilderContext";
 import StartSection from "./sidebar/StartSection";
@@ -10,6 +10,7 @@ import GlobalStylesSection from "./sidebar/GlobalStylesSection";
 import ContentSection from "./sidebar/ContentSection";
 import { SectionItem, ToolSection } from "./sidebar/types";
 import { getDesignsForSection } from "./components";
+import { invertForTheme } from "./sidebar/colorUtils";
 import "./BuilderSidebar.css";
 
 // --- Shared Helpers ---
@@ -93,7 +94,7 @@ interface BuilderSidebarProps {
 }
 
 const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePage }) => {
-  const { pageSections, setPageSections, activeConfigId, setActiveConfigId: setActiveConfigIdCtx } = useBuilder();
+  const { pageSections, setPageSections, activeConfigId, setActiveConfigId: setActiveConfigIdCtx, globalStyles, setGlobalStyles } = useBuilder();
   const sections = pageSections[activePage] ?? [];
   const setSections = (updater: SectionItem[] | ((prev: SectionItem[]) => SectionItem[])) => {
     setPageSections((prev) => ({
@@ -110,6 +111,13 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
   const [expandedSections, setExpandedSections] = useState<ToolSection[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddSectionDropdownOpen, setIsAddSectionDropdownOpen] = useState(false);
+
+  // Auto-expand Sections accordion when a section is clicked on canvas
+  useEffect(() => {
+    if (activeConfigId && !expandedSections.includes("sections")) {
+      setExpandedSections((prev) => [...prev, "sections"]);
+    }
+  }, [activeConfigId]);
 
   const setActiveConfigId = (id: string | null) => {
     setActiveConfigIdCtx(id);
@@ -391,6 +399,50 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
             label="1. Start"
             isOpen={expandedSections.includes("start")}
             onToggle={toggleSection}
+            extraAction={
+              expandedSections.includes("start") ? (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setGlobalStyles((prev) => {
+                      const newTheme = prev.theme === "dark" ? "light" : "dark";
+                      return {
+                        ...prev,
+                        theme: newTheme,
+                        colors: {
+                          primary: invertForTheme(prev.colors.primary),
+                          secondary: invertForTheme(prev.colors.secondary),
+                          paragraph: invertForTheme(prev.colors.paragraph),
+                          accent: prev.colors.accent, // accent stays the same
+                        },
+                      };
+                    });
+                  }}
+                  style={{
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                    opacity: 0.7,
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "rgba(255,255,255,0.05)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = "transparent")
+                  }
+                  title={globalStyles.theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                >
+                  {globalStyles.theme === "dark" ? (
+                    <Moon size={15} color="#aaa" />
+                  ) : (
+                    <Sun size={15} color="#aaa" />
+                  )}
+                </div>
+              ) : null
+            }
           >
             <StartSection
               onRandomize={() => {

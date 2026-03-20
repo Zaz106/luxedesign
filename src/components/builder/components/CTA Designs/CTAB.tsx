@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useBuilder, BorderRadius } from "../../BuilderContext";
+import { contrastText, getLuminance } from "../../sidebar/colorUtils";
 
 const radiusMap: Record<BorderRadius, string> = {
   sharp: "0px",
@@ -25,6 +26,9 @@ const CTASection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const accent = colors.accent;
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
+  const onAccent = contrastText(accent);
+  const onAccentMuted = getLuminance(accent) > 0.35 ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.7)";
+  const onAccentBorder = getLuminance(accent) > 0.35 ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.4)";
 
   return (
     <div style={{ padding: "80px 40px", background: bg }}>
@@ -43,10 +47,10 @@ const CTASection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         }}
       >
         <div style={{ maxWidth: 480 }}>
-          <h2 style={{ fontSize: 30, fontWeight: 700, color: "#fff", margin: 0, fontFamily: hFont }}>
+          <h2 style={{ fontSize: 30, fontWeight: 700, color: onAccent, margin: 0, fontFamily: hFont }}>
             {headingText}
           </h2>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", marginTop: 12, lineHeight: 1.6, fontFamily: bFont }}>
+          <p style={{ fontSize: 14, color: onAccentMuted, marginTop: 12, lineHeight: 1.6, fontFamily: bFont }}>
             {subheading}
           </p>
         </div>
@@ -57,8 +61,8 @@ const CTASection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
               fontSize: 13,
               fontWeight: 600,
               borderRadius: r,
-              border: "2px solid #fff",
-              background: "#fff",
+              border: `2px solid ${onAccent}`,
+              background: onAccent,
               color: accent,
               cursor: "pointer",
               fontFamily: bFont,
@@ -72,9 +76,9 @@ const CTASection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
               fontSize: 13,
               fontWeight: 600,
               borderRadius: r,
-              border: "2px solid rgba(255,255,255,0.4)",
+              border: `2px solid ${onAccentBorder}`,
               background: "transparent",
-              color: "#fff",
+              color: onAccent,
               cursor: "pointer",
               fontFamily: bFont,
             }}

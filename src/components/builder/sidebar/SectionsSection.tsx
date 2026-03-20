@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { GripVertical, Pin, Trash2 } from "lucide-react";
 import { SectionItem } from "./types";
+import { useBuilder } from "../BuilderContext";
 import "./SectionsSection.css";
 
 interface SectionsSectionProps {
@@ -18,6 +19,7 @@ const SectionsSection: React.FC<SectionsSectionProps> = ({
   activeConfigId,
   setActiveConfigId,
 }) => {
+  const { setScrollToSectionId } = useBuilder();
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [dropIndicatorIndex, setDropIndicatorIndex] = useState<number | null>(null);
   const [originalSections, setOriginalSections] = useState<SectionItem[] | null>(null);
@@ -33,7 +35,9 @@ const SectionsSection: React.FC<SectionsSectionProps> = ({
   const handleSectionClick = (e: React.MouseEvent, section: SectionItem) => {
     e.stopPropagation();
     if (!section.isVisible) return;
-    setActiveConfigId(activeConfigId === section.id ? null : section.id);
+    const newId = activeConfigId === section.id ? null : section.id;
+    setActiveConfigId(newId);
+    if (newId) setScrollToSectionId(newId);
   };
 
   const handleDragStart = (e: React.DragEvent, id: string) => {

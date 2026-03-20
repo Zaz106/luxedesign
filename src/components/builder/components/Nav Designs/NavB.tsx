@@ -21,9 +21,8 @@ const NavSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const links = (ct.links ?? "Home, About, Services, Work, Contact").split(", ").filter(Boolean);
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
-  const text = theme === "dark" ? colors.primary : "#111";
+  const text = colors.primary;
   const sub = colors.paragraph;
-  const border = theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
 
   return (
     <div
@@ -33,7 +32,6 @@ const NavSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         alignItems: "center",
         padding: "20px 40px 16px",
         background: bg,
-        borderBottom: `1px solid ${border}`,
         gap: 10,
       }}
     >

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useBuilder, BorderRadius } from "../../BuilderContext";
+import { contrastText } from "../../sidebar/colorUtils";
 
 const radiusMap: Record<BorderRadius, string> = {
   sharp: "0px",
@@ -28,7 +29,7 @@ const PricingSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
   const cardBg = theme === "dark" ? "#111" : "#f9f9f9";
-  const heading = theme === "dark" ? colors.primary : "#111";
+  const heading = colors.primary;
   const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
 
@@ -44,7 +45,7 @@ const PricingSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         {plans.map((plan) => {
           const isFeatured = !!plan.featured;
           const btnBg = buttonStyle === "filled" || isFeatured ? colors.accent : "transparent";
-          const btnColor = buttonStyle === "filled" || isFeatured ? "#000" : colors.accent;
+          const btnColor = buttonStyle === "filled" || isFeatured ? contrastText(colors.accent) : colors.accent;
           const btnBorder = !isFeatured && buttonStyle === "outlined" ? `1.5px solid ${colors.accent}` : "none";
 
           return (
@@ -72,7 +73,7 @@ const PricingSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
                     left: "50%",
                     transform: "translateX(-50%)",
                     background: colors.accent,
-                    color: "#000",
+                    color: contrastText(colors.accent),
                     fontSize: 11,
                     fontWeight: 600,
                     padding: "4px 14px",

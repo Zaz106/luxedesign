@@ -27,6 +27,7 @@ export type GlobalStyles = {
   buttonStyle: ButtonStyle;
   theme: GlobalTheme;
   fonts: FontConfig;
+  showBadge: boolean;
 };
 
 // --- Per-page section mapping ---
@@ -46,6 +47,8 @@ type BuilderContextValue = {
   activePage: number;
   activeConfigId: string | null;
   setActiveConfigId: (id: string | null) => void;
+  scrollToSectionId: string | null;
+  setScrollToSectionId: (id: string | null) => void;
 };
 
 const BuilderContext = createContext<BuilderContextValue | null>(null);
@@ -72,21 +75,32 @@ const defaultSections: SectionItem[] = [
 export const BuilderProvider: React.FC<{
   activePage: number;
   children: React.ReactNode;
-}> = ({ activePage, children }) => {
-  const [globalStyles, setGlobalStyles] = useState<GlobalStyles>({
-    colors: { primary: "#FFFFFF", secondary: "#555555", paragraph: "#888888", accent: "#00FFFF" },
-    borderRadius: "rounded",
-    buttonStyle: "outlined",
-    theme: "dark",
-    fonts: { heading: "Inter", body: "Inter" },
-  });
+  initialState?: {
+    globalStyles: GlobalStyles;
+    sections: import("./sidebar/types").SectionItem[];
+    sectionContent: SectionContent;
+  };
+}> = ({ activePage, children, initialState }) => {
+  const [globalStyles, setGlobalStyles] = useState<GlobalStyles>(
+    initialState?.globalStyles ?? {
+      colors: { primary: "#111111", secondary: "#555555", paragraph: "#666666", accent: "#6c5ce7" },
+      borderRadius: "rounded",
+      buttonStyle: "outlined",
+      theme: "light",
+      fonts: { heading: "Inter", body: "Inter" },
+      showBadge: true,
+    },
+  );
 
-  const [pageSections, setPageSections] = useState<PageSections>({
-    1: defaultSections,
-  });
+  const [pageSections, setPageSections] = useState<PageSections>(
+    initialState ? { [activePage]: initialState.sections } : { 1: defaultSections },
+  );
 
-  const [sectionContent, setSectionContent] = useState<SectionContent>({});
+  const [sectionContent, setSectionContent] = useState<SectionContent>(
+    initialState?.sectionContent ?? {},
+  );
   const [activeConfigId, setActiveConfigId] = useState<string | null>(null);
+  const [scrollToSectionId, setScrollToSectionId] = useState<string | null>(null);
 
   // Load Google Fonts for the builder font picker
   useEffect(() => {
@@ -112,6 +126,8 @@ export const BuilderProvider: React.FC<{
         activePage,
         activeConfigId,
         setActiveConfigId,
+        scrollToSectionId,
+        setScrollToSectionId,
       }}
     >
       {children}

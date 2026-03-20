@@ -3,7 +3,7 @@
 import React from "react";
 import { useBuilder } from "../../BuilderContext";
 
-const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
+const FooterA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
   const { colors, theme } = globalStyles;
   const ct = sectionContent[sectionId] ?? {};
@@ -14,18 +14,18 @@ const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const tagline = ct.tagline ?? "Building the future of web creation, one pixel at a time.";
   const copyright = ct.copyright ?? "\u00a9 2026 Company. All rights reserved.";
   const columns = [
-    { title: ct.col1Title ?? "Product", links: (ct.col1Links ?? "Features, Pricing, Changelog").split(", ") },
-    { title: ct.col2Title ?? "Company", links: (ct.col2Links ?? "About, Blog, Careers").split(", ") },
-    { title: ct.col3Title ?? "Support", links: (ct.col3Links ?? "Help Centre, Contact, Status").split(", ") },
+    { title: ct.col1Title ?? "Product", links: (typeof ct.col1Links === 'string' ? ct.col1Links : "Features, Pricing, Changelog").split(", ") },
+    { title: ct.col2Title ?? "Company", links: (typeof ct.col2Links === 'string' ? ct.col2Links : "About, Blog, Careers").split(", ") },
+    { title: ct.col3Title ?? "Support", links: (typeof ct.col3Links === 'string' ? ct.col3Links : "Help Centre, Contact, Status").split(", ") },
   ];
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
-  const heading = theme === "dark" ? colors.primary : "#111";
+  const heading = colors.primary;
   const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.08)";
 
   return (
-    <div style={{ padding: "60px 40px 32px", background: bg, borderTop: `1px solid ${border}` }}>
+    <div style={{ padding: "60px 40px 32px", background: bg }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 40, flexWrap: "wrap", gap: 32 }}>
         <div>
           <div style={{ fontSize: 18, fontWeight: 600, color: heading, marginBottom: 8, fontFamily: hFont }}>
@@ -68,4 +68,4 @@ const FooterSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   );
 };
 
-export default FooterSection;
+export default FooterA;

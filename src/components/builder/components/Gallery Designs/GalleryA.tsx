@@ -20,7 +20,7 @@ const GallerySection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const subtitle = ct.subtitle ?? "A selection of projects we're proud of.";
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fff";
-  const heading = theme === "dark" ? colors.primary : "#111";
+  const heading = colors.primary;
   const text = colors.paragraph;
 
   const placeholders = Array.from({ length: 6 }, (_, i) => i);

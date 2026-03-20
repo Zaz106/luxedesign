@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useBuilder, BorderRadius } from "../../BuilderContext";
+import { contrastText } from "../../sidebar/colorUtils";
 
 const radiusMap: Record<BorderRadius, string> = {
   sharp: "0px",
@@ -23,11 +24,11 @@ const HeroSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const primaryBtn = ct.primaryBtn ?? "View Our Work";
 
   const bg = theme === "dark" ? "#0a0a0a" : "#fafafa";
-  const heading = theme === "dark" ? colors.primary : "#111";
+  const heading = colors.primary;
   const sub = colors.paragraph;
 
   const btnBg = buttonStyle === "filled" ? colors.accent : "transparent";
-  const btnColor = buttonStyle === "filled" ? "#000" : colors.accent;
+  const btnColor = buttonStyle === "filled" ? contrastText(colors.accent) : colors.accent;
   const btnBorder = buttonStyle === "outlined" ? `1.5px solid ${colors.accent}` : "none";
 
   return (

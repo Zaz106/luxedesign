@@ -25,7 +25,7 @@ const TestimonialsSection: React.FC<{ sectionId: string }> = ({ sectionId }) => 
 
   const bg = theme === "dark" ? "#111" : "#f5f5f5";
   const cardBg = theme === "dark" ? "#181818" : "#fff";
-  const heading = theme === "dark" ? colors.primary : "#111";
+  const heading = colors.primary;
   const text = colors.paragraph;
   const border = theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)";
 

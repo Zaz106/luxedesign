@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useBuilder, BorderRadius } from "../../BuilderContext";
+import { contrastText } from "../../sidebar/colorUtils";
 
 const radiusMap: Record<BorderRadius, string> = {
   sharp: "0px",
@@ -21,11 +22,11 @@ const CTASection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const btnText = ct.btnText ?? "Start Free Trial";
 
   const bg = theme === "dark" ? "#111" : "#f5f5f5";
-  const heading = theme === "dark" ? colors.primary : "#111";
+  const heading = colors.primary;
   const text = colors.paragraph;
 
   const btnBg = buttonStyle === "filled" ? colors.accent : "transparent";
-  const btnColor = buttonStyle === "filled" ? "#000" : colors.accent;
+  const btnColor = buttonStyle === "filled" ? contrastText(colors.accent) : colors.accent;
   const btnBorder = buttonStyle === "outlined" ? `1.5px solid ${colors.accent}` : "none";
 
   return (

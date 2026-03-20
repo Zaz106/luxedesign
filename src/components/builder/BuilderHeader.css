@@ -44,6 +44,41 @@
 .header-right {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+/* Action buttons (Export / Preview) */
+.header-action-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.header-action-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.header-action-button.primary {
+  background: #fff;
+  color: #111;
+  border-color: transparent;
+}
+
+.header-action-button.primary:hover {
+  background: #e8e8e8;
+  color: #000;
 }
 
 /* Toggle button — hidden on desktop */
@@ -80,6 +115,14 @@
 
   .back-button-label {
     display: none;
+  }
+
+  .header-action-label {
+    display: none;
+  }
+
+  .header-action-button {
+    padding: 7px 10px;
   }
 
   .header-title {

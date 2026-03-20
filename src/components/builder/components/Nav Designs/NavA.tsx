@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useBuilder, BorderRadius } from "../../BuilderContext";
+import { contrastText } from "../../sidebar/colorUtils";
 
 const radiusMap: Record<BorderRadius, string> = {
   sharp: "0px",
@@ -21,8 +22,7 @@ const NavSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const ctaText = c.ctaText ?? "Get Started";
 
   const bg = theme === "dark" ? "#111" : "#fff";
-  const text = theme === "dark" ? colors.primary : "#111";
-  const border = theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
+  const text = colors.primary;
 
   return (
     <div
@@ -32,7 +32,6 @@ const NavSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         alignItems: "center",
         padding: "16px 40px",
         background: bg,
-        borderBottom: `1px solid ${border}`,
         flexWrap: "wrap",
         gap: 12,
       }}
@@ -59,7 +58,7 @@ const NavSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
           fontSize: 13,
           borderRadius: radiusMap[borderRadius],
           background: colors.accent,
-          color: "#000",
+          color: contrastText(colors.accent),
           fontWeight: 500,
           cursor: "pointer",
           fontFamily: bFont,

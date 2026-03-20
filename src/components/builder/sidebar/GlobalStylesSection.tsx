@@ -165,6 +165,22 @@ const GlobalStylesSection: React.FC<GlobalStylesSectionProps> = ({
           </div>
         </div>
 
+        {/* Section Badge */}
+        <div className="style-section">
+          <div className="global-style-label">Section Badge</div>
+          <div className="segmented-control">
+            {([true, false] as const).map((val) => (
+              <div
+                key={String(val)}
+                className={`segment-option ${globalStyles.showBadge === val ? "active" : ""}`}
+                onClick={() => setGlobalStyles((prev) => ({ ...prev, showBadge: val }))}
+              >
+                {val ? "Show" : "Hide"}
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Theme */}
         <div className="style-section">
           <div className="global-style-label">Theme</div>

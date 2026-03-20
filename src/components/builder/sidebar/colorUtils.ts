@@ -28,3 +28,32 @@ export function hexToHsv(hex: string): [number, number, number] {
   }
   return [h, max === 0 ? 0 : d / max, max];
 }
+
+/** Returns relative luminance (0 = black, 1 = white) for a hex colour. */
+export function getLuminance(hex: string): number {
+  const clean = hex.replace("#", "").slice(0, 6);
+  if (clean.length !== 6) return 0;
+  const srgb = [clean.slice(0, 2), clean.slice(2, 4), clean.slice(4, 6)].map(
+    (c) => {
+      const v = parseInt(c, 16) / 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    },
+  );
+  return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+}
+
+/** Returns "#fff" or "#000" depending on which has better contrast. */
+export function contrastText(bgHex: string): string {
+  return getLuminance(bgHex) > 0.35 ? "#000" : "#fff";
+}
+
+/** Inverts a hex colour's lightness for theme switching.
+ *  Dark colours become light and vice-versa, hue & saturation are preserved. */
+export function invertForTheme(hex: string): string {
+  const [h, s, v] = hexToHsv(hex);
+  // Invert value (lightness), keep a minimum so pure black→near-white
+  const newV = Math.max(0.08, Math.min(0.95, 1 - v));
+  // Reduce saturation slightly for very light outputs to keep them readable
+  const newS = newV > 0.85 ? s * 0.6 : s;
+  return hsvToHex(h, newS, newV);
+}
