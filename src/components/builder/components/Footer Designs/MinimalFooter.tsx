@@ -9,7 +9,7 @@ const Footer: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { colors, theme, fonts } = globalStyles;
   const content = sectionContent[sectionId] ?? {};
 
-  const logoText = content.logoText ?? "LOGO";
+  const logoText = content.logoText ?? "Brand";
   const email = content.email ?? "hello@example.com";
   const phone = content.phone ?? "+1 234 567 890";
   const contactText = content.contactText ?? "Have any questions or feedback? Reach out below";
@@ -17,7 +17,7 @@ const Footer: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   const navLinks = Array.isArray(content.navLinks) 
     ? content.navLinks 
-    : (content.navLinks ? (content.navLinks as string).split(', ') : ["Home", "About Us", "What We Do", "Workshops", "Pricing"]);
+    : (content.navLinks ? (content.navLinks as string).split(', ') : ["Home", "About Us", "What We Do", "Pricing", "Contact Us"]);
 
   const resourceLinks = Array.isArray(content.resourceLinks) 
     ? content.resourceLinks 

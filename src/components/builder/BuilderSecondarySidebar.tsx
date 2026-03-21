@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Plus } from "lucide-react";
-import { getDesignsForSection } from "./components";
+import { getDesignsForSection, SectionComponent } from "./components";
 import { useBuilder } from "./BuilderContext";
 import {
   GOOGLE_FONTS,
@@ -10,6 +10,78 @@ import {
   ContentField,
 } from "./components/contentSchemas";
 import "./BuilderSecondarySidebar.css";
+
+/* ── Live scaled component preview ───────────────────────────────────────── */
+const PREVIEW_RENDER_WIDTH = 960;
+const PREVIEW_HEIGHT = 140;
+
+const ComponentPreview: React.FC<{
+  component: SectionComponent;
+  align: "top" | "center" | "bottom";
+}> = ({ component: Component, align }) => {
+  const outerRef = React.useRef<HTMLDivElement>(null);
+  const innerRef = React.useRef<HTMLDivElement>(null);
+  const [scale, setScale] = React.useState(0.25);
+  const [innerHeight, setInnerHeight] = React.useState(0);
+  const { globalStyles } = useBuilder();
+
+  React.useEffect(() => {
+    const outer = outerRef.current;
+    const inner = innerRef.current;
+    if (!outer || !inner) return;
+    const update = () => {
+      setScale(outer.clientWidth / PREVIEW_RENDER_WIDTH);
+      setInnerHeight(inner.scrollHeight);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(outer);
+    ro.observe(inner);
+    return () => ro.disconnect();
+  }, []);
+
+  const pageBg = globalStyles.theme === "dark" ? "#0a0a0a" : "#ffffff";
+
+  let posStyle: React.CSSProperties;
+  if (align === "bottom") {
+    posStyle = { bottom: 0, transformOrigin: "bottom left" };
+  } else if (align === "top") {
+    posStyle = { top: 0, transformOrigin: "top left" };
+  } else {
+    const scaledH = innerHeight * scale;
+    const top = Math.max(0, (PREVIEW_HEIGHT - scaledH) / 2);
+    posStyle = { top, transformOrigin: "top left" };
+  }
+
+  return (
+    <div
+      ref={outerRef}
+      style={{
+        width: "100%",
+        height: PREVIEW_HEIGHT,
+        overflow: "hidden",
+        position: "relative",
+        background: pageBg,
+        borderRadius: "6px 6px 0 0",
+      }}
+    >
+      <div
+        ref={innerRef}
+        style={{
+          position: "absolute",
+          left: 0,
+          width: PREVIEW_RENDER_WIDTH,
+          transform: `scale(${scale})`,
+          pointerEvents: "none",
+          userSelect: "none",
+          ...posStyle,
+        }}
+      >
+        <Component sectionId="__preview__" />
+      </div>
+    </div>
+  );
+};
 
 type BuilderSecondarySidebarProps = {
   activeConfigId: string | null;
@@ -287,33 +359,16 @@ const BuilderSecondarySidebar: React.FC<BuilderSecondarySidebarProps> = ({
                   transition: "border-color 0.15s ease",
                 }}
               >
-                <div
-                  style={{
-                    width: "100%",
-                    height: 120,
-                    background: isActive
-                      ? "rgba(152, 126, 210, 0.08)"
-                      : "rgba(255,255,255,0.02)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="rgba(255,255,255,0.15)"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <polyline points="21 15 16 10 5 21" />
-                  </svg>
-                </div>
+                <ComponentPreview
+                    component={design.component}
+                    align={
+                      activeConfigId === "nav"
+                        ? "top"
+                        : activeConfigId === "footer"
+                        ? "bottom"
+                        : "center"
+                    }
+                  />
                 <div
                   style={{
                     padding: "10px 12px",

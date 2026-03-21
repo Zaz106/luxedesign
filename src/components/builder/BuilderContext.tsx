@@ -69,7 +69,7 @@ const defaultSections: SectionItem[] = [
   { id: "pricing", title: "Pricing", isVisible: true, designVariant: "pricing-a" },
   { id: "faq", title: "FAQ", isVisible: true, designVariant: "faq-a" },
   { id: "cta", title: "CTA", isVisible: true, designVariant: "cta-a" },
-  { id: "footer", title: "Footer", isVisible: true, isLocked: true, designVariant: "footer-a" },
+  { id: "footer", title: "Footer", isVisible: true, isLocked: true, designVariant: "footer-classic" },
 ];
 
 export const BuilderProvider: React.FC<{
@@ -87,7 +87,7 @@ export const BuilderProvider: React.FC<{
       borderRadius: "rounded",
       buttonStyle: "outlined",
       theme: "light",
-      fonts: { heading: "Inter", body: "Inter" },
+      fonts: { heading: "Satoshi", body: "Satoshi" },
       showBadge: true,
     },
   );

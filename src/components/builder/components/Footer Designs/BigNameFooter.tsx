@@ -10,13 +10,13 @@ const BigNameFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const ct = sectionContent[sectionId] ?? {};
 
   const logo = ct.logo ?? "Brand";
-  const tagline = ct.tagline ?? "Run conversational product demos, 24/7";
+  const tagline = ct.tagline ?? "Building the future of the web, one pixel at a time.";
   const copyright = ct.copyright ?? `© ${new Date().getFullYear()} Brand. All rights reserved.`;
 
-  const col1Title = ct.col1Title ?? "Platform";
-  const col1Links = (typeof ct.col1Links === "string" ? ct.col1Links : "Features, Outcomes, How it works, Use Cases").split(", ").filter(Boolean);
+  const col1Title = ct.col1Title ?? "Pages";
+  const col1Links = (typeof ct.col1Links === "string" ? ct.col1Links : "Home, About Us, What We Do, Pricing, Contact Us").split(", ").filter(Boolean);
   const col2Title = ct.col2Title ?? "Company";
-  const col2Links = (typeof ct.col2Links === "string" ? ct.col2Links : "Terms, Privacy Policy, Trust Center").split(", ").filter(Boolean);
+  const col2Links = (typeof ct.col2Links === "string" ? ct.col2Links : "Blog, Careers, Press, Contact Us").split(", ").filter(Boolean);
 
   const socialIcons: { name: string; path: string }[] = [
     {
@@ -51,7 +51,7 @@ const BigNameFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
     <footer className={styles.footer} style={{ backgroundColor: bg }}>
       {/* Top row */}
       <div className={styles.top}>
-        {/* Logo + tagline */}
+        {/* Logo + tagline + socials */}
         <div className={styles.brand}>
           <span className={styles.logoText} style={{ fontFamily: fonts.heading, color: textStrong }}>
             {logo}
@@ -59,6 +59,14 @@ const BigNameFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
           <p className={styles.tagline} style={{ fontFamily: fonts.body, color: textMuted }}>
             {tagline}
           </p>
+          <div className={styles.socialRow}>
+            {socialIcons.map(({ name, path }) => (
+              <a key={name} href="#" aria-label={name} className={styles.socialIcon} style={{ color: textMuted }}>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">                  <path d={path} />
+                </svg>
+              </a>
+            ))}
+          </div>
         </div>
 
         {/* Nav columns */}
@@ -84,17 +92,6 @@ const BigNameFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Social icons */}
-      <div className={styles.socialRow}>
-        {socialIcons.map(({ name, path }) => (
-          <a key={name} href="#" aria-label={name} className={styles.socialIcon} style={{ color: textMuted }}>
-            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-              <path d={path} />
-            </svg>
-          </a>
-        ))}
       </div>
 
       {/* Fading brand name */}

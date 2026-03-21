@@ -35,13 +35,16 @@ import FAQA from "./FAQ Designs/FAQA";
 import FAQB from "./FAQ Designs/FAQB";
 
 // CTA Designs imports
-import CTAA from "./CTA Designs/CTAA";
-import CTAB from "./CTA Designs/CTAB";
+import BoldCTA from "./CTA Designs/BoldCTA";
+import SplitCTA from "./CTA Designs/SplitCTA";
+import GradientCTA from "./CTA Designs/GradientCTA";
+import DarkBannerCTA from "./CTA Designs/DarkBannerCTA";
 
 // Footer Designs imports
-import FooterA from "./Footer Designs/FooterA";
-import FooterB from "./Footer Designs/FooterB";
+import FooterClassic from "./Footer Designs/FooterClassic";
 import MinimalFooter from "./Footer Designs/MinimalFooter";
+import ImmersiveFooter from "./Footer Designs/ImmersiveFooter";
+import CorporateFooter from "./Footer Designs/CorporateFooter";
 import SpinnyFooter from "./Footer Designs/SpinnyFooter";
 import BigNameFooter from "./Footer Designs/BigNameFooter";
 
@@ -89,15 +92,18 @@ export const sectionDesigns: Record<string, DesignVariant[]> = {
     { id: "faq-b", name: "Accordion", component: FAQB },
   ],
   cta: [
-    { id: "cta-a", name: "Centered Block", component: CTAA },
-    { id: "cta-b", name: "Banner Card", component: CTAB },
+    { id: "cta-bold",       name: "Bold Email",    component: BoldCTA },
+    { id: "cta-split",      name: "Split Section", component: SplitCTA },
+    { id: "cta-gradient",   name: "Scenic",        component: GradientCTA },
+    { id: "cta-dark-banner",name: "Dark Banner",   component: DarkBannerCTA },
   ],
   footer: [
-    { id: "footer-a", name: "Multi Column", component: FooterA },
-    { id: "footer-b", name: "Centered Stack", component: FooterB },
-    { id: "footer-minimal", name: "Minimalist Grid", component: MinimalFooter },
+    { id: "footer-classic", name: "Classic", component: FooterClassic },
     { id: "footer-spinny", name: "Scrolling Banner", component: SpinnyFooter },
     { id: "footer-bigname", name: "Fading Brand", component: BigNameFooter },
+    { id: "footer-immersive", name: "Immersive", component: ImmersiveFooter },
+    { id: "footer-minimal", name: "Minimalist Grid", component: MinimalFooter },
+    { id: "footer-corporate", name: "Corporate", component: CorporateFooter },
   ],
 };
 
