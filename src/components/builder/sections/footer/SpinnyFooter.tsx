@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useBuilder } from "../../context/BuilderContext";
-import { contrastText } from "../../sidebar/widgets/colorUtils";
+import { contrastText } from "../_shared/styles";
 import styles from "./SpinnyFooter.module.css";
 
 const SpinnyFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {

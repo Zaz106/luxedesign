@@ -1,15 +1,9 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
-import { contrastText } from "../../sidebar/widgets/colorUtils";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS, contrastText } from "../_shared/styles";
 import styles from "./GradientCTA.module.css";
-
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "8px",
-  rounded: "999px",
-};
 
 /**
  * Gradient CTA — animated cloud-like atmospheric blobs over a warm scenic base.
@@ -17,7 +11,7 @@ const radiusMap: Record<BorderRadius, string> = {
 const GradientCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
   const { colors, borderRadius, buttonStyle, fonts } = globalStyles;
-  const r = radiusMap[borderRadius];
+  const r = RADIUS[borderRadius];
   const ct = sectionContent[sectionId] ?? {};
 
   const heading = ct.heading ?? "Clarity, structure, and speed for your workflow";
@@ -73,7 +67,7 @@ const GradientCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
       <div className={styles.content}>
         <h2
           style={{
-            fontSize: "clamp(28px, 3vw, 40px)",
+            fontSize: "clamp(28px, 3cqi, 40px)",
             fontWeight: 400,
             color: "rgba(20, 10, 10, 0.88)",
             maxWidth: 560,

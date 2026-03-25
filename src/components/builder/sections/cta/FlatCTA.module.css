@@ -9,7 +9,7 @@
 }
 
 .heading {
-  font-size: clamp(28px, 3vw, 38px);
+  font-size: clamp(28px, 3cqi, 38px);
   margin: 0 0 16px;
 }
 
@@ -25,13 +25,13 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 1024px) {
+@container (max-width: 1024px) {
   .section {
     padding: 64px 32px;
   }
 }
 
-@media (max-width: 724px) {
+@container (max-width: 724px) {
   .section {
     padding: 48px 20px;
   }
@@ -43,7 +43,7 @@
   }
 }
 
-@media (max-width: 430px) {
+@container (max-width: 430px) {
   .section {
     padding: 36px 16px;
   }

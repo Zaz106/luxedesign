@@ -1,28 +1,16 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
-import { contrastText } from "../../sidebar/widgets/colorUtils";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS, RADIUS_CARD, contrastText } from "../_shared/styles";
 import styles from "./SplitCTAFlipped.module.css";
-
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "12px",
-  rounded: "999px",
-};
-
-const cardRadiusMap: Record<BorderRadius, string> = {
-  sharp: "4px",
-  soft: "16px",
-  rounded: "24px",
-};
 
 /** Split CTA Flipped — content left, image right. */
 const SplitCTAFlipped: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
   const { colors, borderRadius, buttonStyle, theme, fonts } = globalStyles;
-  const r = radiusMap[borderRadius];
-  const cardR = cardRadiusMap[borderRadius];
+  const r = RADIUS[borderRadius];
+  const cardR = RADIUS_CARD[borderRadius];
   const ct = sectionContent[sectionId] ?? {};
 
   const eyebrow      = ct.eyebrow      ?? "Our Offer";

@@ -1,13 +1,15 @@
-/* ═══════════════════════════════════════════════════════════
-   Preview Page — rebuilt from scratch
-   ═══════════════════════════════════════════════════════════ */
+/* =================================================================
+   Preview Page Styles
+   ================================================================= */
 
-/* ─── Page wrapper ─── */
+/* -- Page wrapper -- */
 
 .preview-wrapper {
   min-height: 100vh;
   position: relative;
   background: #0a0a0a;
+  overflow-y: auto;
+  padding-bottom: 80px;
 }
 
 .preview-wrapper.framed {
@@ -15,10 +17,9 @@
   flex-direction: column;
   align-items: center;
   padding: 56px 24px 120px;
-  overflow-y: auto;
 }
 
-/* ─── Empty state ─── */
+/* -- Empty state -- */
 
 .preview-empty {
   min-height: 100vh;
@@ -31,7 +32,7 @@
   font-size: 14px;
 }
 
-/* ─── Viewport dimension pill ─── */
+/* -- Viewport dimension pill -- */
 
 .preview-dim-badge {
   position: fixed;
@@ -53,7 +54,7 @@
   pointer-events: none;
 }
 
-/* ─── Device frame ─── */
+/* -- Device frame -- */
 
 .preview-frame {
   margin: 0 auto;
@@ -74,7 +75,14 @@
     0 30px 80px -16px rgba(0, 0, 0, 0.6);
 }
 
-/* ─── Floating Island Toolbar ─── */
+/* -- Content wrapper (container for @container queries) -- */
+
+.preview-content {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* -- Floating Island Toolbar -- */
 
 .preview-island {
   position: fixed;
@@ -95,7 +103,7 @@
   -webkit-backdrop-filter: blur(24px);
 }
 
-/* ─── Island buttons ─── */
+/* -- Island buttons -- */
 
 .island-btn {
   display: flex;
@@ -112,7 +120,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
-  font-family: var(--font-body);
+  font-family: Inter, system-ui, sans-serif;
 }
 
 .island-btn:hover {
@@ -131,7 +139,7 @@
   pointer-events: none;
 }
 
-/* ─── Zoom label ─── */
+/* -- Zoom label -- */
 
 .island-zoom-label {
   color: rgba(255, 255, 255, 0.45);
@@ -144,7 +152,7 @@
   user-select: none;
 }
 
-/* ─── Divider ─── */
+/* -- Divider -- */
 
 .island-divider {
   width: 1px;
@@ -154,7 +162,7 @@
   flex-shrink: 0;
 }
 
-/* ─── Back button ─── */
+/* -- Back button -- */
 
 .island-btn-back {
   display: flex;
@@ -171,14 +179,14 @@
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
-  font-family: var(--font-body);
+  font-family: Inter, system-ui, sans-serif;
 }
 
 .island-btn-back:hover {
   background: #e8e8e8;
 }
 
-/* ─── Responsive island ─── */
+/* -- Responsive island -- */
 
 @media (max-width: 680px) {
   .preview-island {
@@ -186,7 +194,6 @@
     padding: 4px;
     gap: 1px;
     border-radius: 14px;
-    /* Scrollable on narrow viewports */
     max-width: calc(100vw - 16px);
     overflow-x: auto;
     scrollbar-width: none;
@@ -220,14 +227,7 @@
   }
 }
 
-/* Tooltips are desktop-only (no hover on touch) */
-@media (hover: none) {
-  .preview-island [data-tooltip]::before {
-    display: none;
-  }
-}
-
-/* ─── Orientation icon ─── */
+/* -- Orientation icon -- */
 
 .orient-icon {
   transform: rotate(0deg);
@@ -239,7 +239,7 @@
   transform: rotate(-90deg);
 }
 
-/* ─── Tooltips ─── */
+/* -- Tooltips -- */
 
 .preview-island [data-tooltip] {
   position: relative;
@@ -270,4 +270,11 @@
 .preview-island [data-tooltip]:hover::before {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* No tooltips on touch devices */
+@media (hover: none) {
+  .preview-island [data-tooltip]::before {
+    display: none;
+  }
 }

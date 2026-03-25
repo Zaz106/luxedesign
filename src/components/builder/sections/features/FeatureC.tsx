@@ -1,14 +1,9 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS_CARD } from "../_shared/styles";
 import styles from "./FeatureC.module.css";
-
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "8px",
-  rounded: "16px",
-};
 
 /* Simple inline SVG icons matching the reference */
 const icons = [
@@ -109,7 +104,7 @@ const FeatureSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
               className={styles.card}
               style={{
                 background: cardBg,
-                borderRadius: radiusMap[borderRadius],
+                borderRadius: RADIUS_CARD[borderRadius],
                 border: `1px solid ${border}`,
               }}
             >

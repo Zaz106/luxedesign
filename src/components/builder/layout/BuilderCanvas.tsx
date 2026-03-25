@@ -1,12 +1,33 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo, forwardRef, useImperativeHandle } from "react";
 import { useBuilder } from "../context/BuilderContext";
 import { getComponentForSectionVariant } from "../sections/_shared";
 import "./BuilderCanvas.css";
 
+export interface BuilderCanvasHandle {
+  resetView: () => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+}
 
-const BuilderCanvas = () => {
+// Dev mode: three breakpoints displayed side-by-side on the same canvas
+const DEV_PAGE_SIZES = [
+  { width: 1920, label: "Desktop" },
+  { width: 768,  label: "Tablet"  },
+  { width: 375,  label: "Mobile"  },
+] as const;
+const DEV_GAP = 60;
+const DEV_TOTAL_WIDTH =
+  DEV_PAGE_SIZES.reduce((sum, p) => sum + p.width, 0) + DEV_GAP * (DEV_PAGE_SIZES.length - 1);
+
+interface BuilderCanvasProps {
+  onScaleChange?: (scale: number) => void;
+  /** When true, renders Desktop / Tablet / Mobile pages side-by-side on the same canvas */
+  devMode?: boolean;
+}
+
+const BuilderCanvas = forwardRef<BuilderCanvasHandle, BuilderCanvasProps>(({ onScaleChange, devMode }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewState, setViewState] = useState({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
@@ -16,6 +37,49 @@ const BuilderCanvas = () => {
   const { pageSections, activePage, activeConfigId, setActiveConfigId, globalStyles, scrollToSectionId, setScrollToSectionId } = useBuilder();
   const [hoveredSectionId, setHoveredSectionId] = useState<string | null>(null);
   const themeBg = globalStyles.theme === "dark" ? "#0a0a0a" : "#fff";
+
+  // Responsive canvas: match page width to user's screen resolution
+  const [canvasPageWidth, setCanvasPageWidth] = useState(1920);
+  const defaultViewRef = useRef({ x: 0, y: 0, scale: 1 });
+
+  // Compute initial default zoom before first paint to avoid flash
+  React.useLayoutEffect(() => {
+    const pageWidth = devMode ? DEV_TOTAL_WIDTH : window.screen.width;
+    if (!devMode) setCanvasPageWidth(window.screen.width);
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const compute = (cw: number, ch: number) => {
+      const scale = Math.max(Math.min((cw * 0.82) / pageWidth, 1), 0.3);
+      const x = (cw / 2) * (1 - scale);
+      const y = ch * 0.05 - scale * 100;
+      defaultViewRef.current = { x, y, scale };
+      setViewState({ x, y, scale });
+    };
+
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    compute(cw, ch);
+  }, [devMode]);
+
+  // Keep default reference up-to-date on window resize
+  React.useEffect(() => {
+    const onResize = () => {
+      const totalWidth = devMode ? DEV_TOTAL_WIDTH : window.screen.width;
+      if (!devMode) setCanvasPageWidth(window.screen.width);
+      const container = containerRef.current;
+      if (!container) return;
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const scale = Math.max(Math.min((cw * 0.82) / totalWidth, 1), 0.3);
+      const x = (cw / 2) * (1 - scale);
+      const y = ch * 0.05 - scale * 100;
+      defaultViewRef.current = { x, y, scale };
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [devMode]);
 
   // Touch tracking refs
   const touchesRef = useRef<Map<number, { x: number; y: number }>>(new Map());
@@ -187,7 +251,6 @@ const BuilderCanvas = () => {
             const sectionId = sectionWrapper.getAttribute("data-canvas-section-id");
             if (sectionId) {
               sectionClickedRef.current = true;
-              const current = viewStateRef.current; // use ref for latest
               setActiveConfigId(activeConfigId === sectionId ? null : sectionId);
             }
           }
@@ -326,97 +389,120 @@ const BuilderCanvas = () => {
   };
 
   const resetView = () => {
-    setViewState({ x: 0, y: 0, scale: 1 });
+    // Recalculate for the current container size
+    const container = containerRef.current;
+    if (container) {
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const totalWidth = devMode ? DEV_TOTAL_WIDTH : canvasPageWidth;
+      const scale = Math.max(Math.min((cw * 0.82) / totalWidth, 1), 0.3);
+      const x = (cw / 2) * (1 - scale);
+      const y = ch * 0.05 - scale * 100;
+      defaultViewRef.current = { x, y, scale };
+    }
+    setViewState(defaultViewRef.current);
   };
 
   const handleZoomIn = () => {
-    // Zoom in 5% increments, rounded
-    const currentScale = viewState.scale;
-    let newScale = (Math.floor(currentScale * 20) + 1) / 20;
-
-    // If the calculated step is barely larger or same (floating point noise), jump 1 more
-    if (newScale <= currentScale + 0.001) {
-      newScale += 0.05;
-    }
-
-    newScale = Math.min(newScale, maxZoom);
-    setViewState((s) => ({ ...s, scale: newScale }));
+    setViewState((prev) => {
+      let newScale = (Math.floor(prev.scale * 20) + 1) / 20;
+      if (newScale <= prev.scale + 0.001) newScale += 0.05;
+      newScale = Math.min(newScale, maxZoom);
+      return { ...prev, scale: newScale };
+    });
   };
 
   const handleZoomOut = () => {
-    const currentScale = viewState.scale;
-    let newScale = (Math.ceil(currentScale * 20) - 1) / 20;
-
-    if (newScale >= currentScale - 0.001) {
-      newScale -= 0.05;
-    }
-
-    newScale = Math.max(newScale, minZoom);
-    setViewState((s) => ({ ...s, scale: newScale }));
+    setViewState((prev) => {
+      let newScale = (Math.ceil(prev.scale * 20) - 1) / 20;
+      if (newScale >= prev.scale - 0.001) newScale -= 0.05;
+      newScale = Math.max(newScale, minZoom);
+      return { ...prev, scale: newScale };
+    });
   };
+
+  // Expose controls to parent via ref
+  const fnRef = useRef({ resetView, handleZoomIn, handleZoomOut });
+  fnRef.current = { resetView, handleZoomIn, handleZoomOut };
+  useImperativeHandle(ref, () => ({
+    resetView: () => fnRef.current.resetView(),
+    zoomIn: () => fnRef.current.handleZoomIn(),
+    zoomOut: () => fnRef.current.handleZoomOut(),
+  }), []);
+
+  // Report scale changes to parent
+  React.useEffect(() => {
+    onScaleChange?.(viewState.scale);
+  }, [viewState.scale, onScaleChange]);
+
+  // Memoize section rendering so pan/zoom re-renders don't rebuild section trees
+  const sectionItems = useMemo(() =>
+    sections
+      .filter((s) => s.isVisible)
+      .map((section) => {
+        const Component = getComponentForSectionVariant(section.id, section.designVariant);
+        if (!Component) return null;
+        const isActive = activeConfigId === section.id;
+        const isHovered = hoveredSectionId === section.id;
+        const showHighlight = isHovered || isActive;
+        return (
+          <div
+            key={section.id + (section.designVariant ?? "")}
+            data-canvas-section-id={section.id}
+            className="canvas-section-wrapper"
+            onMouseEnter={() => setHoveredSectionId(section.id)}
+            onMouseLeave={() => setHoveredSectionId(null)}
+          >
+            <Component sectionId={section.id} />
+            {showHighlight && (
+              <div className={`canvas-section-overlay${isActive ? " active" : ""}`}>
+                <span className="canvas-section-label">{section.title}</span>
+              </div>
+            )}
+          </div>
+        );
+      }),
+    [sections, activeConfigId, hoveredSectionId],
+  );
+
+  const transformStyle = `translate(${viewState.x}px, ${viewState.y}px) scale(${viewState.scale})`;
 
   return (
     <div
       ref={containerRef}
       className="builder-canvas-container"
-      style={{
-        cursor: isPanning ? "grabbing" : "grab",
-      }}
+      style={{ cursor: isPanning ? "grabbing" : "grab" }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
-      {/* Visual Grid Background */}
-      <div
-        className="canvas-grid-layer"
-        style={{
-          transform: `translate(${viewState.x}px, ${viewState.y}px) scale(${viewState.scale})`,
-        }}
-      >
-        {/* Infinite Grid effect can go here if needed, but using inner wrapper instead */}
-      </div>
-
       {/* Moving wrapper for grid and content */}
       <div
         className="canvas-content-wrapper"
-        style={{
-          transform: `translate(${viewState.x}px, ${viewState.y}px) scale(${viewState.scale})`,
-        }}
+        style={{ transform: transformStyle }}
       >
         <div className="infinite-grid-background" />
 
-        {/* Content Container - The "Page" being built */}
-        <div className="canvas-page" style={{ backgroundColor: themeBg }}>
-          {sections
-            .filter((s) => s.isVisible)
-            .map((section) => {
-              const Component = getComponentForSectionVariant(
-                section.id,
-                section.designVariant,
-              );
-              if (!Component) return null;
-              const isActive = activeConfigId === section.id;
-              const isHovered = hoveredSectionId === section.id;
-              const showHighlight = isHovered || isActive;
-              return (
-                <div
-                  key={section.id + (section.designVariant ?? "")}
-                  data-canvas-section-id={section.id}
-                  className="canvas-section-wrapper"
-                  onMouseEnter={() => setHoveredSectionId(section.id)}
-                  onMouseLeave={() => setHoveredSectionId(null)}
-                >
-                  <Component sectionId={section.id} />
-                  {showHighlight && (
-                    <div className={`canvas-section-overlay${isActive ? " active" : ""}`}>
-                      <span className="canvas-section-label">{section.title}</span>
-                    </div>
-                  )}
+        {devMode ? (
+          <div className="dev-pages-row" style={{ marginLeft: -DEV_TOTAL_WIDTH / 2 }}>
+            {DEV_PAGE_SIZES.map(({ width, label }) => (
+              <div key={width} className="dev-page-col">
+                <div className="dev-page-label">{label} <span>{width}px</span></div>
+                <div className="dev-page-inner" style={{ backgroundColor: themeBg, width }}>
+                  {sectionItems}
                 </div>
-              );
-            })}
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div
+            className="canvas-page"
+            style={{ backgroundColor: themeBg, width: canvasPageWidth, marginLeft: -canvasPageWidth / 2 }}
+          >
+            {sectionItems}
+          </div>
+        )}
       </div>
 
       {/* Recenter View Button */}
@@ -456,6 +542,8 @@ const BuilderCanvas = () => {
       </div>
     </div>
   );
-};
+});
+
+BuilderCanvas.displayName = "BuilderCanvas";
 
 export default BuilderCanvas;

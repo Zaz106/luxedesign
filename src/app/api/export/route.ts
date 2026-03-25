@@ -31,29 +31,29 @@ type SectionContent = Record<string, Record<string, string>>;
 /* ------------------------------------------------------------------ */
 
 const VARIANT_FILES: Record<string, { tsx: string; css?: string }> = {
-  "nav-a":     { tsx: "nav/NavA.tsx" },
-  "nav-b":     { tsx: "nav/NavB.tsx" },
-  "hero-a":    { tsx: "hero/HeroA.tsx" },
-  "hero-b":    { tsx: "hero/HeroB.tsx" },
+  "nav-a":     { tsx: "nav/NavA.tsx", css: "nav/NavA.module.css" },
+  "nav-b":     { tsx: "nav/NavB.tsx", css: "nav/NavB.module.css" },
+  "hero-a":    { tsx: "hero/HeroA.tsx", css: "hero/HeroA.module.css" },
+  "hero-b":    { tsx: "hero/HeroB.tsx", css: "hero/HeroB.module.css" },
 
-  "features-a": { tsx: "features/FeatureA.tsx" },
-  "features-b": { tsx: "features/FeatureB.tsx" },
+  "features-a": { tsx: "features/FeatureA.tsx", css: "features/FeatureA.module.css" },
+  "features-b": { tsx: "features/FeatureB.tsx", css: "features/FeatureB.module.css" },
   "features-c": { tsx: "features/FeatureC.tsx", css: "features/FeatureC.module.css" },
   "features-d": { tsx: "features/FeatureD.tsx", css: "features/FeatureD.module.css" },
   "features-e": { tsx: "features/FeatureE.tsx", css: "features/FeatureE.module.css" },
 
-  "testimonials-a": { tsx: "testimonials/TestimonialsA.tsx" },
-  "testimonials-b": { tsx: "testimonials/TestimonialsB.tsx" },
+  "testimonials-a": { tsx: "testimonials/TestimonialsA.tsx", css: "testimonials/TestimonialsA.module.css" },
+  "testimonials-b": { tsx: "testimonials/TestimonialsB.tsx", css: "testimonials/TestimonialsB.module.css" },
   "testimonials-c": { tsx: "testimonials/TestimonialsC.tsx", css: "testimonials/TestimonialsC.module.css" },
 
-  "gallery-a":  { tsx: "gallery/GalleryA.tsx" },
-  "gallery-b":  { tsx: "gallery/GalleryB.tsx" },
+  "gallery-a":  { tsx: "gallery/GalleryA.tsx", css: "gallery/GalleryA.module.css" },
+  "gallery-b":  { tsx: "gallery/GalleryB.tsx", css: "gallery/GalleryB.module.css" },
 
-  "pricing-a":  { tsx: "pricing/PricingA.tsx" },
-  "pricing-b":  { tsx: "pricing/PricingB.tsx" },
+  "pricing-a":  { tsx: "pricing/PricingA.tsx", css: "pricing/PricingA.module.css" },
+  "pricing-b":  { tsx: "pricing/PricingB.tsx", css: "pricing/PricingB.module.css" },
 
-  "faq-a":      { tsx: "faq/FAQA.tsx" },
-  "faq-b":      { tsx: "faq/FAQB.tsx" },
+  "faq-a":      { tsx: "faq/FAQA.tsx", css: "faq/FAQA.module.css" },
+  "faq-b":      { tsx: "faq/FAQB.tsx", css: "faq/FAQB.module.css" },
 
   "cta-bold":           { tsx: "cta/BoldCTA.tsx",          css: "cta/BoldCTA.module.css" },
   "cta-centered":       { tsx: "cta/CenteredCTA.tsx",      css: "cta/CenteredCTA.module.css" },
@@ -120,6 +120,26 @@ function transformSource(source: string): string {
       `import { ${imports.trim()} } from "@/utils/colorUtils";`,
   );
 
+  // _shared/styles ➜ @/utils/styles
+  source = source.replace(
+    /import\s*\{([^}]+)\}\s*from\s*["'][^"']*_shared\/styles["'];?/g,
+    (_match, imports: string) =>
+      `import { ${imports.trim()} } from "@/utils/styles";`,
+  );
+
+  // _shared/layout.module.css ➜ ./layout.module.css (flattened in export)
+  source = source.replace(
+    /import\s+layout\s+from\s*["'][^"']*_shared\/layout\.module\.css["'];?/g,
+    `import layout from "./layout.module.css";`,
+  );
+
+  // CSS module imports: adjust relative path to same directory
+  source = source.replace(
+    /import\s+styles\s+from\s*["']\.\/([^"']+)["'];?/g,
+    (_match, file: string) =>
+      `import styles from "./${file}";`,
+  );
+
   // useBuilder() ➜ useSite()
   source = source.replace(/useBuilder\(\)/g, "useSite()");
 
@@ -172,6 +192,10 @@ h1, h2, h3, h4, h5, h6 {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+main {
+  container-type: inline-size;
 }
 
 ::-webkit-scrollbar { width: 10px; }
@@ -394,6 +418,36 @@ export async function POST(req: NextRequest) {
       `src/utils/colorUtils.ts`,
       await fs.readFile(colorUtilsPath, "utf-8"),
     );
+
+    /* --- Shared section styles (RADIUS, themeBg, buttonStyles, etc.) --- */
+    const sharedStylesPath = path.join(
+      sectionsDir, "_shared", "styles.ts",
+    );
+    let sharedStyles = await fs.readFile(sharedStylesPath, "utf-8");
+    // Rewrite imports: BuilderContext types ➜ siteConfig, colorUtils ➜ @/utils
+    sharedStyles = sharedStyles.replace(
+      /import\s*\{([^}]+)\}\s*from\s*["'][^"']*BuilderContext["'];?/g,
+      (_match: string, imports: string) =>
+        `import { ${imports.trim()} } from "@/config/siteConfig";`,
+    );
+    sharedStyles = sharedStyles.replace(
+      /import\s*\{([^}]+)\}\s*from\s*["'][^"']*colorUtils["'];?/g,
+      (_match: string, imports: string) =>
+        `import { ${imports.trim()} } from "@/utils/colorUtils";`,
+    );
+    sharedStyles = sharedStyles.replace(
+      /export\s*\{([^}]+)\}\s*from\s*["'][^"']*colorUtils["'];?/g,
+      (_match: string, imports: string) =>
+        `export { ${imports.trim()} } from "@/utils/colorUtils";`,
+    );
+    proj.file(`src/utils/styles.ts`, sharedStyles);
+
+    /* --- Shared layout CSS module --- */
+    const layoutCssPath = path.join(sectionsDir, "_shared", "layout.module.css");
+    try {
+      const layoutCss = await fs.readFile(layoutCssPath, "utf-8");
+      proj.file(`src/components/sections/layout.module.css`, layoutCss);
+    } catch { /* layout CSS not found – skip */ }
 
     /* --- App-level files --- */
     proj.file(`src/app/globals.css`, generateGlobalsCss(globalStyles));

@@ -1,14 +1,9 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS_CARD } from "../_shared/styles";
 import styles from "./FeatureE.module.css";
-
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "8px",
-  rounded: "16px",
-};
 
 const FeatureSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
@@ -35,7 +30,7 @@ const FeatureSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         background: colors.accent,
         color: "#fff",
         padding: "10px 22px",
-        borderRadius: radiusMap[borderRadius],
+        borderRadius: RADIUS_CARD[borderRadius],
         fontSize: 13,
         fontWeight: 600,
         border: "none",
@@ -88,7 +83,7 @@ const FeatureSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
             background: isDark
               ? "linear-gradient(135deg, #151515, #1e1e1e)"
               : "linear-gradient(135deg, #eee, #e0e0e0)",
-            borderRadius: radiusMap[borderRadius],
+            borderRadius: RADIUS_CARD[borderRadius],
             color: textColor,
             fontSize: 14,
             fontFamily: fonts.body,

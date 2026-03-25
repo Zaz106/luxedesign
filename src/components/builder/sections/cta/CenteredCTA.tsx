@@ -1,15 +1,9 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
-import { contrastText } from "../../sidebar/widgets/colorUtils";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS, contrastText } from "../_shared/styles";
 import styles from "./CenteredCTA.module.css";
-
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "8px",
-  rounded: "999px",
-};
 
 /**
  * Centered CTA — clean, minimal, professional. Accent pill eyebrow,
@@ -18,7 +12,7 @@ const radiusMap: Record<BorderRadius, string> = {
 const CenteredCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
   const { colors, borderRadius, buttonStyle, theme, fonts } = globalStyles;
-  const r = radiusMap[borderRadius];
+  const r = RADIUS[borderRadius];
   const ct = sectionContent[sectionId] ?? {};
 
   const eyebrow    = ct.eyebrow    ?? "Get Started";

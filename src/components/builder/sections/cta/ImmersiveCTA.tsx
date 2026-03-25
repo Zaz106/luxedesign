@@ -1,14 +1,9 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS } from "../_shared/styles";
 import styles from "./ImmersiveCTA.module.css";
-
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "8px",
-  rounded: "999px",
-};
 
 /**
  * Immersive CTA — dark atmospheric section that mirrors the ImmersiveFooter's visual
@@ -17,7 +12,7 @@ const radiusMap: Record<BorderRadius, string> = {
 const ImmersiveCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
   const { colors, borderRadius, buttonStyle, fonts } = globalStyles;
-  const r = radiusMap[borderRadius];
+  const r = RADIUS[borderRadius];
   const ct = sectionContent[sectionId] ?? {};
 
   const heading     = ct.heading     ?? "Let's build something extraordinary together.";

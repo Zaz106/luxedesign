@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Monitor,
   Tablet,
@@ -18,7 +18,9 @@ import type { SectionItem } from "../sidebar/types";
 import type { SectionContent } from "../context/BuilderContext";
 import "./PreviewIsland.css";
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Types & constants â”€â”€ */
+/* ------------------------------------------------------------------ */
+/*  Types & constants                                                  */
+/* ------------------------------------------------------------------ */
 
 type DeviceMode = "desktop" | "tablet" | "mobile";
 
@@ -36,57 +38,20 @@ const DEVICE_WIDTHS: Record<
   mobile: { portrait: 375, landscape: 667 },
 };
 
-/** Matching viewport heights for each device â€” makes 100vh work correctly inside iframe */
-const DEVICE_HEIGHTS: Record<
-  Exclude<DeviceMode, "desktop">,
-  { portrait: number; landscape: number }
-> = {
-  tablet: { portrait: 1024, landscape: 768 },
-  mobile: { portrait: 667, landscape: 375 },
-};
-
 const ZOOM_STEPS = [50, 75, 100, 125, 150];
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Section renderer â”€â”€ */
-
-const PreviewRenderer: React.FC<{
-  sections: SectionItem[];
-  globalStyles: GlobalStyles;
-}> = ({ sections, globalStyles }) => {
-  const themeBg = globalStyles.theme === "dark" ? "#0a0a0a" : "#fff";
-
-  return (
-    <div style={{ background: themeBg }}>
-      {sections
-        .filter((s) => s.isVisible)
-        .map((section) => {
-          const Component = getComponentForSectionVariant(
-            section.id,
-            section.designVariant,
-          );
-          if (!Component) return null;
-          return <Component key={section.id} sectionId={section.id} />;
-        })}
-    </div>
-  );
-};
-
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Preview page â”€â”€ */
+/* ------------------------------------------------------------------ */
+/*  Preview page                                                       */
+/* ------------------------------------------------------------------ */
 
 const PreviewPage: React.FC = () => {
   const [snapshot, setSnapshot] = useState<PreviewSnapshot | null>(null);
   const [device, setDevice] = useState<DeviceMode>("desktop");
   const [zoom, setZoom] = useState(100);
   const [landscape, setLandscape] = useState(false);
-  const [isRaw, setIsRaw] = useState(false);
-  /** Controlled iframe height â€” initialised to device viewport height so 100vh works inside */
-  const [iframeHeight, setIframeHeight] = useState<number | string>("100vh");
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  /* â”€â”€ Bootstrap â”€â”€ */
+  /* -- Load snapshot from sessionStorage -- */
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setIsRaw(params.get("raw") === "true");
     try {
       const raw = sessionStorage.getItem("luxe-preview");
       if (raw) setSnapshot(JSON.parse(raw));
@@ -95,7 +60,7 @@ const PreviewPage: React.FC = () => {
     }
   }, []);
 
-  /* â”€â”€ Google Fonts â”€â”€ */
+  /* -- Inject Google Fonts -- */
   useEffect(() => {
     const id = "preview-google-fonts";
     if (!document.getElementById(id)) {
@@ -107,63 +72,15 @@ const PreviewPage: React.FC = () => {
     }
   }, []);
 
-  /* â”€â”€ Raw mode body setup â”€â”€ */
+  /* -- Page-level styling -- */
   useEffect(() => {
-    if (!isRaw || !snapshot) return;
-    const bg = snapshot.globalStyles.theme === "dark" ? "#0a0a0a" : "#fff";
-    document.documentElement.style.background = bg;
-    document.body.style.background = bg;
+    document.documentElement.style.background = "#0a0a0a";
+    document.body.style.background = "#0a0a0a";
     document.body.style.margin = "0";
     document.body.style.padding = "0";
-    // Capture viewport height BEFORE iframe can grow  prevents 100vh-based
-    // content (e.g. hero sections) from causing an infinite resize loop.
-    document.documentElement.style.setProperty("--preview-vh", window.innerHeight + "px");
-  }, [isRaw, snapshot]);
+  }, []);
 
-  /* â”€â”€ Raw mode: report content height to parent via postMessage â”€â”€ */
-  useEffect(() => {
-    if (!isRaw) return;
-
-    const sendHeight = () => {
-      // measure the actual rendered content height, bypassing overflow clipping
-      const h = document.body.scrollHeight || document.documentElement.scrollHeight;
-      if (h > 0) window.parent.postMessage({ type: "luxe-preview-height", height: h }, "*");
-    };
-
-    // After first paint
-    requestAnimationFrame(sendHeight);
-
-    const ro = new ResizeObserver(sendHeight);
-    ro.observe(document.body);
-    return () => ro.disconnect();
-  }, [isRaw, snapshot]);
-
-  /* â”€â”€ Seed iframe height to device viewport size on every device / orientation change â”€â”€ */
-  useEffect(() => {
-    if (isRaw) return;
-    if (device === "desktop") {
-      setIframeHeight("100vh");
-    } else {
-      const h = landscape
-        ? DEVICE_HEIGHTS[device as "tablet" | "mobile"].landscape
-        : DEVICE_HEIGHTS[device as "tablet" | "mobile"].portrait;
-      setIframeHeight(h);
-    }
-  }, [device, landscape, isRaw]);
-
-  /* â”€â”€ Parent mode: receive height messages from iframe â”€â”€ */
-  useEffect(() => {
-    if (isRaw) return;
-    const handle = (e: MessageEvent) => {
-      if (e.data?.type === "luxe-preview-height") {
-        setIframeHeight(e.data.height as number);
-      }
-    };
-    window.addEventListener("message", handle);
-    return () => window.removeEventListener("message", handle);
-  }, [isRaw]);
-
-  /* â”€â”€ Actions â”€â”€ */
+  /* -- Actions -- */
   const handleBack = () => {
     window.close();
     window.location.href = "/web-builder";
@@ -175,14 +92,6 @@ const PreviewPage: React.FC = () => {
       if (raw) setSnapshot(JSON.parse(raw));
     } catch {
       /* ignore */
-    }
-    if (iframeRef.current) {
-      // Force reload by temporarily clearing src
-      const src = iframeRef.current.src;
-      iframeRef.current.src = "";
-      requestAnimationFrame(() => {
-        if (iframeRef.current) iframeRef.current.src = src;
-      });
     }
   }, []);
 
@@ -203,22 +112,7 @@ const PreviewPage: React.FC = () => {
     }
   };
 
-  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• RAW MODE (rendered inside iframe) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-
-  if (isRaw) {
-    if (!snapshot) return null;
-    return (
-      <BuilderProvider activePage={1} initialState={snapshot}>
-        <PreviewRenderer
-          sections={snapshot.sections}
-          globalStyles={snapshot.globalStyles}
-        />
-      </BuilderProvider>
-    );
-  }
-
-  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• NORMAL MODE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-
+  /* -- Empty state -- */
   if (!snapshot) {
     return (
       <div className="preview-empty">
@@ -227,6 +121,7 @@ const PreviewPage: React.FC = () => {
     );
   }
 
+  /* -- Layout values -- */
   const isFramed = device !== "desktop";
   const frameW = isFramed
     ? landscape
@@ -234,19 +129,14 @@ const PreviewPage: React.FC = () => {
       : DEVICE_WIDTHS[device as "tablet" | "mobile"].portrait
     : 0;
   const themeBg = snapshot.globalStyles.theme === "dark" ? "#0a0a0a" : "#fff";
+  const visibleSections = snapshot.sections.filter((s) => s.isVisible);
 
   return (
     <div className={`preview-wrapper${isFramed ? " framed" : ""}`}>
       {/* Viewport dimension pill */}
       {isFramed && <div className="preview-dim-badge">{frameW}px</div>}
 
-      {/*
-        The iframe is ALWAYS mounted and visible for all device modes.
-        Width is controlled via CSS/inline style â€” never display:none.
-        This means the browser always lays out iframe content at the correct
-        width, so height syncs (via postMessage) are always accurate and
-        transitions between device sizes are seamless CSS animations.
-      */}
+      {/* Content frame */}
       <div
         className={`preview-frame ${device}`}
         style={{
@@ -256,21 +146,32 @@ const PreviewPage: React.FC = () => {
             : {}),
         }}
       >
-        <iframe
-          ref={iframeRef}
-          src="/web-builder/preview?raw=true"
+        {/*
+          container-type: inline-size makes @container queries and cqi units
+          respond to this wrapper's width, matching builder canvas behavior.
+          No iframe needed -- sections render directly.
+        */}
+        <div
+          className="preview-content"
           style={{
-            width: "100%",
-            border: "none",
-            display: "block",
             background: themeBg,
-            height: typeof iframeHeight === "number" ? `${iframeHeight}px` : iframeHeight,
+            containerType: "inline-size",
           }}
-          title="Preview"
-        />
+        >
+          <BuilderProvider activePage={1} initialState={snapshot}>
+            {visibleSections.map((section) => {
+              const Component = getComponentForSectionVariant(
+                section.id,
+                section.designVariant,
+              );
+              if (!Component) return null;
+              return <Component key={section.id} sectionId={section.id} />;
+            })}
+          </BuilderProvider>
+        </div>
       </div>
 
-      {/* â”€â”€â”€ Floating Island â”€â”€â”€ */}
+      {/* Floating Island */}
       <div className="preview-island">
         <button
           className={`island-btn${device === "desktop" ? " active" : ""}`}
@@ -380,4 +281,3 @@ const PreviewPage: React.FC = () => {
 };
 
 export default PreviewPage;
-

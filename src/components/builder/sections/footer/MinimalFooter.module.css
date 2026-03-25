@@ -136,13 +136,13 @@
   gap: 1.5rem;
 }
 
-@media (min-width: 724px) {
+@container (min-width: 724px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1024px) {
+@container (min-width: 1024px) {
   .grid {
     grid-template-columns: 1fr 1.5fr 1fr 1fr;
   }
@@ -166,25 +166,25 @@
   height: 3rem;
 }
 
-@media (min-width: 724px) {
+@container (min-width: 724px) {
   .inputGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1024px) {
+@container (min-width: 1024px) {
   .inputGrid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (max-width: 724px) {
+@container (max-width: 724px) {
   .footer {
     padding: 3rem 1.5rem 1.5rem;
   }
 }
 
-@media (max-width: 430px) {
+@container (max-width: 430px) {
   .footer {
     padding: 2rem 1rem 1rem;
   }

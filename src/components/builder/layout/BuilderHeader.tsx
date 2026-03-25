@@ -2,16 +2,17 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, PanelLeft, Download, Eye, Loader2 } from "lucide-react";
+import { ArrowLeft, Columns3, Download, Eye, Loader2 } from "lucide-react";
 import { useBuilder } from "../context/BuilderContext";
 import { exportProject } from "../export/exportProject";
 import "./BuilderHeader.css";
 
 interface BuilderHeaderProps {
-  onToggleSidebar: () => void;
+  devMode?: boolean;
+  onToggleDevMode?: () => void;
 }
 
-const BuilderHeader: React.FC<BuilderHeaderProps> = ({ onToggleSidebar }) => {
+const BuilderHeader: React.FC<BuilderHeaderProps> = ({ devMode, onToggleDevMode }) => {
   const router = useRouter();
   const { globalStyles, pageSections, sectionContent, activePage } = useBuilder();
   const [isExporting, setIsExporting] = useState(false);
@@ -58,6 +59,14 @@ const BuilderHeader: React.FC<BuilderHeaderProps> = ({ onToggleSidebar }) => {
 
       <div className="header-right">
         <button
+          className={`header-action-button dev-button${devMode ? " active" : ""}`}
+          onClick={onToggleDevMode}
+          aria-label="Toggle responsive dev mode"
+        >
+          <Columns3 size={16} />
+          <span className="header-action-label">Dev</span>
+        </button>
+        <button
           className="header-action-button"
           aria-label="Download code"
           onClick={handleExport}
@@ -69,13 +78,6 @@ const BuilderHeader: React.FC<BuilderHeaderProps> = ({ onToggleSidebar }) => {
         <button className="header-action-button primary" onClick={handlePreview} aria-label="Preview site">
           <Eye size={16} />
           <span className="header-action-label">Preview</span>
-        </button>
-        <button
-          onClick={onToggleSidebar}
-          className="sidebar-toggle-button"
-          aria-label="Toggle sidebar"
-        >
-          <PanelLeft size={20} />
         </button>
       </div>
     </header>

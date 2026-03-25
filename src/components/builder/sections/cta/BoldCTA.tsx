@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useBuilder } from "../../context/BuilderContext";
-import { contrastText } from "../../sidebar/widgets/colorUtils";
+import { contrastText } from "../_shared/styles";
 import styles from "./BoldCTA.module.css";
 
 const BoldCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {

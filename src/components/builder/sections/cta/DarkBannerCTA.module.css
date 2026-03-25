@@ -30,7 +30,7 @@
   z-index: 1;
 }
 
-@media (max-width: 724px) {
+@container (max-width: 724px) {
   .scene {
     padding: 64px 24px 56px !important;
   }
@@ -43,7 +43,7 @@
   }
 }
 
-@media (max-width: 430px) {
+@container (max-width: 430px) {
   .scene {
     padding: 48px 16px 40px !important;
   }

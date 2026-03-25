@@ -91,9 +91,10 @@ const Accordion = ({
 interface BuilderSidebarProps {
   activePage: number;
   setActivePage: (page: number) => void;
+  forceExpandSection?: ToolSection | null;
 }
 
-const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePage }) => {
+const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePage, forceExpandSection }) => {
   const { pageSections, setPageSections, activeConfigId, setActiveConfigId: setActiveConfigIdCtx, globalStyles, setGlobalStyles } = useBuilder();
   const sections = pageSections[activePage] ?? [];
   const setSections = (updater: SectionItem[] | ((prev: SectionItem[]) => SectionItem[])) => {
@@ -108,9 +109,16 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [pages, setPages] = useState([1]);
   const [isPageDropdownOpen, setIsPageDropdownOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<ToolSection[]>([]);
+  const [expandedSections, setExpandedSections] = useState<ToolSection[]>(["start"]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddSectionDropdownOpen, setIsAddSectionDropdownOpen] = useState(false);
+
+  // Auto-expand the section selected from the bottom bar
+  useEffect(() => {
+    if (forceExpandSection) {
+      setExpandedSections([forceExpandSection]);
+    }
+  }, [forceExpandSection]);
 
   // Auto-expand Sections accordion when a section is clicked on canvas
   useEffect(() => {

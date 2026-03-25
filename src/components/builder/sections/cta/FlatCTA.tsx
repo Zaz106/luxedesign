@@ -1,15 +1,9 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
-import { contrastText } from "../../sidebar/widgets/colorUtils";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS, contrastText } from "../_shared/styles";
 import styles from "./FlatCTA.module.css";
-
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "8px",
-  rounded: "999px",
-};
 
 /**
  * Flat CTA — same centered layout as CenteredCTA but without the card wrapper.
@@ -18,7 +12,7 @@ const radiusMap: Record<BorderRadius, string> = {
 const FlatCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
   const { colors, borderRadius, buttonStyle, theme, fonts } = globalStyles;
-  const r = radiusMap[borderRadius];
+  const r = RADIUS[borderRadius];
   const ct = sectionContent[sectionId] ?? {};
 
   const eyebrow     = ct.eyebrow     ?? "Get Started";

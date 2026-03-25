@@ -42,7 +42,7 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 1024px) {
+@container (max-width: 1024px) {
   .navColumns {
     gap: 2rem;
   }
@@ -113,7 +113,7 @@
 
 .bigName {
   display: block;
-  font-size: clamp(48px, 14vw, 200px);
+  font-size: clamp(48px, 14cqi, 200px);
   font-weight: 700;
   letter-spacing: -0.04em;
   white-space: nowrap;
@@ -126,7 +126,7 @@
   mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
 }
 
-@media (max-width: 724px) {
+@container (max-width: 724px) {
   .footer {
     padding: 2.5rem 1.5rem 0;
   }
@@ -148,7 +148,7 @@
   }
 }
 
-@media (max-width: 430px) {
+@container (max-width: 430px) {
   .footer {
     padding: 2rem 1rem 0;
   }

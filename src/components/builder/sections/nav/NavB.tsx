@@ -1,63 +1,36 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
+import { useBuilder } from "../../context/BuilderContext";
+import { themeBg } from "../_shared/styles";
+import styles from "./NavB.module.css";
 
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "6px",
-  rounded: "999px",
-};
-
-/** Design B: Centered logo nav with links below */
-const NavSection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
+const NavB: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
-  const { colors, borderRadius, theme } = globalStyles;
+  const { colors, theme, fonts } = globalStyles;
   const ct = sectionContent[sectionId] ?? {};
-  const hFont = globalStyles.fonts.heading;
-  const bFont = globalStyles.fonts.body;
 
   const logo = ct.logo ?? "LOGO";
   const links = (ct.links ?? "Home, About, Services, Work, Contact").split(", ").filter(Boolean);
 
-  const bg = theme === "dark" ? "#0a0a0a" : "#fff";
-  const text = colors.primary;
-  const sub = colors.paragraph;
-
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "20px 40px 16px",
-        background: bg,
-        gap: 10,
-      }}
-    >
-      <div style={{ fontSize: 20, fontWeight: 700, color: text, letterSpacing: 2, fontFamily: hFont }}>
+    <nav className={styles.nav} style={{ background: themeBg(theme) }}>
+      <div className={styles.logo} style={{ color: colors.primary, fontFamily: fonts.heading }}>
         {logo}
       </div>
-      <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
+      <div className={styles.links}>
         {links.map((item) => (
           <span
             key={item}
-            style={{
-              fontSize: 12,
-              color: sub,
-              cursor: "pointer",
-              textTransform: "uppercase",
-              letterSpacing: 1.5,
-              fontWeight: 500,
-              fontFamily: bFont,
-            }}
+            className={styles.link}
+            style={{ color: colors.paragraph, fontFamily: fonts.body }}
           >
             {item}
           </span>
         ))}
       </div>
-    </div>
+    </nav>
   );
 };
 
-export default NavSection;
+export default NavB;

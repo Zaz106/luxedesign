@@ -41,7 +41,7 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 1024px) {
+@container (max-width: 1024px) {
   .navColumns {
     gap: 2rem;
   }
@@ -102,7 +102,7 @@
 
 .bigName {
   display: block;
-  font-size: clamp(48px, 16vw, 260px);
+  font-size: clamp(48px, 16cqi, 260px);
   font-weight: 700;
   letter-spacing: -0.04em;
   white-space: nowrap;
@@ -122,7 +122,7 @@
   text-align: center;
 }
 
-@media (max-width: 724px) {
+@container (max-width: 724px) {
   .footer {
     padding: 2rem 1.5rem 0;
   }
@@ -142,7 +142,7 @@
   }
 }
 
-@media (max-width: 430px) {
+@container (max-width: 430px) {
   .footer {
     padding: 1.5rem 1rem 0;
   }

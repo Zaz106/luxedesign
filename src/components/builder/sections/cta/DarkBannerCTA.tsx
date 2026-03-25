@@ -1,14 +1,9 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS } from "../_shared/styles";
 import styles from "./DarkBannerCTA.module.css";
-
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "8px",
-  rounded: "999px",
-};
 
 /**
  * Dark Banner CTA — deep dark background with animated accent glow filling the section.
@@ -16,7 +11,7 @@ const radiusMap: Record<BorderRadius, string> = {
 const DarkBannerCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
   const { colors, borderRadius, buttonStyle, fonts } = globalStyles;
-  const r = radiusMap[borderRadius];
+  const r = RADIUS[borderRadius];
   const ct = sectionContent[sectionId] ?? {};
 
   const heading      = ct.heading      ?? "Take the next step toward a better experience";
@@ -60,7 +55,7 @@ const DarkBannerCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
       <div className={styles.content}>
         <h2
           style={{
-            fontSize: "clamp(28px, 3vw, 40px)",
+            fontSize: "clamp(28px, 3cqi, 40px)",
             fontWeight: 700,
             color: "rgba(255,255,255,0.92)",
             maxWidth: 660,

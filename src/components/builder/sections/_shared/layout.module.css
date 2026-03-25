@@ -1,0 +1,28 @@
+/* =================================================================
+   Shared Section Layout — content max-width + responsive padding
+   
+   Usage: import layout from "../_shared/layout.module.css"
+   Then:  <div className={layout.inner}> wraps section content
+   
+   The section root keeps its full-width background color.
+   This inner wrapper constrains content width for readability.
+   ================================================================= */
+
+.inner {
+  max-width: 1600px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 3rem;
+}
+
+@container (max-width: 1024px) {
+  .inner {
+    padding-inline: 2rem;
+  }
+}
+
+@container (max-width: 640px) {
+  .inner {
+    padding-inline: 1.25rem;
+  }
+}

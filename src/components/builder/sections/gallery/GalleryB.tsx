@@ -1,21 +1,15 @@
 "use client";
 
 import React from "react";
-import { useBuilder, BorderRadius } from "../../context/BuilderContext";
+import { useBuilder } from "../../context/BuilderContext";
+import { RADIUS_CARD } from "../_shared/styles";
+import styles from "./GalleryB.module.css";
+import layout from "../_shared/layout.module.css";
 
-const radiusMap: Record<BorderRadius, string> = {
-  sharp: "0px",
-  soft: "8px",
-  rounded: "16px",
-};
-
-/** Design B: Masonry-style 2-column gallery with overlaid labels */
-const GallerySection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
+const GalleryB: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
-  const { colors, borderRadius, theme } = globalStyles;
+  const { colors, borderRadius, theme, fonts } = globalStyles;
   const ct = sectionContent[sectionId] ?? {};
-  const hFont = globalStyles.fonts.heading;
-  const bFont = globalStyles.fonts.body;
 
   const title = ct.title ?? "Selected Work";
   const projects = [
@@ -26,69 +20,40 @@ const GallerySection: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   ];
 
   const bg = theme === "dark" ? "#111" : "#f5f5f5";
-  const heading = colors.primary;
-  const text = colors.paragraph;
 
   return (
-    <div style={{ padding: "80px 40px", background: bg }}>
-      <h2
-        style={{
-          fontSize: 32,
-          fontWeight: 600,
-          color: heading,
-          margin: "0 0 48px",
-          fontFamily: hFont,
-        }}
-      >
-        {title}
-      </h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-          gap: 20,
-        }}
-      >
-        {projects.map((p, i) => (
-          <div
-            key={p.title}
-            style={{
-              position: "relative",
-              aspectRatio: i % 3 === 0 ? "16/10" : "4/3",
-              background:
-                theme === "dark"
+    <div className={styles.section} style={{ background: bg }}>
+      <div className={layout.inner}>
+        <h2 className={styles.title} style={{ color: colors.primary, fontFamily: fonts.heading }}>
+          {title}
+        </h2>
+        <div className={styles.grid}>
+          {projects.map((p, i) => (
+            <div
+              key={p.title}
+              className={styles.item}
+              style={{
+                aspectRatio: i % 3 === 0 ? "16/10" : "4/3",
+                background: theme === "dark"
                   ? "linear-gradient(135deg, #1a1a1a, #222)"
                   : "linear-gradient(135deg, #e8e8e8, #ddd)",
-              borderRadius: radiusMap[borderRadius],
-              overflow: "hidden",
-              display: "flex",
-              alignItems: "flex-end",
-              padding: 24,
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  fontSize: 11,
-                  textTransform: "uppercase",
-                  letterSpacing: 1.5,
-                  color: colors.accent,
-                  marginBottom: 4,
-                  fontWeight: 500,
-                  fontFamily: bFont,
-                }}
-              >
-                {p.category}
+                borderRadius: RADIUS_CARD[borderRadius],
+              }}
+            >
+              <div>
+                <div className={styles.category} style={{ color: colors.accent, fontFamily: fonts.body }}>
+                  {p.category}
+                </div>
+                <div className={styles.itemTitle} style={{ color: colors.primary, fontFamily: fonts.heading }}>
+                  {p.title}
+                </div>
               </div>
-              <div style={{ fontSize: 18, fontWeight: 600, color: heading, fontFamily: hFont }}>
-                {p.title}
-              </div>
-            </div>
-          </div>
+      </div>
         ))}
       </div>
+          </div>
     </div>
   );
 };
 
-export default GallerySection;
+export default GalleryB;
