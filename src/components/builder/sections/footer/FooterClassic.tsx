@@ -3,6 +3,7 @@
 import React from "react";
 import { useBuilder } from "../../context/BuilderContext";
 import styles from "./FooterClassic.module.css";
+import layout from "../_shared/layout.module.css";
 
 const SOCIAL_SVGS: { name: string; path: string }[] = [
   {
@@ -56,7 +57,8 @@ const FooterClassic: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const socials = SOCIAL_SVGS;
 
   return (
-    <footer className={styles.footer} style={{ background: outerBg, padding: "2rem 2rem 2rem" }}>
+    <footer className={styles.footer} style={{ background: outerBg }}>
+      <div className={layout.footerInner}>
       <div className={styles.footerBlock} style={{ background: bg, border: `1px solid ${border}` }}>
         <div className={styles.top}>
           <div className={styles.brand}>
@@ -107,6 +109,7 @@ const FooterClassic: React.FC<{ sectionId: string }> = ({ sectionId }) => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );

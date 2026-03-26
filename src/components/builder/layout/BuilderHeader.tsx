@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Columns3, Download, Eye, Loader2 } from "lucide-react";
+import { ArrowLeft, MonitorSmartphone, Download, Eye, Loader2 } from "lucide-react";
 import { useBuilder } from "../context/BuilderContext";
 import { exportProject } from "../export/exportProject";
 import "./BuilderHeader.css";
@@ -63,7 +63,7 @@ const BuilderHeader: React.FC<BuilderHeaderProps> = ({ devMode, onToggleDevMode 
           onClick={onToggleDevMode}
           aria-label="Toggle responsive dev mode"
         >
-          <Columns3 size={16} />
+          <MonitorSmartphone size={16} />
           <span className="header-action-label">Dev</span>
         </button>
         <button

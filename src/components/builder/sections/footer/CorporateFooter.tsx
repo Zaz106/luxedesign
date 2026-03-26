@@ -3,6 +3,7 @@
 import React from "react";
 import { useBuilder } from "../../context/BuilderContext";
 import styles from "./CorporateFooter.module.css";
+import layout from "../_shared/layout.module.css";
 
 const CorporateFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
@@ -34,6 +35,7 @@ const CorporateFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   return (
     <footer className={styles.footer} style={{ backgroundColor: bg }}>
+      <div className={layout.footerInner}>
       {/* Top section */}
       <div className={styles.top}>
         <div className={styles.brand}>
@@ -76,6 +78,7 @@ const CorporateFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         </div>
       </div>
 
+      </div>
       {/* Giant faded brand name */}
       <div className={styles.bigNameWrap}>
         <span className={styles.bigName} style={{ fontFamily: fonts.heading, color: textFaint }}>

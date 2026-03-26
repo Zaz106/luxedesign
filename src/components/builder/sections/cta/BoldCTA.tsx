@@ -41,7 +41,7 @@ const BoldCTA: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
         <form
           className={styles.form}
-          style={{ borderColor, borderRadius: "9999px" }}
+          style={{ borderColor}}
           onSubmit={(e) => e.preventDefault()}
         >
           <input

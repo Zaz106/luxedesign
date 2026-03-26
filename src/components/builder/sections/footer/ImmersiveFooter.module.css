@@ -32,7 +32,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 2.5rem 3rem;
+  padding: 2.5rem 0;
 }
 
 /* ── Top bar ── */
@@ -82,7 +82,7 @@
     padding: 0 1.2rem;
   }
   .content {
-    padding: 2rem 2rem;
+    padding: 2rem 0;
   }
 }
 
@@ -141,7 +141,7 @@
 
 @container (max-width: 724px) {
   .content {
-    padding: 2rem 1.5rem;
+    padding: 2rem 0;
   }
 
   .columnsRow {
@@ -166,7 +166,7 @@
 
 @container (max-width: 430px) {
   .content {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 0;
   }
 
   .colTitle {

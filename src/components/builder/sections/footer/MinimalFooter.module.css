@@ -1,6 +1,6 @@
 .footer {
   background-color: #f3f4f6; /* Very Light Grey */
-  padding: 4rem 4rem 2rem;
+  padding: 4rem 0 2rem;
   color: var(--color-text-main);
 }
 
@@ -180,13 +180,13 @@
 
 @container (max-width: 724px) {
   .footer {
-    padding: 3rem 1.5rem 1.5rem;
+    padding: 3rem 0 1.5rem;
   }
 }
 
 @container (max-width: 430px) {
   .footer {
-    padding: 2rem 1rem 1rem;
+    padding: 2rem 0 1rem;
   }
 
   .heading {

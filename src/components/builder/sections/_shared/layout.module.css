@@ -26,3 +26,31 @@
     padding-inline: 1.25rem;
   }
 }
+
+/* =================================================================
+   Footer Inner — percentage-based width constraint
+   
+   Usage: import layout from "../_shared/layout.module.css"
+   Then:  <div className={layout.footerInner}> wraps footer content
+   
+   Desktop 90% · Tablet 100% + Mobile 100% with inline padding
+   ================================================================= */
+
+.footerInner {
+  width: 90%;
+  margin-inline: auto;
+}
+
+@container (max-width: 1024px) {
+  .footerInner {
+    width: 100%;
+    padding-inline: 2rem;
+  }
+}
+
+@container (max-width: 640px) {
+  .footerInner {
+    width: 100%;
+    padding-inline: 1.25rem;
+  }
+}

@@ -35,6 +35,7 @@ const VARIANT_FILES: Record<string, { tsx: string; css?: string }> = {
   "nav-b":     { tsx: "nav/NavB.tsx", css: "nav/NavB.module.css" },
   "hero-a":    { tsx: "hero/HeroA.tsx", css: "hero/HeroA.module.css" },
   "hero-b":    { tsx: "hero/HeroB.tsx", css: "hero/HeroB.module.css" },
+  "hero-c":    { tsx: "hero/HeroC.tsx", css: "hero/HeroC.module.css" },
 
   "features-a": { tsx: "features/FeatureA.tsx", css: "features/FeatureA.module.css" },
   "features-b": { tsx: "features/FeatureB.tsx", css: "features/FeatureB.module.css" },
@@ -51,9 +52,11 @@ const VARIANT_FILES: Record<string, { tsx: string; css?: string }> = {
 
   "pricing-a":  { tsx: "pricing/PricingA.tsx", css: "pricing/PricingA.module.css" },
   "pricing-b":  { tsx: "pricing/PricingB.tsx", css: "pricing/PricingB.module.css" },
+  "pricing-c":  { tsx: "pricing/PricingC.tsx", css: "pricing/PricingC.module.css" },
 
   "faq-a":      { tsx: "faq/FAQA.tsx", css: "faq/FAQA.module.css" },
   "faq-b":      { tsx: "faq/FAQB.tsx", css: "faq/FAQB.module.css" },
+  "faq-c":      { tsx: "faq/FAQC.tsx", css: "faq/FAQC.module.css" },
 
   "cta-bold":           { tsx: "cta/BoldCTA.tsx",          css: "cta/BoldCTA.module.css" },
   "cta-centered":       { tsx: "cta/CenteredCTA.tsx",      css: "cta/CenteredCTA.module.css" },

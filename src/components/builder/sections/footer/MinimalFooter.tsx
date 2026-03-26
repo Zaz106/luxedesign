@@ -3,6 +3,7 @@
 import React from 'react';
 import { useBuilder } from '../../context/BuilderContext';
 import styles from './MinimalFooter.module.css';
+import layout from '../_shared/layout.module.css';
 
 const Footer: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
@@ -32,6 +33,7 @@ const Footer: React.FC<{ sectionId: string }> = ({ sectionId }) => {
       backgroundColor: theme === 'dark' ? '#0a0a0a' : '#f3f4f6',
       color: colors.paragraph 
     }}>
+      <div className={layout.footerInner}>
       <div className={styles.container}>
         <div className={styles.grid}>
           {/* Column 1: Logo & Nav */}
@@ -90,6 +92,7 @@ const Footer: React.FC<{ sectionId: string }> = ({ sectionId }) => {
             <a href="#" style={{ color: colors.paragraph }}>Terms and Conditions</a>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );

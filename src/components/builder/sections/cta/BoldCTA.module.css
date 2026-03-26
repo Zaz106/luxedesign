@@ -106,10 +106,10 @@ input:-webkit-autofill:active{
 
   .form {
     flex-direction: column;
-    padding: 1rem;
     gap: 1rem;
     align-items: stretch;
-    border-radius: 20px;
+    border-radius: 25px;
+    padding: 1.25rem 1rem 0.75rem;
   }
   
   .input {

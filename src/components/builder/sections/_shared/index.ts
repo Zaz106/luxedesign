@@ -9,6 +9,7 @@ import NavB from "../nav/NavB";
 // Hero Designs imports
 import HeroA from "../hero/HeroA";
 import HeroB from "../hero/HeroB";
+import HeroC from "../hero/HeroC";
 
 // Feature Designs imports
 import FeatureA from "../features/FeatureA";
@@ -29,10 +30,12 @@ import GalleryB from "../gallery/GalleryB";
 // Pricing Designs imports
 import PricingA from "../pricing/PricingA";
 import PricingB from "../pricing/PricingB";
+import PricingC from "../pricing/PricingC";
 
 // FAQ Designs imports
 import FAQA from "../faq/FAQA";
 import FAQB from "../faq/FAQB";
+import FAQC from "../faq/FAQC";
 
 // CTA Designs imports
 import BoldCTA from "../cta/BoldCTA";
@@ -70,6 +73,7 @@ export const sectionDesigns: Record<string, DesignVariant[]> = {
   hero: [
     { id: "hero-a", name: "Centered Fullwidth", component: HeroA },
     { id: "hero-b", name: "Split Layout", component: HeroB },
+    { id: "hero-c", name: "Statement", component: HeroC },
   ],
   features: [
     { id: "features-a", name: "Card Grid", component: FeatureA },
@@ -90,10 +94,12 @@ export const sectionDesigns: Record<string, DesignVariant[]> = {
   pricing: [
     { id: "pricing-a", name: "Simple Cards", component: PricingA },
     { id: "pricing-b", name: "Featured Card", component: PricingB },
+    { id: "pricing-c", name: "Feature Cards", component: PricingC },
   ],
   faq: [
     { id: "faq-a", name: "Stacked Cards", component: FAQA },
     { id: "faq-b", name: "Accordion", component: FAQB },
+    { id: "faq-c", name: "Centered Accordion", component: FAQC },
   ],
   cta: [
     { id: "cta-bold",         name: "Bold Email",        component: BoldCTA },

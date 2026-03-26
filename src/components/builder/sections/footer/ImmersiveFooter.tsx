@@ -3,6 +3,7 @@
 import React from "react";
 import { useBuilder } from "../../context/BuilderContext";
 import styles from "./ImmersiveFooter.module.css";
+import layout from "../_shared/layout.module.css";
 
 const ImmersiveFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
@@ -41,6 +42,7 @@ const ImmersiveFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
       {/* Content */}
       <div className={styles.content}>
+        <div className={layout.footerInner}>
         {/* Top bar */}
         <div className={styles.topBar}>
           <span className={styles.logoText} style={{ fontFamily: fonts.heading, color: textBright }}>
@@ -95,6 +97,7 @@ const ImmersiveFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
               ))}
             </div>
           </div>
+        </div>
         </div>
       </div>
 

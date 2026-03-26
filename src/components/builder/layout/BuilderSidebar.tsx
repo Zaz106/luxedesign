@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronRight, Search, SquarePen, Plus, Sun, Moon } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, SquarePen, Plus, Sun, Moon, Sparkles, X } from "lucide-react";
 import BuilderSecondarySidebar from "./BuilderSecondarySidebar";
 import { useBuilder } from "../context/BuilderContext";
 import StartSection from "../sidebar/panels/StartSection";
@@ -112,6 +112,8 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
   const [expandedSections, setExpandedSections] = useState<ToolSection[]>(["start"]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddSectionDropdownOpen, setIsAddSectionDropdownOpen] = useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
 
   // Auto-expand the section selected from the bottom bar
   useEffect(() => {
@@ -568,6 +570,34 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
             label="4. Content"
             isOpen={expandedSections.includes("content")}
             onToggle={toggleSection}
+            extraAction={
+              expandedSections.includes("content") ? (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsAiModalOpen(true);
+                  }}
+                  style={{
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                    opacity: 0.7,
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "rgba(255,255,255,0.05)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = "transparent")
+                  }
+                  title="AI Content Fill"
+                >
+                  <Sparkles size={15} color="#aaa" />
+                </div>
+              ) : null
+            }
           >
             <ContentSection
               sections={sections}
@@ -585,6 +615,52 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
           />
         </div>
       </div>
+
+      {/* AI Content Modal */}
+      {isAiModalOpen && (
+        <div
+          className="ai-modal-overlay"
+          onClick={() => setIsAiModalOpen(false)}
+        >
+          <div
+            className="ai-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="ai-modal-header">
+              <div className="ai-modal-header-left">
+                <Sparkles size={16} color="#987ed2" />
+                <span className="ai-modal-title">AI Content Fill</span>
+              </div>
+              <button
+                className="ai-modal-close"
+                onClick={() => setIsAiModalOpen(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <p className="ai-modal-description">
+              Describe your business or project and AI will populate all section content for you.
+            </p>
+
+            <textarea
+              className="ai-modal-textarea"
+              placeholder="e.g. A modern fintech startup that helps freelancers manage invoices and payments…"
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              rows={5}
+            />
+
+            <button
+              className="ai-modal-submit"
+              disabled={!aiPrompt.trim()}
+            >
+              <Sparkles size={14} />
+              Generate Content
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

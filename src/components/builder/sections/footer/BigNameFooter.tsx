@@ -3,6 +3,7 @@
 import React from "react";
 import { useBuilder } from "../../context/BuilderContext";
 import styles from "./BigNameFooter.module.css";
+import layout from "../_shared/layout.module.css";
 
 const BigNameFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
   const { globalStyles, sectionContent } = useBuilder();
@@ -49,6 +50,7 @@ const BigNameFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
 
   return (
     <footer className={styles.footer} style={{ backgroundColor: bg }}>
+      <div className={layout.footerInner}>
       {/* Top row */}
       <div className={styles.top}>
         {/* Logo + tagline + socials */}
@@ -94,6 +96,7 @@ const BigNameFooter: React.FC<{ sectionId: string }> = ({ sectionId }) => {
         </div>
       </div>
 
+      </div>
       {/* Fading brand name */}
       <div className={styles.bigNameWrap}>
         <span
