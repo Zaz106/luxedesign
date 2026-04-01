@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronRight, Search, SquarePen, Plus, Sun, Moon, Sparkles, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, SquarePen, Plus, Sun, Moon, Sparkles, X, Copy, Trash2 } from "lucide-react";
 import BuilderSecondarySidebar from "./BuilderSecondarySidebar";
 import { useBuilder } from "../context/BuilderContext";
 import StartSection from "../sidebar/panels/StartSection";
@@ -11,6 +11,8 @@ import ContentSection from "../sidebar/panels/ContentSection";
 import { SectionItem, ToolSection } from "../sidebar/types";
 import { getDesignsForSection } from "../sections/_shared";
 import { invertForTheme } from "../sidebar/widgets/colorUtils";
+import { PRESETS } from "../sections/_shared/presets";
+import { newPageSections } from "../context/BuilderContext";
 import "./BuilderSidebar.css";
 
 // --- Shared Helpers ---
@@ -89,13 +91,11 @@ const Accordion = ({
 
 // --- Main Component ---
 interface BuilderSidebarProps {
-  activePage: number;
-  setActivePage: (page: number) => void;
   forceExpandSection?: ToolSection | null;
 }
 
-const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePage, forceExpandSection }) => {
-  const { pageSections, setPageSections, activeConfigId, setActiveConfigId: setActiveConfigIdCtx, globalStyles, setGlobalStyles } = useBuilder();
+const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ forceExpandSection }) => {
+  const { pageSections, setPageSections, sectionContent, setSectionContent, activeConfigId, setActiveConfigId: setActiveConfigIdCtx, globalStyles, setGlobalStyles, activePage, setActivePage } = useBuilder();
   const sections = pageSections[activePage] ?? [];
   const setSections = (updater: SectionItem[] | ((prev: SectionItem[]) => SectionItem[])) => {
     setPageSections((prev) => ({
@@ -105,15 +105,21 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
     }));
   };
 
+  // Derive pages list from pageSections keys
+  const pages = React.useMemo(() => Object.keys(pageSections).map(Number).sort((a, b) => a - b), [pageSections]);
+
   const [projectTitle, setProjectTitle] = useState("Title");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [pages, setPages] = useState([1]);
   const [isPageDropdownOpen, setIsPageDropdownOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<ToolSection[]>(["start"]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddSectionDropdownOpen, setIsAddSectionDropdownOpen] = useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  // Honeypot field — never rendered visibly; bots may fill it
+  const [aiHoneypot, setAiHoneypot] = useState("");
 
   // Auto-expand the section selected from the bottom bar
   useEffect(() => {
@@ -206,20 +212,100 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
   const handleAddPage = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (pages.length >= 5) return;
-    const newPage = pages.length + 1;
-    setPages([...pages, newPage]);
-    // Initialize new page with default sections
+    const newPage = Math.max(...pages) + 1;
     setPageSections((prev) => ({
       ...prev,
-      [newPage]: [
-        { id: "nav", title: "Navigation", isVisible: true, isLocked: true },
-        { id: "hero", title: "Hero Section", isVisible: true, isLocked: true },
-        { id: "features", title: "Feature Section 1", isVisible: true },
-        { id: "footer", title: "Footer", isVisible: true, isLocked: true },
-      ],
+      [newPage]: newPageSections(),
     }));
     setActivePage(newPage);
     setIsPageDropdownOpen(false);
+  };
+
+  const handleDeletePage = (e: React.MouseEvent, pageNum: number) => {
+    e.stopPropagation();
+    if (pages.length <= 1) return;
+    setPageSections((prev) => {
+      const next = { ...prev };
+      delete next[pageNum];
+      return next;
+    });
+    if (activePage === pageNum) {
+      const remaining = pages.filter((p) => p !== pageNum);
+      setActivePage(remaining[remaining.length - 1]);
+    }
+    setIsPageDropdownOpen(false);
+  };
+
+  const handleCopyPage = (e: React.MouseEvent, pageNum: number) => {
+    e.stopPropagation();
+    if (pages.length >= 5) return;
+    const newPage = Math.max(...pages) + 1;
+    const sourceSections = (pageSections[pageNum] ?? []).map((s) => ({
+      ...s,
+      id: s.id.startsWith("features-") ? `features-${Date.now()}-${Math.random().toString(36).slice(2, 7)}` : s.id,
+    }));
+    setPageSections((prev) => ({ ...prev, [newPage]: sourceSections }));
+    setActivePage(newPage);
+    setIsPageDropdownOpen(false);
+  };
+
+  const handleAiGenerate = async () => {
+    if (!aiPrompt.trim() || isAiLoading) return;
+    setIsAiLoading(true);
+    setAiError(null);
+
+    // Build the sections payload from visible sections + their variant IDs + schema field keys
+    const { variantContentSchemas } = await import("../sections/_shared/contentSchemas");
+    const sectionSpecs = sections
+      .filter((s) => s.isVisible && s.designVariant && variantContentSchemas[s.designVariant])
+      .map((s) => ({
+        id: s.id,
+        title: s.title,
+        variantId: s.designVariant!,
+        fields: variantContentSchemas[s.designVariant!].map((f) => f.key),
+      }));
+
+    if (sectionSpecs.length === 0) {
+      setAiError("No editable sections found. Add some sections first.");
+      setIsAiLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/ai-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: aiPrompt.trim(),
+          sections: sectionSpecs,
+          hp: aiHoneypot, // honeypot — always empty for real users
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setAiError(data.error ?? "Failed to generate content. Please try again.");
+        return;
+      }
+
+      // Merge AI-generated content into sectionContent
+      const incoming: Record<string, Record<string, string>> = data.content ?? {};
+      setSectionContent((prev) => {
+        const next = { ...prev };
+        for (const [sectionId, fields] of Object.entries(incoming)) {
+          next[sectionId] = { ...(next[sectionId] ?? {}), ...fields };
+        }
+        return next;
+      });
+
+      setIsAiModalOpen(false);
+      setAiPrompt("");
+      setAiHoneypot("");
+    } catch {
+      setAiError("Network error. Please check your connection and try again.");
+    } finally {
+      setIsAiLoading(false);
+    }
   };
 
   const handleAddSection = (sectionIdOrType: string) => {
@@ -364,17 +450,41 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
                           color: page === activePage ? "white" : "#888",
                         }}
                       >
-                        Page {page}
-                        {page === activePage && (
-                          <div
-                            style={{
-                              width: 4,
-                              height: 4,
-                              borderRadius: "50%",
-                              background: "#987ed2",
-                            }}
-                          />
-                        )}
+                        <span>Page {page}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                          {page === activePage && (
+                            <div
+                              style={{
+                                width: 4,
+                                height: 4,
+                                borderRadius: "50%",
+                                background: "#987ed2",
+                              }}
+                            />
+                          )}
+                          {pages.length < 5 && (
+                            <div
+                              title="Duplicate page"
+                              onClick={(e) => handleCopyPage(e, page)}
+                              style={{ display: "flex", alignItems: "center", padding: "2px 2px", borderRadius: 4, opacity: 0.5 }}
+                              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; e.stopPropagation(); }}
+                              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.5"; }}
+                            >
+                              <Copy size={11} />
+                            </div>
+                          )}
+                          {page !== activePage && pages.length > 1 && (
+                            <div
+                              title="Delete page"
+                              onClick={(e) => handleDeletePage(e, page)}
+                              style={{ display: "flex", alignItems: "center", padding: "2px 2px", borderRadius: 4, opacity: 0.5  }}
+                              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; e.stopPropagation(); }}
+                              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.5"; }}
+                            >
+                              <Trash2 size={11} />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                     {pages.length < 5 && (
@@ -550,6 +660,7 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
               setSections={setSections}
               activeConfigId={activeConfigId}
               setActiveConfigId={setActiveConfigId}
+              searchQuery={searchQuery}
             />
           </Accordion>
 
@@ -585,6 +696,7 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    padding: "4px 6px",
                   }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.background = "rgba(255,255,255,0.05)")
@@ -620,7 +732,7 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
       {isAiModalOpen && (
         <div
           className="ai-modal-overlay"
-          onClick={() => setIsAiModalOpen(false)}
+          onClick={() => !isAiLoading && setIsAiModalOpen(false)}
         >
           <div
             className="ai-modal"
@@ -633,30 +745,60 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ activePage, setActivePa
               </div>
               <button
                 className="ai-modal-close"
-                onClick={() => setIsAiModalOpen(false)}
+                onClick={() => !isAiLoading && setIsAiModalOpen(false)}
+                disabled={isAiLoading}
               >
                 <X size={16} />
               </button>
             </div>
 
             <p className="ai-modal-description">
-              Describe your business or project and AI will populate all section content for you.
+              Describe your business or project and AI will populate all visible section content for you.
             </p>
+
+            {/* Honeypot — hidden from real users, bots will fill it */}
+            <input
+              type="text"
+              value={aiHoneypot}
+              onChange={(e) => setAiHoneypot(e.target.value)}
+              tabIndex={-1}
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", opacity: 0, pointerEvents: "none" }}
+              autoComplete="off"
+            />
 
             <textarea
               className="ai-modal-textarea"
               placeholder="e.g. A modern fintech startup that helps freelancers manage invoices and payments…"
               value={aiPrompt}
               onChange={(e) => setAiPrompt(e.target.value)}
-              rows={5}
+              rows={6}
+              disabled={isAiLoading}
+              maxLength={800}
             />
+
+            {aiError && (
+              <p style={{ fontSize: 12, color: "#e05555", margin: "8px 0 0", lineHeight: 1.4 }}>
+                {aiError}
+              </p>
+            )}
 
             <button
               className="ai-modal-submit"
-              disabled={!aiPrompt.trim()}
+              disabled={!aiPrompt.trim() || isAiLoading}
+              onClick={handleAiGenerate}
             >
-              <Sparkles size={14} />
-              Generate Content
+              {isAiLoading ? (
+                <>
+                  <span style={{ width: 14, height: 14, border: "2px solid rgba(255,255,255,0.15)", borderTopColor: "rgba(255,255,255,0.7)", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
+                  Generating…
+                </>
+              ) : (
+                <>
+                  <Sparkles size={14} />
+                  Generate Content
+                </>
+              )}
             </button>
           </div>
         </div>

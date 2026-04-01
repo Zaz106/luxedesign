@@ -10,16 +10,13 @@ import { ToolSection } from "../sidebar/types";
 import "./BuilderLayout.css";
 
 /* Inner component that has access to BuilderContext */
-const BuilderLayoutInner: React.FC<{
-  activePage: number;
-  setActivePage: (p: number) => void;
-}> = ({ activePage, setActivePage }) => {
+const BuilderLayoutInner: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeToolSection, setActiveToolSection] = useState<ToolSection | null>(null);
   const [canvasScale, setCanvasScale] = useState(1);
   const [devMode, setDevMode] = useState(false);
   const canvasRef = useRef<BuilderCanvasHandle>(null);
-  const { activeConfigId } = useBuilder();
+  const { activeConfigId, setActiveConfigId, undo, redo, canUndo, canRedo } = useBuilder();
 
   // When a section is clicked on the canvas, open the sidebar drawer
   // with "sections" expanded so the secondary sidebar is visible
@@ -39,6 +36,43 @@ const BuilderLayoutInner: React.FC<{
     }
   }, [activeConfigId]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const ctrl = e.ctrlKey || e.metaKey;
+      if (!ctrl) return;
+
+      if (e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if (e.key === "z" && e.shiftKey) {
+        e.preventDefault();
+        redo();
+      } else if (e.key === "y") {
+        e.preventDefault();
+        redo();
+      } else if (e.key === "p") {
+        e.preventDefault();
+        // Trigger preview via the header button click
+        document.getElementById("builder-preview-btn")?.click();
+      } else if (e.key === "e") {
+        e.preventDefault();
+        document.getElementById("builder-export-btn")?.click();
+      }
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveConfigId(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [undo, redo, setActiveConfigId]);
+
   const handleSelectSection = (section: ToolSection) => {
     if (sidebarOpen && activeToolSection === section) {
       setSidebarOpen(false);
@@ -56,7 +90,14 @@ const BuilderLayoutInner: React.FC<{
 
   return (
     <>
-      <BuilderHeader devMode={devMode} onToggleDevMode={() => setDevMode((p) => !p)} />
+      <BuilderHeader
+        devMode={devMode}
+        onToggleDevMode={() => setDevMode((p) => !p)}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        onUndo={undo}
+        onRedo={redo}
+      />
       <div className="builder-main">
         {sidebarOpen && (
           <div
@@ -66,8 +107,6 @@ const BuilderLayoutInner: React.FC<{
         )}
         <div className={`sidebar-drawer ${sidebarOpen ? "open" : ""}`}>
           <BuilderSidebar
-            activePage={activePage}
-            setActivePage={setActivePage}
             forceExpandSection={activeToolSection}
           />
         </div>
@@ -86,12 +125,10 @@ const BuilderLayoutInner: React.FC<{
 };
 
 const BuilderLayout = () => {
-  const [activePage, setActivePage] = useState(1);
-
   return (
-    <BuilderProvider activePage={activePage}>
+    <BuilderProvider>
       <div className="builder-layout">
-        <BuilderLayoutInner activePage={activePage} setActivePage={setActivePage} />
+        <BuilderLayoutInner />
       </div>
     </BuilderProvider>
   );

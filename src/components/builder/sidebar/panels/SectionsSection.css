@@ -56,21 +56,29 @@
   font-weight: 400;
 }
 
-.section-item .section-delete {
+.section-item .section-actions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.section-item:hover .section-actions {
+  opacity: 1;
+}
+
+.section-item .section-copy, .section-item .section-delete {
   color: #444;
   flex-shrink: 0;
   padding: 4px;
   display: flex;
   cursor: pointer;
   transition: color 0.15s ease;
-  opacity: 0;
 }
 
-.section-item:hover .section-delete {
-  opacity: 1;
-}
-
-.section-item .section-delete:hover {
+.section-item .section-copy:hover, .section-item .section-delete:hover {
   color: #888;
 }
 

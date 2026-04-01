@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { GripVertical, Pin, Trash2 } from "lucide-react";
+import { GripVertical, Pin, Trash2, Copy } from "lucide-react";
 import { SectionItem } from "../types";
 import { useBuilder } from "../../context/BuilderContext";
 import "./SectionsSection.css";
@@ -11,6 +11,7 @@ interface SectionsSectionProps {
   setSections: React.Dispatch<React.SetStateAction<SectionItem[]>>;
   activeConfigId: string | null;
   setActiveConfigId: (id: string | null) => void;
+  searchQuery?: string;
 }
 
 const SectionsSection: React.FC<SectionsSectionProps> = ({
@@ -18,6 +19,7 @@ const SectionsSection: React.FC<SectionsSectionProps> = ({
   setSections,
   activeConfigId,
   setActiveConfigId,
+  searchQuery = "",
 }) => {
   const { setScrollToSectionId } = useBuilder();
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
@@ -30,6 +32,24 @@ const SectionsSection: React.FC<SectionsSectionProps> = ({
         s.id === id && !s.isLocked ? { ...s, isVisible: !s.isVisible } : s,
       ),
     );
+  };
+
+  const duplicateSection = (section: SectionItem) => {
+    const newId = section.id.startsWith("features")
+      ? `features-${Date.now()}`
+      : `${section.id}-${Date.now()}`;
+    const copy: SectionItem = {
+      ...section,
+      id: newId,
+      title: `${section.title} (Copy)`,
+      isLocked: false,
+    };
+    setSections((prev) => {
+      const idx = prev.findIndex((s) => s.id === section.id);
+      const next = [...prev];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
   };
 
   const handleSectionClick = (e: React.MouseEvent, section: SectionItem) => {
@@ -120,6 +140,11 @@ const SectionsSection: React.FC<SectionsSectionProps> = ({
   };
 
   const visibleSections = sections.filter((s) => s.isVisible);
+  const filteredSections = searchQuery.trim()
+    ? visibleSections.filter((s) =>
+        s.title.toLowerCase().includes(searchQuery.trim().toLowerCase()),
+      )
+    : visibleSections;
 
   return (
     <div
@@ -136,7 +161,7 @@ const SectionsSection: React.FC<SectionsSectionProps> = ({
           handleDrop(e);
         }}
       >
-        {visibleSections.map((section, index) => (
+        {filteredSections.map((section, index) => (
           <React.Fragment key={section.id}>
             {dropIndicatorIndex === index && draggedItemId && (
               <div className="drop-indicator" />
@@ -166,11 +191,20 @@ const SectionsSection: React.FC<SectionsSectionProps> = ({
               )}
               <span className="section-title">{section.title}</span>
               {!section.isLocked && (
-                <div
-                  className="section-delete"
-                  onClick={(e) => { e.stopPropagation(); toggleVisibility(section.id); }}
-                >
-                  <Trash2 size={13} />
+                <div className="section-actions">
+                  <div
+                    className="section-copy"
+                    title="Duplicate section"
+                    onClick={(e) => { e.stopPropagation(); duplicateSection(section); }}
+                  >
+                    <Copy size={12} />
+                  </div>
+                  <div
+                    className="section-delete"
+                    onClick={(e) => { e.stopPropagation(); toggleVisibility(section.id); }}
+                  >
+                    <Trash2 size={13} />
+                  </div>
                 </div>
               )}
             </div>

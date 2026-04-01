@@ -381,6 +381,26 @@ export const variantContentSchemas: Record<string, ContentField[]> = {
     { key: "legal1", label: "Legal Link 1", type: "text", defaultValue: "Terms of Service" },
     { key: "legal2", label: "Legal Link 2", type: "text", defaultValue: "Privacy Policy" },
   ],
+  "stats-a": [
+    { key: "label", label: "Label (above stats)", type: "text", defaultValue: "Trusted by teams worldwide" },
+    { key: "stat1Value", label: "Stat 1 Value", type: "text", defaultValue: "500+" },
+    { key: "stat1Label", label: "Stat 1 Label", type: "text", defaultValue: "Happy Clients" },
+    { key: "stat2Value", label: "Stat 2 Value", type: "text", defaultValue: "99.9%" },
+    { key: "stat2Label", label: "Stat 2 Label", type: "text", defaultValue: "Uptime SLA" },
+    { key: "stat3Value", label: "Stat 3 Value", type: "text", defaultValue: "2M+" },
+    { key: "stat3Label", label: "Stat 3 Label", type: "text", defaultValue: "Requests / Day" },
+    { key: "stat4Value", label: "Stat 4 Value", type: "text", defaultValue: "24/7" },
+    { key: "stat4Label", label: "Stat 4 Label", type: "text", defaultValue: "Support" },
+  ],
+  "logobanner-a": [
+    { key: "label", label: "Label text", type: "text", defaultValue: "Trusted by leading companies" },
+    { key: "logo1", label: "Company 1", type: "text", defaultValue: "Stripe" },
+    { key: "logo2", label: "Company 2", type: "text", defaultValue: "Vercel" },
+    { key: "logo3", label: "Company 3", type: "text", defaultValue: "Linear" },
+    { key: "logo4", label: "Company 4", type: "text", defaultValue: "Supabase" },
+    { key: "logo5", label: "Company 5", type: "text", defaultValue: "Figma" },
+    { key: "logo6", label: "Company 6", type: "text", defaultValue: "Notion" },
+  ],
 };
 
 /** Get the content schema for a given variant ID */

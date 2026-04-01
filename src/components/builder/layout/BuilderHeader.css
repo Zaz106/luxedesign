@@ -8,6 +8,7 @@
   padding: 0 20px;
   justify-content: space-between;
   z-index: 20;
+  position: relative;
 }
 
 .header-left {
@@ -90,8 +91,23 @@
 }
 
 .header-action-button:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
+}
+
+/* Undo/Redo icon-only buttons */
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.header-action-button.icon-only {
+  padding: 7px 9px;
+  min-width: unset;
 }
 
 /* ===== Tablet & below ===== */

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, MonitorSmartphone, Download, Eye, Loader2 } from "lucide-react";
+import { ArrowLeft, MonitorSmartphone, Download, Eye, Loader2, Undo2, Redo2 } from "lucide-react";
 import { useBuilder } from "../context/BuilderContext";
 import { exportProject } from "../export/exportProject";
 import "./BuilderHeader.css";
@@ -10,9 +10,20 @@ import "./BuilderHeader.css";
 interface BuilderHeaderProps {
   devMode?: boolean;
   onToggleDevMode?: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
+  onUndo?: () => void;
+  onRedo?: () => void;
 }
 
-const BuilderHeader: React.FC<BuilderHeaderProps> = ({ devMode, onToggleDevMode }) => {
+const BuilderHeader: React.FC<BuilderHeaderProps> = ({
+  devMode,
+  onToggleDevMode,
+  canUndo,
+  canRedo,
+  onUndo,
+  onRedo,
+}) => {
   const router = useRouter();
   const { globalStyles, pageSections, sectionContent, activePage } = useBuilder();
   const [isExporting, setIsExporting] = useState(false);
@@ -30,11 +41,7 @@ const BuilderHeader: React.FC<BuilderHeaderProps> = ({ devMode, onToggleDevMode 
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      await exportProject(
-        globalStyles,
-        pageSections[activePage] ?? [],
-        sectionContent,
-      );
+      await exportProject(globalStyles, pageSections, sectionContent);
     } catch (err) {
       console.error("Export failed:", err);
     } finally {
@@ -57,6 +64,27 @@ const BuilderHeader: React.FC<BuilderHeaderProps> = ({ devMode, onToggleDevMode 
         <h1 className="header-title">Web Builder Tool</h1>
       </div>
 
+      <div className="header-center">
+        <button
+          className="header-action-button icon-only"
+          title="Undo (Ctrl+Z)"
+          aria-label="Undo"
+          onClick={onUndo}
+          disabled={!canUndo}
+        >
+          <Undo2 size={15} />
+        </button>
+        <button
+          className="header-action-button icon-only"
+          title="Redo (Ctrl+Shift+Z)"
+          aria-label="Redo"
+          onClick={onRedo}
+          disabled={!canRedo}
+        >
+          <Redo2 size={15} />
+        </button>
+      </div>
+
       <div className="header-right">
         <button
           className={`header-action-button dev-button${devMode ? " active" : ""}`}
@@ -67,6 +95,7 @@ const BuilderHeader: React.FC<BuilderHeaderProps> = ({ devMode, onToggleDevMode 
           <span className="header-action-label">Dev</span>
         </button>
         <button
+          id="builder-export-btn"
           className="header-action-button"
           aria-label="Download code"
           onClick={handleExport}
@@ -75,7 +104,12 @@ const BuilderHeader: React.FC<BuilderHeaderProps> = ({ devMode, onToggleDevMode 
           {isExporting ? <Loader2 size={16} className="spin-icon" /> : <Download size={16} />}
           <span className="header-action-label">{isExporting ? "Exporting…" : "Export"}</span>
         </button>
-        <button className="header-action-button primary" onClick={handlePreview} aria-label="Preview site">
+        <button
+          id="builder-preview-btn"
+          className="header-action-button primary"
+          onClick={handlePreview}
+          aria-label="Preview site"
+        >
           <Eye size={16} />
           <span className="header-action-label">Preview</span>
         </button>

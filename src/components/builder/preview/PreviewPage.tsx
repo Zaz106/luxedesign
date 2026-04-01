@@ -158,7 +158,7 @@ const PreviewPage: React.FC = () => {
             containerType: "inline-size",
           }}
         >
-          <BuilderProvider activePage={1} initialState={snapshot}>
+          <BuilderProvider initialState={snapshot}>
             {visibleSections.map((section) => {
               const Component = getComponentForSectionVariant(
                 section.id,

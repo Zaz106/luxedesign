@@ -73,12 +73,16 @@ const VARIANT_FILES: Record<string, { tsx: string; css?: string }> = {
   "footer-immersive":   { tsx: "footer/ImmersiveFooter.tsx", css: "footer/ImmersiveFooter.module.css" },
   "footer-minimal":     { tsx: "footer/MinimalFooter.tsx",   css: "footer/MinimalFooter.module.css" },
   "footer-corporate":   { tsx: "footer/CorporateFooter.tsx", css: "footer/CorporateFooter.module.css" },
+
+  "stats-a":         { tsx: "stats/StatsA.tsx",         css: "stats/StatsA.module.css" },
+  "logobanner-a":    { tsx: "logobanner/LogoBannerA.tsx", css: "logobanner/LogoBannerA.module.css" },
 };
 
 const DEFAULT_VARIANTS: Record<string, string> = {
   nav: "nav-a", hero: "hero-a", features: "features-a",
   testimonials: "testimonials-a", gallery: "gallery-a",
-  pricing: "pricing-a", faq: "faq-a", cta: "cta-bold", footer: "footer-classic",
+  pricing: "pricing-a", faq: "faq-a", cta: "cta-centered", footer: "footer-classic",
+  stats: "stats-a", logobanner: "logobanner-a",
 };
 
 const GOOGLE_FONTS = new Set([
@@ -92,7 +96,7 @@ const GOOGLE_FONTS = new Set([
 
 function normalizeSectionType(id: string): string {
   for (const t of Object.keys(DEFAULT_VARIANTS)) {
-    if (id.startsWith(t)) return t;
+    if (id === t || id.startsWith(t + "-")) return t;
   }
   return id;
 }
@@ -352,11 +356,18 @@ ${jsx}
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { globalStyles, sections, sectionContent } = body as {
+    const { globalStyles, pageSections: rawPageSections, sectionContent } = body as {
       globalStyles: GlobalStyles;
-      sections: SectionItem[];
+      pageSections: Record<number, SectionItem[]>;
       sectionContent: SectionContent;
     };
+
+    // Normalise page numbers (JSON keys are always strings)
+    const pageSections: Record<number, SectionItem[]> = {};
+    for (const [k, v] of Object.entries(rawPageSections)) {
+      pageSections[Number(k)] = v as SectionItem[];
+    }
+    const pageNumbers = Object.keys(pageSections).map(Number).sort((a, b) => a - b);
 
     const zip = new JSZip();
     const proj = zip.folder("website")!;
@@ -366,10 +377,17 @@ export async function POST(req: NextRequest) {
     );
     const fontsDir = path.join(process.cwd(), "public", "fonts");
 
+    /* --- Collect all visible sections across all pages --- */
+    const allVisible: SectionItem[] = [];
+    for (const pageNum of pageNumbers) {
+      for (const s of (pageSections[pageNum] ?? [])) {
+        if (s.isVisible) allVisible.push(s);
+      }
+    }
+
     /* --- Determine which variants are needed --- */
-    const visible = sections.filter((s) => s.isVisible);
     const needed = new Set<string>();
-    for (const s of visible) {
+    for (const s of allVisible) {
       const v = s.designVariant || DEFAULT_VARIANTS[normalizeSectionType(s.id)];
       if (v) needed.add(v);
     }
@@ -399,9 +417,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    /* --- Filter sectionContent to only visible sections --- */
+    /* --- Filter sectionContent to only visible sections cross all pages --- */
     const filteredContent: SectionContent = {};
-    for (const s of visible) {
+    for (const s of allVisible) {
       if (sectionContent[s.id]) {
         filteredContent[s.id] = sectionContent[s.id];
       }
@@ -455,7 +473,16 @@ export async function POST(req: NextRequest) {
     /* --- App-level files --- */
     proj.file(`src/app/globals.css`, generateGlobalsCss(globalStyles));
     proj.file(`src/app/layout.tsx`, generateLayoutTsx(globalStyles));
-    proj.file(`src/app/page.tsx`, generatePageTsx(sections));
+
+    // Page 1 → src/app/page.tsx; pages 2+ → src/app/page-{n}/page.tsx
+    for (const pageNum of pageNumbers) {
+      const pageSecs = pageSections[pageNum] ?? [];
+      if (pageNum === 1) {
+        proj.file(`src/app/page.tsx`, generatePageTsx(pageSecs));
+      } else {
+        proj.file(`src/app/page-${pageNum}/page.tsx`, generatePageTsx(pageSecs));
+      }
+    }
 
     /* --- Project boilerplate --- */
     proj.file(

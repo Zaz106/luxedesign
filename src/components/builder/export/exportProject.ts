@@ -1,15 +1,14 @@
-import type { GlobalStyles, SectionContent } from "../context/BuilderContext";
-import type { SectionItem } from "../sidebar/types";
+import type { GlobalStyles, SectionContent, PageSections } from "../context/BuilderContext";
 
 export async function exportProject(
   globalStyles: GlobalStyles,
-  sections: SectionItem[],
+  pageSections: PageSections,
   sectionContent: SectionContent,
 ): Promise<void> {
   const res = await fetch("/api/export", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ globalStyles, sections, sectionContent }),
+    body: JSON.stringify({ globalStyles, pageSections, sectionContent }),
   });
 
   if (!res.ok) {

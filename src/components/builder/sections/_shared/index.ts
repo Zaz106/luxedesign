@@ -55,6 +55,12 @@ import CorporateFooter from "../footer/CorporateFooter";
 import SpinnyFooter from "../footer/SpinnyFooter";
 import BigNameFooter from "../footer/BigNameFooter";
 
+// Stats Designs imports
+import StatsA from "../stats/StatsA";
+
+// Logo Banner Designs imports
+import LogoBannerA from "../logobanner/LogoBannerA";
+
 export type SectionComponentProps = { sectionId: string };
 export type SectionComponent = React.FC<SectionComponentProps>;
 
@@ -119,11 +125,20 @@ export const sectionDesigns: Record<string, DesignVariant[]> = {
     { id: "footer-minimal", name: "Minimalist Grid", component: MinimalFooter },
     { id: "footer-corporate", name: "Corporate", component: CorporateFooter },
   ],
+  stats: [
+    { id: "stats-a", name: "Stat Strip", component: StatsA },
+  ],
+  logobanner: [
+    { id: "logobanner-a", name: "Logo Trust Band", component: LogoBannerA },
+  ],
 };
 
-/** Normalise section IDs like "features-12345" â†’ "features" */
+/** Normalise section IDs like "features-12345" → "features",
+ *  "stats-12345" → "stats", "logobanner-12345" → "logobanner" */
 const normaliseSectionType = (sectionId: string): string => {
   if (sectionId.startsWith("features")) return "features";
+  if (sectionId.startsWith("stats")) return "stats";
+  if (sectionId.startsWith("logobanner")) return "logobanner";
   return sectionId;
 };
 
