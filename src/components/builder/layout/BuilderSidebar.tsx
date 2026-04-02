@@ -95,7 +95,7 @@ interface BuilderSidebarProps {
 }
 
 const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ forceExpandSection }) => {
-  const { pageSections, setPageSections, sectionContent, setSectionContent, activeConfigId, setActiveConfigId: setActiveConfigIdCtx, globalStyles, setGlobalStyles, activePage, setActivePage } = useBuilder();
+  const { pageSections, setPageSections, sectionContent, setSectionContent, activeConfigId, setActiveConfigId: setActiveConfigIdCtx, globalStyles, setGlobalStyles, activePage, setActivePage, setIsAiGenerating } = useBuilder();
   const sections = pageSections[activePage] ?? [];
   const setSections = (updater: SectionItem[] | ((prev: SectionItem[]) => SectionItem[])) => {
     setPageSections((prev) => ({
@@ -252,9 +252,12 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ forceExpandSection }) =
   const handleAiGenerate = async () => {
     if (!aiPrompt.trim() || isAiLoading) return;
     setIsAiLoading(true);
+    setIsAiGenerating(true);
     setAiError(null);
+    setIsAiModalOpen(false); // close immediately so canvas animation is visible
 
-    // Build the sections payload from visible sections + their variant IDs + schema field keys
+    // Build the sections payload — only id, title, variantId.
+    // Field resolution happens server-side from the trusted schema.
     const { variantContentSchemas } = await import("../sections/_shared/contentSchemas");
     const sectionSpecs = sections
       .filter((s) => s.isVisible && s.designVariant && variantContentSchemas[s.designVariant])
@@ -262,7 +265,6 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ forceExpandSection }) =
         id: s.id,
         title: s.title,
         variantId: s.designVariant!,
-        fields: variantContentSchemas[s.designVariant!].map((f) => f.key),
       }));
 
     if (sectionSpecs.length === 0) {
@@ -285,6 +287,7 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ forceExpandSection }) =
       const data = await res.json();
       if (!res.ok) {
         setAiError(data.error ?? "Failed to generate content. Please try again.");
+        setIsAiModalOpen(true); // re-open modal to show error
         return;
       }
 
@@ -298,13 +301,14 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ forceExpandSection }) =
         return next;
       });
 
-      setIsAiModalOpen(false);
       setAiPrompt("");
       setAiHoneypot("");
     } catch {
       setAiError("Network error. Please check your connection and try again.");
+      setIsAiModalOpen(true); // re-open modal to show error
     } finally {
       setIsAiLoading(false);
+      setIsAiGenerating(false);
     }
   };
 
@@ -772,15 +776,12 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({ forceExpandSection }) =
               placeholder="e.g. A modern fintech startup that helps freelancers manage invoices and payments…"
               value={aiPrompt}
               onChange={(e) => setAiPrompt(e.target.value)}
-              rows={6}
               disabled={isAiLoading}
               maxLength={800}
             />
 
             {aiError && (
-              <p style={{ fontSize: 12, color: "#e05555", margin: "8px 0 0", lineHeight: 1.4 }}>
-                {aiError}
-              </p>
+              <p className="ai-modal-error">{aiError}</p>
             )}
 
             <button

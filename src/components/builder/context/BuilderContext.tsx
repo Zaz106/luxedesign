@@ -59,6 +59,8 @@ type BuilderContextValue = {
   setActiveConfigId: (id: string | null) => void;
   scrollToSectionId: string | null;
   setScrollToSectionId: (id: string | null) => void;
+  isAiGenerating: boolean;
+  setIsAiGenerating: (v: boolean) => void;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -147,6 +149,7 @@ export const BuilderProvider: React.FC<{
   const [activePage, setActivePageState] = useState<number>(1);
   const [activeConfigId, setActiveConfigId] = useState<string | null>(null);
   const [scrollToSectionId, setScrollToSectionId] = useState<string | null>(null);
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
 
   // --- Undo / Redo ---
   const historyRef = useRef<Snapshot[]>([{ globalStyles, pageSections, sectionContent }]);
@@ -301,6 +304,8 @@ export const BuilderProvider: React.FC<{
         setActiveConfigId,
         scrollToSectionId,
         setScrollToSectionId,
+        isAiGenerating,
+        setIsAiGenerating,
         undo,
         redo,
         canUndo,

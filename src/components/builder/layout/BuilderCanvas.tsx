@@ -34,7 +34,7 @@ const BuilderCanvas = forwardRef<BuilderCanvasHandle, BuilderCanvasProps>(({ onS
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
   const sectionClickedRef = useRef(false);
-  const { pageSections, activePage, activeConfigId, setActiveConfigId, globalStyles, scrollToSectionId, setScrollToSectionId } = useBuilder();
+  const { pageSections, activePage, activeConfigId, setActiveConfigId, globalStyles, scrollToSectionId, setScrollToSectionId, isAiGenerating } = useBuilder();
   const [hoveredSectionId, setHoveredSectionId] = useState<string | null>(null);
   const themeBg = globalStyles.theme === "dark" ? "#0a0a0a" : "#fff";
 
@@ -449,7 +449,7 @@ const BuilderCanvas = forwardRef<BuilderCanvasHandle, BuilderCanvasProps>(({ onS
           <div
             key={section.id + (section.designVariant ?? "")}
             data-canvas-section-id={section.id}
-            className="canvas-section-wrapper"
+            className={`canvas-section-wrapper${isAiGenerating ? " ai-generating" : ""}`}
             onMouseEnter={() => setHoveredSectionId(section.id)}
             onMouseLeave={() => setHoveredSectionId(null)}
           >
@@ -462,7 +462,7 @@ const BuilderCanvas = forwardRef<BuilderCanvasHandle, BuilderCanvasProps>(({ onS
           </div>
         );
       }),
-    [sections, activeConfigId, hoveredSectionId],
+    [sections, activeConfigId, hoveredSectionId, isAiGenerating],
   );
 
   const transformStyle = `translate(${viewState.x}px, ${viewState.y}px) scale(${viewState.scale})`;
@@ -505,40 +505,40 @@ const BuilderCanvas = forwardRef<BuilderCanvasHandle, BuilderCanvasProps>(({ onS
         )}
       </div>
 
-      {/* Recenter View Button */}
-      <button
-        onClick={resetView}
-        onPointerDown={(e) => e.stopPropagation()}
-        className="reset-view-button"
-      >
-        {/* Simple Icon */}
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-          <path d="M3 3v5h5" />
-        </svg>
-        Reset View
-      </button>
+      {/* Bottom bar: Reset | AI banner (conditional) | Zoom */}
+      <div className="canvas-bottom-bar" onPointerDown={(e) => e.stopPropagation()}>
+        <button onClick={resetView} className="reset-view-button">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          Reset View
+        </button>
 
-      {/* Zoom Controls Overlay */}
-      <div onPointerDown={(e) => e.stopPropagation()} className="zoom-controls">
-        <button onClick={handleZoomOut} className="zoom-button">
-          -
-        </button>
-        <span className="zoom-display">
-          {Math.round(viewState.scale * 100)}%
-        </span>
-        <button onClick={handleZoomIn} className="zoom-button">
-          +
-        </button>
+        {isAiGenerating && (
+          <div className="ai-generating-banner">
+            <span className="ai-banner-icon">✦</span>
+            <span>AI is writing your content</span>
+            <span className="ai-typing-dots">
+              <span>.</span><span>.</span><span>.</span>
+            </span>
+          </div>
+        )}
+
+        <div className="zoom-controls">
+          <button onClick={handleZoomOut} className="zoom-button">-</button>
+          <span className="zoom-display">{Math.round(viewState.scale * 100)}%</span>
+          <button onClick={handleZoomIn} className="zoom-button">+</button>
+        </div>
       </div>
     </div>
   );
