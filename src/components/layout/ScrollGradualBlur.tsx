@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import GradualBlur from "../ui/GradualBlur";
 
 export default function ScrollGradualBlur() {
   const [shouldShow, setShouldShow] = useState(false);
+  const pathname = usePathname();
+  const isExcluded = pathname === "/get-started";
 
   useEffect(() => {
+    if (isExcluded) return;
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -33,7 +37,9 @@ export default function ScrollGradualBlur() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isExcluded]);
+
+  if (isExcluded) return null;
 
   return (
     <div style={{ 
