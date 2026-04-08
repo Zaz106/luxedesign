@@ -5,23 +5,23 @@
 /* ── Section & Card ── */
 .formSection {
   background: #f7f7f8;
-  padding: 0 2rem 6rem;
+  padding: 4rem 2rem 4rem;
   position: relative;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .formCard {
   max-width: 860px;
-  margin: -8rem auto 0;
+  width: 100%;
+  margin: 0 auto;
   background: #ffffff;
   border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 10;
-}
-
-.formCardSubmitted {
-  margin-top: 2rem;
 }
 
 /* ── Pagination dots ── */
@@ -135,7 +135,7 @@
 .fieldInput {
   font-family: var(--font-heading);
   width: 100%;
-  padding: 0.875rem 1.125rem;
+  padding: 1rem 1.25rem;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 12px;
@@ -227,15 +227,16 @@
 
 .phoneInputContainer {
   display: flex;
-  align-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   overflow: visible;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
+  background: #ffffff;
 }
 
 .phoneInputContainer:focus-within {
-  border-color: rgba(0, 0, 0, 0.35);
+  border-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .phoneInputContainerError {
@@ -246,12 +247,13 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0 0.875rem 0 1.125rem;
+  padding: 0 1.25rem;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
   position: relative;
-  flex-shrink: 0;
-  align-self: stretch;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-top-left-radius: 11px;
+  border-bottom-left-radius: 11px;
 }
 
 .flagIcon {
@@ -262,20 +264,18 @@
 }
 
 .countryCode {
-  font-family: var(--font-heading);
   font-size: 1rem;
-  color: #1a1a1a;
+  color: #000000;
   font-weight: 400;
-  white-space: nowrap;
 }
 
 .countryDropdown {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  width: 130px;
+  width: 120px;
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   z-index: 100;
@@ -285,19 +285,18 @@
 }
 
 .countryOption {
-  color: #1a1a1a;
-  font-family: var(--font-heading);
+  color: #000000;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.625rem 1rem;
-  transition: background 0.15s;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  transition: background 0.2s;
   cursor: pointer;
 }
 
 .countryOption:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .optionFlag {
@@ -306,15 +305,13 @@
 }
 
 .phoneInput {
-  font-family: var(--font-heading);
   flex: 1;
-  padding: 0.875rem 1.125rem;
+  padding: 1.1rem 1.25rem;
   background: transparent;
   border: none;
   font-size: 1rem;
-  color: #1a1a1a;
+  color: #000000;
   outline: none;
-  min-width: 0;
 }
 
 .phoneInput::placeholder {
@@ -341,6 +338,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  touch-action: manipulation;
 }
 
 .optionBtn:hover {
@@ -379,6 +377,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  touch-action: manipulation;
 }
 
 .chip:hover {
@@ -572,16 +571,6 @@
   opacity: 0.7;
 }
 
-/* ── Draft saved indicator ── */
-.draftSaved {
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  color: rgba(0, 0, 0, 0.3);
-  text-align: center;
-  padding: 0.75rem 0 0;
-  transition: opacity 0.3s ease;
-}
-
 /* ── Navigation buttons ── */
 .navButtons {
   display: flex;
@@ -605,6 +594,7 @@
   font-size: 0.9375rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  touch-action: manipulation;
 }
 
 .backBtn:hover {
@@ -643,6 +633,7 @@
   font-size: 0.9375rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  touch-action: manipulation;
 }
 
 .nextBtn:hover {
@@ -663,11 +654,18 @@
   font-size: 0.9375rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  touch-action: manipulation;
 }
 
 .submitBtn:hover {
   background: #2a2a2a;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.submitBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ── Back to top floating button ── */
@@ -765,21 +763,24 @@
 }
 
 /* ── Thank you screen (modal content) ── */
-.thankYou {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 6rem 4rem;
-  text-align: center;
-}
-
 .thankYouIcon {
   width: 64px;
   height: 64px;
   border-radius: 50%;
   background: #1a1a1a;
   color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.errorIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fdf0f0;
+  color: #d94444;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -824,11 +825,11 @@
 
 @media (max-width: 768px) {
   .formSection {
-    padding: 0 1.25rem 4rem;
+    padding: 4rem 1.25rem 4rem;
   }
 
   .formCard {
-    margin-top: -8rem;
+    margin-top: 0;
     border-radius: 20px;
   }
 
@@ -910,13 +911,11 @@
 
   .fieldInput,
   .fieldTextarea {
-    padding: 0.75rem 1rem;
-    font-size: 0.9375rem;
+    font-size: 1rem; /* never below 16px — prevents iOS auto-zoom */
   }
 
   .phoneInput {
-    padding: 0.75rem 1rem;
-    font-size: 0.9375rem;
+    font-size: 1rem; /* never below 16px — prevents iOS auto-zoom */
   }
 
   .fieldLabel {
@@ -934,11 +933,11 @@
 
 @media (max-width: 480px) {
   .formSection {
-    padding: 0 0.75rem 3rem;
+    padding: 3rem 0.75rem 3rem;
   }
 
   .formCard {
-    margin-top: -6rem;
+    margin-top: 0;
     border-radius: 16px;
   }
 
@@ -1012,14 +1011,12 @@
   }
 
   .fieldInput,
-  .fieldTextarea {
-    padding: 0.7rem 0.875rem;
-    font-size: 0.875rem;
+  .fieldTextarea {    
+    font-size: 1rem; /* never below 16px — prevents iOS auto-zoom */
   }
 
   .phoneInput {
-    padding: 0.7rem 0.875rem;
-    font-size: 0.875rem;
+    font-size: 1rem; /* never below 16px — prevents iOS auto-zoom */
   }
 
   .fieldLabel {

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Check, Upload, X, Lightbulb, ArrowUp } from "lucide-react";
+import { Check, Upload, X, Lightbulb, ArrowUp, AlertCircle } from "lucide-react";
 import {
   ZAFlag, USFlag, GBFlag, AUFlag, CAFlag,
 } from "../../ui/Icons";
@@ -266,6 +266,8 @@ const GetStartedForm = () => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Set<string>>(new Set());
   const [shakeFields, setShakeFields] = useState<Set<string>>(new Set());
 
@@ -304,7 +306,7 @@ const GetStartedForm = () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === "object") {
-          setFormData(prev => ({ ...prev, ...parsed }));
+          setFormData(prev => ({ ...prev, ...parsed, _hp: "" }));
         }
       }
     } catch {
@@ -339,7 +341,8 @@ const GetStartedForm = () => {
     if (draftTimerRef.current) clearTimeout(draftTimerRef.current);
     draftTimerRef.current = setTimeout(() => {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        const { _hp, ...draftData } = formData;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(draftData));
       } catch { /* storage full */ }
     }, 800);
     return () => { if (draftTimerRef.current) clearTimeout(draftTimerRef.current); };
@@ -538,36 +541,44 @@ const GetStartedForm = () => {
     }
   };
 
-  const goToStep = useCallback((index: number) => {
+  const goToStep = (index: number) => {
     if (index < currentStepIndex) {
       setValidationErrors(new Set());
       setDirection(-1);
       setCurrentStepIndex(index);
       scrollToForm();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStepIndex]);
+  };
 
   const handleSubmit = async () => {
-    setShowConfirmModal(true);
-    localStorage.removeItem(STORAGE_KEY);
-
+    setIsSubmitting(true);
     try {
       const fd = new FormData();
       fd.append("brief", JSON.stringify({ ...formData, phoneCountryCode: selectedCountry.dial }));
       uploadedFiles.forEach((file) => fd.append("file", file, file.name));
 
-      await fetch("/api/send-brief", {
+      const res = await fetch("/api/send-brief", {
         method: "POST",
         body: fd,
       });
-    } catch (err) {
-      console.error("[send-brief] fetch failed:", err);
+
+      if (res.ok) {
+        localStorage.removeItem(STORAGE_KEY);
+        setSubmitError(false);
+      } else {
+        setSubmitError(true);
+      }
+    } catch {
+      setSubmitError(true);
+    } finally {
+      setIsSubmitting(false);
+      setShowConfirmModal(true);
     }
   };
 
   const handleCloseModal = () => {
     setShowConfirmModal(false);
+    setSubmitError(false);
     setFormData(initialFormData);
     setCurrentStepIndex(0);
     setDirection(1);
@@ -575,6 +586,11 @@ const GetStartedForm = () => {
     setShakeFields(new Set());
     setUploadedFiles([]);
     scrollToForm();
+  };
+
+  const handleCloseErrorModal = () => {
+    setShowConfirmModal(false);
+    setSubmitError(false);
   };
 
   const scrollToTop = () => {
@@ -645,7 +661,7 @@ const GetStartedForm = () => {
         <label className={styles.fieldLabel}>
           {label}{required && <span className={styles.required}> *</span>}
         </label>
-        <div className={`${styles.optionGroup} ${hasError ? styles.shake : ""}`}>
+        <div className={styles.optionGroup}>
           {options.map(opt => (
             <button
               key={opt.value}
@@ -669,7 +685,7 @@ const GetStartedForm = () => {
         <label className={styles.fieldLabel}>
           {label}{required && <span className={styles.required}> *</span>}
         </label>
-        <div className={`${styles.chipGroup} ${hasError ? styles.shake : ""}`}>
+        <div className={styles.chipGroup}>
           {options.map(opt => (
             <button
               key={opt.value}
@@ -693,14 +709,6 @@ const GetStartedForm = () => {
         <p className={styles.uploadText}>Click to upload files</p>
         <p className={styles.uploadHint}>PNG, JPG, PDF, DOC, PPT — max 10 MB each, up to {MAX_FILES} files</p>
       </div>
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple
-        accept={ALLOWED_EXTENSIONS.join(",")}
-        onChange={handleFileUpload}
-        style={{ display: "none" }}
-      />
       {uploadedFiles.length > 0 && (
         <div className={styles.uploadedFiles}>
           {uploadedFiles.map((file, i) => (
@@ -1083,6 +1091,7 @@ const GetStartedForm = () => {
         </div>
       )}
       {renderTextarea("additionalNotes", "Is there anything else you\u2019d like us to know before we get started?", "Any additional details, preferences, or questions...", 4)}
+      {renderFileUpload("Upload any reference files (logos, inspiration, documents)")}
     </div>
   );
 
@@ -1208,7 +1217,6 @@ const GetStartedForm = () => {
 
   /* ── Derived values ── */
   const currentStep = activeSteps[currentStepIndex];
-  const isLastStep = currentStepIndex === activeSteps.length - 1;
   const isReviewStep = currentStep?.id === "review";
 
   if (!currentStep) return null;
@@ -1219,7 +1227,10 @@ const GetStartedForm = () => {
   return (
     <section className={styles.formSection}>
       {showConfirmModal && (
-        <div className={styles.modalOverlay} onClick={handleCloseModal}>
+        <div
+          className={styles.modalOverlay}
+          onClick={submitError ? handleCloseErrorModal : handleCloseModal}
+        >
           <motion.div
             className={styles.modalBox}
             onClick={(e) => e.stopPropagation()}
@@ -1231,25 +1242,47 @@ const GetStartedForm = () => {
             <button
               type="button"
               className={styles.modalCloseBtn}
-              onClick={handleCloseModal}
+              onClick={submitError ? handleCloseErrorModal : handleCloseModal}
               aria-label="Close"
             >
               <X size={18} />
             </button>
-            <div className={styles.thankYouIcon}>
-              <Check size={32} />
-            </div>
-            <h2 className={styles.thankYouTitle}>Thank You!</h2>
-            <p className={styles.thankYouText}>
-              We&apos;ve received your project brief. Our team will review your details and get back to you within 24&ndash;48 hours.
-            </p>
-            <button
-              type="button"
-              className={styles.modalDoneBtn}
-              onClick={handleCloseModal}
-            >
-              Close
-            </button>
+
+            {submitError ? (
+              <>
+                <div className={styles.errorIcon}>
+                  <AlertCircle size={32} />
+                </div>
+                <h2 className={styles.thankYouTitle}>Something went wrong</h2>
+                <p className={styles.thankYouText}>
+                  We couldn&apos;t send your brief. Please check your connection and try again. Your answers have been saved.
+                </p>
+                <button
+                  type="button"
+                  className={styles.modalDoneBtn}
+                  onClick={handleCloseErrorModal}
+                >
+                  Try Again
+                </button>
+              </>
+            ) : (
+              <>
+                <div className={styles.thankYouIcon}>
+                  <Check size={32} />
+                </div>
+                <h2 className={styles.thankYouTitle}>Thank You!</h2>
+                <p className={styles.thankYouText}>
+                  We&apos;ve received your project brief. Our team will review your details and get back to you within 24&ndash;48 hours.
+                </p>
+                <button
+                  type="button"
+                  className={styles.modalDoneBtn}
+                  onClick={handleCloseModal}
+                >
+                  Close
+                </button>
+              </>
+            )}
           </motion.div>
         </div>
       )}
@@ -1265,6 +1298,15 @@ const GetStartedForm = () => {
               value={str("_hp")}
               onChange={(e) => updateField("_hp", e.target.value)}
               style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden", opacity: 0, pointerEvents: "none" }}
+            />
+            {/* Single shared file input — triggered by all renderFileUpload() calls */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept={ALLOWED_EXTENSIONS.join(",")}
+              onChange={handleFileUpload}
+              style={{ display: "none" }}
             />
             {/* Pagination dots */}
             <div className={styles.pagination}>
@@ -1312,14 +1354,14 @@ const GetStartedForm = () => {
                   <div />
                 )}
                 {isReviewStep ? (
-                  <button type="button" className={styles.submitBtn} onClick={handleSubmit}>
-                    Submit
-                    <Check size={15} />
-                  </button>
-                ) : isLastStep ? (
-                  <button type="button" className={styles.nextBtn} onClick={goNext}>
-                    Next
-                    <span className={styles.arrowIcon}>&rarr;</span>
+                  <button
+                    type="button"
+                    className={styles.submitBtn}
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending…" : "Submit"}
+                    {!isSubmitting && <Check size={15} />}
                   </button>
                 ) : (
                   <button type="button" className={styles.nextBtn} onClick={goNext}>

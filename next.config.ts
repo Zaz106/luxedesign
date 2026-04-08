@@ -14,11 +14,11 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js dev requires unsafe-eval
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com", // Next.js dev requires unsafe-eval; Vercel Analytics
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      "connect-src 'self'", // API calls stay same-origin; Gemini is called server-side
+      "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com", // Vercel Analytics
       "frame-ancestors 'none'",
     ].join("; "),
   },

@@ -1,22 +1,16 @@
-import ColorBends from "../../ui/ColorBends";
+import Image from "next/image";
 import styles from "./GetStartedHero.module.css";
 
 const GetStartedHero = () => {
   return (
     <section className={styles.heroSection}>
       <div className={styles.heroBackground} aria-hidden>
-        <ColorBends
-          colors={["#2400b3", "#987ed2"]}
-          rotation={10}
-          speed={0.6}
-          scale={0.85}
-          mouseInfluence={0}
-          noise={0}
-          transparent
-          autoRotate={0}
-          frequency={1}
-          warpStrength={1}
-          parallax={0}
+        <Image
+          src="/images/get-started-hero-image.jpg"
+          alt=""
+          fill
+          style={{ objectFit: "cover", objectPosition: "center" }}
+          priority
         />
       </div>
       <div className={styles.heroOverlay} aria-hidden />
