@@ -12,18 +12,27 @@ const ACCENT = "#987ed2";
 const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024; // 10 MB per file
 
 // Resolve the production origin — supports both www and non-www variants.
-// Set SITE_URL in Vercel Environment Variables, e.g. https://sixfootdesignco.co.za
-const PRODUCTION_ORIGIN = (process.env.SITE_URL ?? "https://sixfootdesignco.co.za").replace(/\/$/, "");
-const ALLOWED_ORIGINS = new Set([
-  PRODUCTION_ORIGIN,
+// SITE_URL is optional (e.g. https://sixfootdesignco.co.za once the custom domain is set).
+// VERCEL_URL is injected automatically by Vercel on every deployment (no https:// prefix).
+const PRODUCTION_ORIGIN = (process.env.SITE_URL ?? "").replace(/\/$/, "");
+const allowedOriginsList: string[] = [];
+if (PRODUCTION_ORIGIN) {
+  allowedOriginsList.push(PRODUCTION_ORIGIN);
   // Cover the www <-> non-www counterpart automatically
-  PRODUCTION_ORIGIN.startsWith("https://www.")
-    ? PRODUCTION_ORIGIN.replace("https://www.", "https://")
-    : PRODUCTION_ORIGIN.replace("https://", "https://www."),
-  ...(process.env.NODE_ENV === "development"
-    ? ["http://localhost:3000", "http://localhost:3001"]
-    : []),
-]);
+  allowedOriginsList.push(
+    PRODUCTION_ORIGIN.startsWith("https://www.")
+      ? PRODUCTION_ORIGIN.replace("https://www.", "https://")
+      : PRODUCTION_ORIGIN.replace("https://", "https://www.")
+  );
+}
+// Vercel deployment URL (e.g. luxedesign-dusky.vercel.app) — always allow
+if (process.env.VERCEL_URL) {
+  allowedOriginsList.push(`https://${process.env.VERCEL_URL}`);
+}
+if (process.env.NODE_ENV === "development") {
+  allowedOriginsList.push("http://localhost:3000", "http://localhost:3001");
+}
+const ALLOWED_ORIGINS = new Set(allowedOriginsList);
 
 /* ══════════════════════════════════════
    Rate limiting (in-memory, per IP)
