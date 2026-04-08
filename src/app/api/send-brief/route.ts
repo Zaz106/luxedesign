@@ -10,8 +10,16 @@ const FROM_ADDRESS = `${COMPANY_NAME} <noreply@sixfootdesignco.co.za>`;
 const INTERNAL_EMAIL = "joshua.huisman06@gmail.com";
 const ACCENT = "#987ed2";
 const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024; // 10 MB per file
+
+// Resolve the production origin — supports both www and non-www variants.
+// Set SITE_URL in Vercel Environment Variables, e.g. https://sixfootdesignco.co.za
+const PRODUCTION_ORIGIN = (process.env.SITE_URL ?? "https://sixfootdesignco.co.za").replace(/\/$/, "");
 const ALLOWED_ORIGINS = new Set([
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://sixfootdesignco.co.za",
+  PRODUCTION_ORIGIN,
+  // Cover the www <-> non-www counterpart automatically
+  PRODUCTION_ORIGIN.startsWith("https://www.")
+    ? PRODUCTION_ORIGIN.replace("https://www.", "https://")
+    : PRODUCTION_ORIGIN.replace("https://", "https://www."),
   ...(process.env.NODE_ENV === "development"
     ? ["http://localhost:3000", "http://localhost:3001"]
     : []),
@@ -1050,6 +1058,15 @@ export async function POST(request: NextRequest) {
   if (!clientOk || !internalOk) {
     console.error("[send-brief] Client email:", clientResult);
     console.error("[send-brief] Internal email:", internalResult);
+  }
+
+  // If both sends failed, return 500 so the frontend shows the error modal.
+  // If at least one succeeded we treat it as a success.
+  if (!clientOk && !internalOk) {
+    return NextResponse.json(
+      { error: "Failed to send emails", clientSent: false, internalSent: false },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ success: true, clientSent: clientOk, internalSent: internalOk });
