@@ -11,29 +11,6 @@ const INTERNAL_EMAIL = "joshua.huisman06@gmail.com";
 const ACCENT = "#987ed2";
 const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024; // 10 MB per file
 
-// Resolve the production origin — supports both www and non-www variants.
-// SITE_URL is optional (e.g. https://sixfootdesignco.co.za once the custom domain is set).
-// VERCEL_URL is injected automatically by Vercel on every deployment (no https:// prefix).
-const PRODUCTION_ORIGIN = (process.env.SITE_URL ?? "").replace(/\/$/, "");
-const allowedOriginsList: string[] = [];
-if (PRODUCTION_ORIGIN) {
-  allowedOriginsList.push(PRODUCTION_ORIGIN);
-  // Cover the www <-> non-www counterpart automatically
-  allowedOriginsList.push(
-    PRODUCTION_ORIGIN.startsWith("https://www.")
-      ? PRODUCTION_ORIGIN.replace("https://www.", "https://")
-      : PRODUCTION_ORIGIN.replace("https://", "https://www.")
-  );
-}
-// Vercel deployment URL (e.g. luxedesign-dusky.vercel.app) — always allow
-if (process.env.VERCEL_URL) {
-  allowedOriginsList.push(`https://${process.env.VERCEL_URL}`);
-}
-if (process.env.NODE_ENV === "development") {
-  allowedOriginsList.push("http://localhost:3000", "http://localhost:3001");
-}
-const ALLOWED_ORIGINS = new Set(allowedOriginsList);
-
 /* ══════════════════════════════════════
    Rate limiting (in-memory, per IP)
    ══════════════════════════════════════ */
@@ -885,10 +862,19 @@ function buildInternalEmail(data: BriefPayload): string {
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
-  // ── (1) Origin / CSRF check ─────────────────────────────────────────
+// ── (1) Origin / CSRF check ─────────────────────────────────────────
+  // Dynamically compare origin hostname to the request host — works on any
+  // deployment (local, Vercel preview, custom domain) without env vars.
   const origin = request.headers.get("origin");
-  if (origin && !ALLOWED_ORIGINS.has(origin)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (origin) {
+    const requestHost =
+      (request.headers.get("x-forwarded-host") || request.headers.get("host") || "")
+        .split(":")[0]; // strip port
+    let originHost = "";
+    try { originHost = new URL(origin).hostname; } catch { /* malformed origin → block */ }
+    if (!originHost || originHost !== requestHost) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
   }
 
   // ── (2) Rate limiting ────────────────────────────────────────────────
