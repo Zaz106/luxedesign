@@ -12,6 +12,11 @@ import {
   GitHubIcon,
 } from "../ui/Icons";
 import styles from "./Footer.module.css";
+import {
+  footerAboutLinks,
+  footerExploreLinks,
+  footerSupportLinks,
+} from "./footerLinks";
 
 // Lazy load Prism with no SSR
 const Prism = dynamic(() => import("../ui/Prism"), {
@@ -112,25 +117,28 @@ const Footer = () => {
             <div className={styles.columns}>
               <div>
                 <h4>Explore</h4>
-                <Link href="/">Home</Link>
-                <Link href="/about">About Us</Link>
-                <Link href="/web-builder">Web Builder</Link>
-                <Link href="/pricing">Pricing</Link>
-                <Link href="/contact">Contact Us</Link>
+                {footerExploreLinks.map((link) => (
+                  <Link key={link.label} href={link.href}>
+                    {link.label}
+                  </Link>
+                ))}
               </div>
               <div>
                 <h4>About</h4>
-                <a href="/#services">Services</a>
-                <a href="/#work">Our Work</a>
-                <Link href="/pricing">Pricing</Link>
-                <Link href="/pricing">Our Team</Link>
+                {footerAboutLinks.map((link) => (
+                  <Link key={link.label} href={link.href}>
+                    {link.label}
+                  </Link>
+                ))}
               </div>
               <div>
                 <h4>Support</h4>
                 <div className={styles.linkGroup}>
-                  <a href="/contact">Contact Us</a>
-                  <a href="/contact">Community</a>
-                  <a href="/contact">Support</a>
+                  {footerSupportLinks.map((link) => (
+                    <Link key={link.label} href={link.href}>
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
@@ -163,7 +171,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
-// Force re-compile to fix hydration mismatch
-
-// Force re-compile to fix hydration mismatch

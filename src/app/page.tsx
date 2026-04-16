@@ -1,7 +1,16 @@
 import dynamic from "next/dynamic";
+import type { Metadata } from "next";
 import Header from "../components/layout/Header";
 import Hero from "../components/sections/Landing Page/Hero";
+import { buildPageMetadata } from "./seo";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Home",
+  description:
+    "Explore Luxe Designs services for strategy, web design, and development that help businesses grow online.",
+  path: "/",
+});
 
 // Lazy load heavy/below-the-fold components
 const LogoCloud = dynamic(
@@ -16,8 +25,8 @@ const Intro = dynamic(
     loading: () => <div style={{ height: "600px" }} aria-hidden />,
   },
 );
-const Testamonials = dynamic(
-  () => import("../components/sections/Landing Page/Testamonials"),
+const Testimonials = dynamic(
+  () => import("../components/sections/Landing Page/Testimonials"),
   {
     loading: () => <div style={{ height: "600px" }} aria-hidden />,
   },
@@ -54,7 +63,7 @@ export default function Home() {
       <main className={styles.main}>
         <Hero />
         <LogoCloud />
-        <Testamonials />
+        <Testimonials />
         <Intro />
         <Services />
         <Feature />

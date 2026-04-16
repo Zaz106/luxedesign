@@ -1,8 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { InstagramIcon, TikTokIcon, LinkedInIcon, GitHubIcon } from "../ui/Icons";
 import styles from "./SimpleFooter.module.css";
+import {
+  footerAboutLinks,
+  footerExploreLinks,
+  footerSupportLinks,
+} from "./footerLinks";
 
 const SimpleFooter = () => {
   return (
@@ -28,25 +34,28 @@ const SimpleFooter = () => {
             <div className={styles.columns}>
               <div>
                 <h4>Explore</h4>
-                <a href="#home">Home</a>
-                <a href="#about">About Us</a>
-                <a href="#projects">Web Builder</a>
-                <a href="/#pricing">Pricing</a>
-                <a href="/contact">Contact Us</a>
+                {footerExploreLinks.map((link) => (
+                  <Link key={link.label} href={link.href}>
+                    {link.label}
+                  </Link>
+                ))}
               </div>
               <div>
                 <h4>About</h4>
-                <a href="/#services">Services</a>
-                <a href="/#work">Our Work</a>
-                <a href="/#pricing">Pricing</a>
-                <a href="/#pricing">Our Team</a>
+                {footerAboutLinks.map((link) => (
+                  <Link key={link.label} href={link.href}>
+                    {link.label}
+                  </Link>
+                ))}
               </div>
               <div>
                 <h4>Support</h4>
                 <div className={styles.linkGroup}>
-                  <a href="/contact">Contact Us</a>
-                  <a href="/contact">Community</a>
-                  <a href="/contact">Support</a>
+                  {footerSupportLinks.map((link) => (
+                    <Link key={link.label} href={link.href}>
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>

@@ -1,34 +1,14 @@
-"use client";
-import React, { useState } from "react";
-import Header from "../../components/layout/Header";
-import Footer from "../../components/layout/Footer";
-import PricingHero, {
-  PricingCategory,
-} from "../../components/sections/Pricing/PricingHero";
-import PricingWebsites from "../../components/sections/Pricing/categories/PricingWebsites";
-import PricingApps from "../../components/sections/Pricing/categories/PricingApps";
-import PricingHosting from "../../components/sections/Pricing/categories/PricingHosting";
-import PricingFAQ from "../../components/sections/Pricing/PricingFAQ";
-import styles from "./PricingPage.module.css";
+import type { Metadata } from "next";
+import PricingClient from "./PricingClient";
+import { buildPageMetadata } from "../seo";
 
-export default function Pricing() {
-  const [category, setCategory] = useState<PricingCategory>("websites");
+export const metadata: Metadata = buildPageMetadata({
+  title: "Pricing",
+  description:
+    "Review transparent Luxe Designs pricing for websites, app builds, and ongoing hosting support.",
+  path: "/pricing",
+});
 
-  return (
-    <div className={styles.page}>
-      <Header disableAutoHide={true} />
-      <main className={styles.main}>
-        <PricingHero activeCategory={category} onSelectCategory={setCategory} />
-
-        <div className={styles.pricingContent}>
-          {category === "websites" && <PricingWebsites />}
-          {category === "apps" && <PricingApps />}
-          {category === "hosting" && <PricingHosting />}
-        </div>
-
-        <PricingFAQ />
-      </main>
-      <Footer />
-    </div>
-  );
+export default function PricingPage() {
+  return <PricingClient />;
 }

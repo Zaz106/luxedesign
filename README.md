@@ -1,44 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Luxe Designs Website
 
-## Getting Started
+Marketing website for Luxe Designs, built with Next.js App Router.
+![alt text](image.png)
 
-First, run the development server:
+## Overview
+
+- Framework: Next.js 16 + React 19 + TypeScript
+- Styling: CSS Modules
+- Fonts: `next/font` (optimized, self-hosted loading)
+- Analytics: `@vercel/analytics`
+- Key pages:
+  - `/` Home
+  - `/about` About
+  - `/pricing` Pricing
+  - `/contact` Contact
+
+## Project Structure
+
+- `src/app/` route files, metadata, `sitemap.ts`, and `robots.ts`
+- `src/components/layout/` shared layout pieces (`Header`, `Footer`, etc.)
+- `src/components/sections/` page section components
+- `public/` static assets (images, icons, documents)
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build & Run
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## SEO & Metadata
 
-To learn more about Next.js, take a look at the following resources:
+- Root metadata is defined in `src/app/layout.tsx` with:
+  - `metadataBase`
+  - `title.template` for consistent branding
+- Page-level metadata is generated via `src/app/seo.ts`
+- Each page exports unique metadata (`title`, `description`, `openGraph`, canonical)
+- `src/app/sitemap.ts` and `src/app/robots.ts` are included
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Security Headers
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Configured in `next.config.ts`, including:
 
-## Deploy on Vercel
+- Content Security Policy (CSP)
+- Strict-Transport-Security (HSTS)
+- X-Frame-Options
+- Cross-Origin-Opener-Policy
+- Referrer and permissions policies
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment Variables
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Create `.env.local` and set:
 
-4. Real image support — Image upload/URL field type for sections
-5. Content field expansion — Color picker per-section, toggle fields, number inputs
-7. Expanded font library — More Google Fonts or custom URL input
-8. AI content generation — Wire the AI button to an actual LLM API
-11. Project-level settings — Site name, favicon, meta description, OG image, GA tag
-12. Form section with backend — Contact form section that actually submits data
-14. Per-section style overrides — Global theme overrides at the individual section level
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
+
+This is used for canonical URLs, sitemap host entries, and metadata base URL.
+
+## Notes
+
+- Keep page files (`page.tsx`) server components; move client logic into child components.
+- Use `next/image` for all images, with descriptive `alt` text.
+- Use accessible labels for icon-only interactive links.

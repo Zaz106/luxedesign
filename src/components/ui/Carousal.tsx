@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, PanInfo } from "motion/react";
 import styles from "./Solutions.module.css";
 
@@ -169,16 +170,19 @@ const Solutions = () => {
                   <div className={styles.cardContent}>
                     <div className={styles.avatarWrapper} aria-hidden="true">
                       {item.image && item.id === 1 ? (
-                         // eslint-disable-next-line @next/next/no-img-element
-                         <img 
-                           src={item.image} 
-                           alt={item.name}
-                           className={styles.avatarImage}
-                           onError={(e) => {
-                             e.currentTarget.style.display = 'none';
-                             e.currentTarget.nextElementSibling?.classList.remove(styles.hidden);
-                           }} 
-                          />
+                        <Image
+                          src={item.image}
+                          alt={`Portrait of ${item.name}`}
+                          className={styles.avatarImage}
+                          width={56}
+                          height={56}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            e.currentTarget.nextElementSibling?.classList.remove(
+                              styles.hidden,
+                            );
+                          }}
+                        />
                       ) : null}
                       <span className={`${styles.avatarPlaceholder} ${item.image && item.id === 1 ? styles.hidden : ''}`}>{item.initials}</span>
                     </div>
